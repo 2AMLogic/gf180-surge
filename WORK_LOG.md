@@ -4,6 +4,17 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-11-15
 
+- **PR #710**: tools: drop dead extra_summary_fields/model_trace params from _publish_refusal
+- **Issue #691** (closed): Remove the 2 dead parameters on _publish_refusal: the RTL refusal path accepts extra_summary_fields and model_trace and reads neither
+- **PR #709**: fix(tools): count executed negative-control cases instead of re-calling registries
+- **Issue #687** (closed): run_negative_control's exit code and summary line do not detect a dropped control registration
+- **PR #705**: docs(evidence): disclose the item 9 envelope's producer klt, correct stale counts
+- **Issue #670** (closed): Follow-on: Work identified in PR #659
+- **PR #672**: evidence: measure F-640-1 under the pinned oracle — release velocity does not reach audio in either leaf
+- **Issue #660** (closed): Measure F-640-1 under the pinned oracle: two committed references cite a release velocity of 100 but were rendered with 0
+- **PR #706**: refactor(tools): route the five effect-family parse_tb_trace parsers through CheckpointKeys, re-deriving their byte-frozen records
+- **Issue #666** (closed): Extend the #455 duplicate-key refusal to the five live-pinned effect-family parse_tb_trace parsers
+- **PR #696**: evidence(t1-item1): re-measure the five #580 groups at 1800 s and record rf_ains34_core's netlist as input-less
 - **PR #661**: refactor(rtl): carry galactic_core's arithmetic at integer-exact widths, not 128 bits
 - **Issue #641** (closed): galactic_core: narrow the 128-bit arithmetic so klt synthesize reaches a verdict (NO_VERDICT survives a 1800 s Yosys budget)
 - **PR #685**: refactor(model): fold the duplicated FX-runner helpers onto run_fx_model and give checkpoint_set an explicit settle
