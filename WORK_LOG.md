@@ -4,6 +4,8 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-11-16
 
+- **PR #725**: fix: neutralize machine paths in t1-physical pnr.failure.txt payload
+- **Issue #718** (closed): signoff/t1-physical/regen.py writes pnr.failure.txt raw — same path churn #714 fixed for t1-item1
 - **PR #697**: test: fold committed-evidence scan guards onto one shared non-vacuity helper
 - **Issue #683** (closed): Eight committed-evidence scans in tests/ pass vacuously when the directory goes empty: fold the hand-rolled count guards onto one shared helper
 - **Issue #715** (closed): Operator decision: strict required-status-checks policy blocks merging any PR whose branch is behind main (blocks #708)
