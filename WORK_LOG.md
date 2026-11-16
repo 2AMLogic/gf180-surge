@@ -4,6 +4,8 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-11-16
 
+- **PR #693**: fix(tools): run the Reverb1 and AW49 RTL runners in the platform temp dir
+- **Issue #677** (closed): Make run_reverb_rtl.py and compare_rtl_model_aw49.py portable: drop the hardcoded per-user macOS temp directory
 - **PR #717**: fix: substitute machine-local paths in t1-item1 failure.txt payloads
 - **Issue #714** (closed): regen.py commits a machine-local worktree path in failure.txt
 - **PR #713**: signoff(t1-item1): attribute the five #580 synthesis timeouts by a pre-ABC operator census
