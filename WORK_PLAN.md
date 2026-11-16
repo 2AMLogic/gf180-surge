@@ -9,6 +9,7 @@ Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a h
 
 - **#658**: test(byte-frozen): derive the attested_inventories counts from the inventories
 - **#708**: fix(model): coerce AW-49 input-boundary quantizer to double, restoring numpy-version-invariant stimulus
+- **#716**: chore(loom): resync installed Loom to v0.19.1302
 
 ## Very Important
 
@@ -32,6 +33,8 @@ Human-approved issues ready for implementation (`loom:issue`).
 - **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus)
 - **#679**: Commit a reproducible probe for the four open input pins behind the ext_mem_instr LVS mismatch
 - **#683**: Eight committed-evidence scans in tests/ pass vacuously when the directory goes empty: fold the hand-rolled count guards onto one shared helper
+- **#718**: signoff/t1-physical/regen.py writes pnr.failure.txt raw — same path churn #714 fixed for t1-item1
+- **#720**: SXT-024 Reverb1 txn_log_sha256 digests may be environment-dependent (reported, not re-derived)
 
 ## In Progress
 
@@ -47,15 +50,13 @@ Issues currently being built (`loom:building`).
 - **#663**: Remove the private render_bus copy in tools/render_wt_reference.py: it is the shared _render_reference_common.render_bus with a different constructor call
 - **#668**: SXT-028a: AW-49 canonical stimulus quantization is numpy-major-version sensitive (NEP 50) — disposition needed
 - **#671**: Reference sidecars inherit engine identity from the extractor inputs, so it does not identify the rendering engine (F-660-1)
-- **#677**: Make run_reverb_rtl.py and compare_rtl_model_aw49.py portable: drop the hardcoded per-user macOS temp directory
 - **#681**: compare_lp12_model.py: a present-but-silent engine tap still grades the engine stability leg BOUNDED (and refusals exit 1, not the documented 2)
-- **#714**: regen.py commits a machine-local worktree path in failure.txt (timeout-progress.txt is substituted, failure.txt is not)
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-- **#712**: trace galactic_core's ABC loop reports to the counts/adv_idx memory mapping and remove them
+_None._
 
 ## Approved (Awaiting Merge)
 
@@ -64,7 +65,6 @@ PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 - **#658**: test(byte-frozen): derive the attested_inventories counts from the inventories
 - **#708**: fix(model): coerce AW-49 input-boundary quantizer to double, restoring numpy-version-invariant stimulus
 - **#716**: chore(loom): resync installed Loom to v0.19.1302
-- **#717**: fix: substitute machine-local paths in t1-item1 failure.txt payloads
 
 ## Proposed
 
@@ -99,10 +99,10 @@ Issues carrying `loom:curated`.
 - **#663**: Remove the private render_bus copy in tools/render_wt_reference.py: it is the shared _render_reference_common.render_bus with a different constructor call *(curated)*
 - **#668**: SXT-028a: AW-49 canonical stimulus quantization is numpy-major-version sensitive (NEP 50) — disposition needed *(curated)*
 - **#671**: Reference sidecars inherit engine identity from the extractor inputs, so it does not identify the rendering engine (F-660-1) *(curated)*
-- **#677**: Make run_reverb_rtl.py and compare_rtl_model_aw49.py portable: drop the hardcoded per-user macOS temp directory *(curated)*
 - **#679**: Commit a reproducible probe for the four open input pins behind the ext_mem_instr LVS mismatch *(curated)*
 - **#681**: compare_lp12_model.py: a present-but-silent engine tap still grades the engine stability leg BOUNDED (and refusals exit 1, not the documented 2) *(curated)*
-- **#714**: regen.py commits a machine-local worktree path in failure.txt (timeout-progress.txt is substituted, failure.txt is not) *(curated)*
+- **#718**: signoff/t1-physical/regen.py writes pnr.failure.txt raw — same path churn #714 fixed for t1-item1 *(curated)*
+- **#720**: SXT-024 Reverb1 txn_log_sha256 digests may be environment-dependent (reported, not re-derived) *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -119,13 +119,13 @@ Issues carrying `loom:curated`.
 
 | Bucket | Count |
 |------|-------|
-| Operator merge-risk holds | 2 |
+| Operator merge-risk holds | 3 |
 | Very important | 1 |
 | Important | 3 |
-| Ready (`loom:issue`) | 4 |
-| In Progress (`loom:building`) | 13 |
-| PRs awaiting review | 1 |
-| Approved PRs awaiting merge | 4 |
+| Ready (`loom:issue`) | 6 |
+| In Progress (`loom:building`) | 11 |
+| PRs awaiting review | 0 |
+| Approved PRs awaiting merge | 3 |
 | Curated | 33 |
 | Architect / Hermit proposals | 1 |
 | Active epics | 4 |
