@@ -301,12 +301,36 @@ module galactic_core (
   endfunction
 
   // combinational external-memory request
+  // counts/adv_idx are constant-indexed everywhere (#657) so they infer as
+  // plain registers rather than memories; the variable ln[1:0] is decoded
+  // with explicit case statements instead of a variable index.
   logic [31:0] wcount;
   always @* begin
     case (st)
-      S_S1WR, S_S1RD: wcount = 32'(counts[{2'b00, ln[1:0]}]);
-      S_S2WR, S_S2RD: wcount = 32'(counts[{2'b01, ln[1:0]}]);
-      S_S3WR, S_S3RD: wcount = 32'(counts[{2'b10, ln[1:0]}]);
+      S_S1WR, S_S1RD: begin
+        case (ln[1:0])
+          2'd0: wcount = 32'(counts[0]);
+          2'd1: wcount = 32'(counts[1]);
+          2'd2: wcount = 32'(counts[2]);
+          default: wcount = 32'(counts[3]);
+        endcase
+      end
+      S_S2WR, S_S2RD: begin
+        case (ln[1:0])
+          2'd0: wcount = 32'(counts[4]);
+          2'd1: wcount = 32'(counts[5]);
+          2'd2: wcount = 32'(counts[6]);
+          default: wcount = 32'(counts[7]);
+        endcase
+      end
+      S_S3WR, S_S3RD: begin
+        case (ln[1:0])
+          2'd0: wcount = 32'(counts[8]);
+          2'd1: wcount = 32'(counts[9]);
+          2'd2: wcount = 32'(counts[10]);
+          default: wcount = 32'(counts[11]);
+        endcase
+      end
       default: wcount = 0;
     endcase
   end
@@ -340,7 +364,12 @@ module galactic_core (
         end
         S_S1RD: begin
           em_req  = 1'b1;
-          em_addr = mem_base + s1_region(ln) + adv_idx[ln[1:0]];
+          case (ln[1:0])
+            2'd0: em_addr = mem_base + s1_region(ln) + adv_idx[0];
+            2'd1: em_addr = mem_base + s1_region(ln) + adv_idx[1];
+            2'd2: em_addr = mem_base + s1_region(ln) + adv_idx[2];
+            default: em_addr = mem_base + s1_region(ln) + adv_idx[3];
+          endcase
         end
         S_S2WR: begin
           em_req   = 1'b1;
@@ -350,7 +379,12 @@ module galactic_core (
         end
         S_S2RD: begin
           em_req  = 1'b1;
-          em_addr = mem_base + s2_region(ln) + adv_idx[ln[1:0]];
+          case (ln[1:0])
+            2'd0: em_addr = mem_base + s2_region(ln) + adv_idx[0];
+            2'd1: em_addr = mem_base + s2_region(ln) + adv_idx[1];
+            2'd2: em_addr = mem_base + s2_region(ln) + adv_idx[2];
+            default: em_addr = mem_base + s2_region(ln) + adv_idx[3];
+          endcase
         end
         S_S3WR: begin
           em_req   = 1'b1;
@@ -360,7 +394,12 @@ module galactic_core (
         end
         S_S3RD: begin
           em_req  = 1'b1;
-          em_addr = mem_base + s3_region(ln) + adv_idx[ln[1:0]];
+          case (ln[1:0])
+            2'd0: em_addr = mem_base + s3_region(ln) + adv_idx[0];
+            2'd1: em_addr = mem_base + s3_region(ln) + adv_idx[1];
+            2'd2: em_addr = mem_base + s3_region(ln) + adv_idx[2];
+            default: em_addr = mem_base + s3_region(ln) + adv_idx[3];
+          endcase
         end
         default: ;
       endcase
@@ -430,10 +469,24 @@ module galactic_core (
         S_S1ADV: begin
           // counters advance one per cycle; the read index is captured in
           // the SAME cycle (post-advance value)
-          counts[{2'b00, ln[1:0]}] <= advance(counts[{2'b00, ln[1:0]}],
-                                              32'(cfg_delay[{2'b00, ln[1:0]}]));
-          adv_idx[ln[1:0]] <= advance(counts[{2'b00, ln[1:0]}],
-                                      32'(cfg_delay[{2'b00, ln[1:0]}]));
+          case (ln[1:0])
+            2'd0: begin
+              counts[0] <= advance(counts[0], 32'(cfg_delay[0]));
+              adv_idx[0] <= advance(counts[0], 32'(cfg_delay[0]));
+            end
+            2'd1: begin
+              counts[1] <= advance(counts[1], 32'(cfg_delay[1]));
+              adv_idx[1] <= advance(counts[1], 32'(cfg_delay[1]));
+            end
+            2'd2: begin
+              counts[2] <= advance(counts[2], 32'(cfg_delay[2]));
+              adv_idx[2] <= advance(counts[2], 32'(cfg_delay[2]));
+            end
+            default: begin
+              counts[3] <= advance(counts[3], 32'(cfg_delay[3]));
+              adv_idx[3] <= advance(counts[3], 32'(cfg_delay[3]));
+            end
+          endcase
           if (ln == 3) begin
             ln <= 0; st <= S_S1RD;
           end else ln <= ln + 1;
@@ -460,10 +513,24 @@ module galactic_core (
         end
 
         S_S2ADV: begin
-          counts[{2'b01, ln[1:0]}] <= advance(counts[{2'b01, ln[1:0]}],
-                                              32'(cfg_delay[{2'b01, ln[1:0]}]));
-          adv_idx[ln[1:0]] <= advance(counts[{2'b01, ln[1:0]}],
-                                      32'(cfg_delay[{2'b01, ln[1:0]}]));
+          case (ln[1:0])
+            2'd0: begin
+              counts[4] <= advance(counts[4], 32'(cfg_delay[4]));
+              adv_idx[0] <= advance(counts[4], 32'(cfg_delay[4]));
+            end
+            2'd1: begin
+              counts[5] <= advance(counts[5], 32'(cfg_delay[5]));
+              adv_idx[1] <= advance(counts[5], 32'(cfg_delay[5]));
+            end
+            2'd2: begin
+              counts[6] <= advance(counts[6], 32'(cfg_delay[6]));
+              adv_idx[2] <= advance(counts[6], 32'(cfg_delay[6]));
+            end
+            default: begin
+              counts[7] <= advance(counts[7], 32'(cfg_delay[7]));
+              adv_idx[3] <= advance(counts[7], 32'(cfg_delay[7]));
+            end
+          endcase
           if (ln == 3) begin
             ln <= 0; st <= S_S2RD;
           end else ln <= ln + 1;
@@ -490,10 +557,24 @@ module galactic_core (
         end
 
         S_S3ADV: begin
-          counts[{2'b10, ln[1:0]}] <= advance(counts[{2'b10, ln[1:0]}],
-                                              32'(cfg_delay[{2'b10, ln[1:0]}]));
-          adv_idx[ln[1:0]] <= advance(counts[{2'b10, ln[1:0]}],
-                                      32'(cfg_delay[{2'b10, ln[1:0]}]));
+          case (ln[1:0])
+            2'd0: begin
+              counts[8] <= advance(counts[8], 32'(cfg_delay[8]));
+              adv_idx[0] <= advance(counts[8], 32'(cfg_delay[8]));
+            end
+            2'd1: begin
+              counts[9] <= advance(counts[9], 32'(cfg_delay[9]));
+              adv_idx[1] <= advance(counts[9], 32'(cfg_delay[9]));
+            end
+            2'd2: begin
+              counts[10] <= advance(counts[10], 32'(cfg_delay[10]));
+              adv_idx[2] <= advance(counts[10], 32'(cfg_delay[10]));
+            end
+            default: begin
+              counts[11] <= advance(counts[11], 32'(cfg_delay[11]));
+              adv_idx[3] <= advance(counts[11], 32'(cfg_delay[11]));
+            end
+          endcase
           if (ln == 3) begin
             ln <= 0; st <= S_S3RD;
           end else ln <= ln + 1;

@@ -34,7 +34,7 @@ runner is NOT_RUN on this host — its temp dir is a hardcoded macOS path).
 | reverb1_core | sv2v | PASS | 36290 instances; real datapath (external-memory ports) |
 | rf_ains34_core | sv2v | exit 0, **NOT datapath evidence** | 7467 instances, but the core has **no input ports** (they are internal `logic`, poked hierarchically by its testbench), so Yosys constant-folds the datapath: 3054 tie-lows, 2058 flops, 2054 AND2, no adder or multiplier. Its `area_um2`/timing must not be cited (#580); see `RECORD.md` |
 | rf_bins12_core, rf_global2_core, rf_global34_core, rf_send34_core, logical4_core | sv2v | NO_VERDICT | Yosys killed at a **1800 s** budget (`request.yosys_timeout_s`, klt **`0.9.2`** — a tagged release), all five inside `synth`'s generic ABC pass at the blif extraction; 0.25M–2.0M cells reach it. No unsortable-cells warnings (unlike `galactic_core`). Cause not established; see `RECORD.md` (#580) |
-| galactic_core | sv2v | NO_VERDICT | sv2v converts; Yosys was killed at a **1800 s** budget (`request.yosys_timeout_s`, klt `0.9.2.dev890+gd9bc36811ddd` — an unreleased rev pin, not a tagged release), having reached only the generic ABC pass. Not a proof of non-synthesizability. #641 narrowed the 128-bit arithmetic to its integer-exact widths (no schedule or port change; RTL-vs-model still exact) and re-ran at the same budget: **same outcome, same pass, same warnings**, so that suspected cause is now measured and refuted as the dominant cost. See `galactic_core/RECORD.md` (#641) |
+| galactic_core | sv2v | NO_VERDICT | sv2v converts; Yosys was killed at a **1800 s** budget (`request.yosys_timeout_s`, klt `0.9.2.dev890+gd9bc36811ddd` — an unreleased rev pin, not a tagged release), having reached only the generic ABC pass. Not a proof of non-synthesizability. #641 narrowed the 128-bit arithmetic to its integer-exact widths (no schedule or port change; RTL-vs-model still exact) and re-ran at the same budget: **same outcome, same pass, same warnings**, so that suspected cause is now measured and refuted as the dominant cost. #657 then traced the 20 unsortable-cell warnings / 35 ABC loop reports to the `counts`/`adv_idx` memory mapping and removed them (constant-indexed arrays; RTL-vs-model still exact, transaction logs byte-identical): the third 1800 s run carries **zero** loop reports and **still** dies at `4.22.1` — the loops are gone, the obstacle (generic ABC over ~2.8e5 cells) is not, an upstream/tool-pin question per #657's stop condition. See `galactic_core/RECORD.md` (#641, #657) |
 
 **Result ports exposed (#580).** The six cores (`logical4_core`, `rf_{ains34,
 bins12,global2,global34,send34}_core`) previously had `block_done` as their only
@@ -82,7 +82,7 @@ ports is tracked separately, because `tests/` is content-hashed by
 envelope in the same change.
 
 **galactic_core obstacle (observed #572, re-measured #579, restructured and
-re-measured #641; cause still not established).** sv2v converts it (838 lines
+re-measured #641; traced and loop-removed #657).** sv2v converts it (838 lines
 before #641, 869 after). Yosys `synth` reaches ~270k generic cells and the
 generic `abc` pass does not finish. The 300 s limit was an internal klt
 default; it is now the request field `yosys_timeout_s` (klayout-tools#5412).
@@ -97,6 +97,18 @@ pass at `4.22.1 Extracting gate netlist ... to input.blif`, with Yosys
 reporting `Couldn't topologically sort cells` 20 times and ABC still breaking
 combinational loops when the budget expired
 (`galactic_core/timeout-progress.txt`).
+
+#657 (2026-11-16) traced that condition with a hand-run pre-ABC `scc` probe:
+the loops are created by `MEMORY_MAP` from the `counts`/`adv_idx` `$mem`
+cells' write-enable/address logic tangled with the `advance` write-data path
+— no cycle exists in the source. Making both arrays constant-indexed (plain
+registers, no memory inference) removes **all** of it: the third 1800 s run
+carries zero unsortable-cell warnings and zero loop reports, and **still**
+dies at `4.22.1`. The loops are measured and refuted as the dominant cost;
+what remains is generic ABC over ~2.8e5 cells of arithmetic, a
+Yosys/ABC-side behaviour the repo cannot change from the RTL — recorded as
+an upstream/tool-pin question, not acted on
+(`galactic_core/RECORD.md`, #657 section).
 
 **#641 then narrowed the arithmetic and re-ran at the same budget.** The RTL
 now carries every product, sum and saturation at the narrowest integer-exact

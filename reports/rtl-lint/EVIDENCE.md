@@ -127,6 +127,21 @@ tolerated debt. No other group's waivers were touched, and no RTL, frozen
 model, fixture or tool byte was edited to remove a warning. This is lint
 evidence only.
 
+**Update (#657):** `counts` and `adv_idx` in `galactic_core` were made
+constant-indexed everywhere (explicit `case (ln[1:0])` decodes replace the
+variable subscripts), so Yosys infers them as plain registers instead of
+memories — the RTL change that removes the post-`memory_map` combinational
+loops (#657's probe). No port, schedule or behaviour change. The group's
+waivers were re-derived against the new bytes under the same pinned Verilator
+5.050: still **101** entries for `galactic_core`, and the
+rule+message+count multiset is **identical** to the #641 baseline (verified
+programmatically before committing) — every entry is the same diagnostic
+re-keyed for line/column/fingerprint/source-hash drift only. The committed
+baseline stays **703** waivers in total, severe waivers unchanged at 11
+(both asserted by `tests/test_rtl_lint.py`). No diagnostic was added or
+removed, and no RTL, frozen model, fixture or tool byte was edited to remove
+a warning. This is lint evidence only.
+
 **A green `rtl-lint` job does not mean these 96 severe waivers are
 accepted.** The checker returns PASS (exit 0) when the diagnostic multiset
 matches the baseline, whether or not the severe waivers' `review_decision`

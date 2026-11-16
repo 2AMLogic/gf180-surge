@@ -28,7 +28,7 @@ proves the reference budgets reject one.
 
 | Claim | Status | Evidence |
 |---|---|---|
-| Frozen model ↔ RTL exact | **PASS** (4/4 cases; 3 mutants CONTROL-OK) | `rtl-exactness.json` |
+| Frozen model ↔ RTL exact | **PASS** (4/4 cases; 4 mutants CONTROL-OK) | `rtl-exactness.json` |
 | Model ↔ pinned engine, slot boundary | **6/6 PASS (PENDING-FREEZE budgets)** | `artifacts/compare-*.json` |
 | Negative controls live | **5/5 CONTROL-OK** | `negative-controls/negative-controls.json` |
 | Complete-wet preset renders | **REFUSED** (fail-closed; unlanded siblings) | `artifacts/extract-refusals.txt`, extraction applicability records |
@@ -157,6 +157,7 @@ image (54 words/frame × instances), and the frozen-revision pin.
 | mutant-regen-halved | 256 | feedback regen halved in the RTL | **CONTROL-OK: FAILS** |
 | mutant-shared-memory-dual | 64 | `mem_base` dropped (both instances pool one region) | **CONTROL-OK: FAILS** |
 | mutant-narrow-product | 64 | the core's exact 32×32→64 signed product truncated to 32 bits (#641) | **CONTROL-OK: FAILS** |
+| mutant-wrong-counter-map | 64 | stage-2 read-index capture wired to the stage-1 counter (#657) | **CONTROL-OK: FAILS** |
 
 **Arithmetic widths narrowed (#641), result unchanged.** The RTL now
 carries every product, sum and saturation at the narrowest integer-exact
@@ -169,6 +170,20 @@ committed record (re-derived under the CI-pinned numpy 2.4.2 -- see the note
 below). The third mutant is the failure control for the change itself: a
 deliberately too-narrow (32-bit) product must FAIL, and it does.
 
+**`counts`/`adv_idx` made constant-indexed (#657), result unchanged.** Every
+variable subscript on the two writable state arrays was replaced by an
+explicit `case (ln[1:0])` decode, so Yosys infers them as plain registers
+rather than memories — the RTL change that removes the post-`memory_map`
+combinational loops the #657 probe traces (see
+`signoff/t1-item1/galactic_core/RECORD.md`). The FSM schedule, the per-block
+cycle count and the `em_*` transaction order are untouched, and the record
+was re-derived under the CI-pinned numpy 2.4.2 after the change: all four
+real cases are still integer-exact and **all four `txn_log_sha256` values
+are byte-identical to the previously committed record** — the only diff is
+the added fourth mutant. The fourth mutant is the failure control for the
+change itself: wiring the stage-2 `adv_idx[0]` capture to the stage-1
+counter is a wrong memory mapping that must FAIL, and it does.
+
 **Note — the `canonical-temple-512b` transaction log is numpy-major-version
 sensitive; this record is pinned to numpy 2.4.2 (#668).** Re-derived under the
 CI-pinned numpy 2.4.2 (`signoff/t1-item9-inventory.json`), every hash in the
@@ -177,7 +192,7 @@ table above is byte-identical to the previously committed record. Under numpy
 (`cbe9b206…0481501` under both 2.4.2 and 2.5.2); the other three cases and
 every mutant hash are version-invariant. **RTL-vs-frozen-model exactness is
 not affected**: in all three versions the run is `status=PASS`, 4/4
-`exact=True`, three mutants `CONTROL-OK` — the model and RTL legs agree with
+`exact=True`, four mutants `CONTROL-OK` — the model and RTL legs agree with
 *each other* every time, and move together because the RTL is driven by
 model-generated stimulus. The difference is in the stimulus: the frozen
 model's input-boundary quantizer `f32_to_s32i` computes

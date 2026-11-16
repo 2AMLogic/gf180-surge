@@ -1,6 +1,9 @@
 # galactic_core — synthesizability record (#641, after #579; tracker #572, parent #537)
 
-Verdict: **NO_VERDICT** (unchanged). Not PASS, not FAIL.
+Verdict: **NO_VERDICT** (unchanged). Not PASS, not FAIL. The 2026-11-16
+#657 section below traces and removes the unsortable-cells / ABC
+combinational-loop condition and re-runs at the same budget: the loop
+reports are gone, the outcome is not.
 
 `rtl/effects/aw-49/galactic_core.sv` was restructured as #641 asked — every
 product, sum and saturation narrowed to the smallest width that is still
@@ -138,3 +141,157 @@ synthesizability of `galactic_core`, P&R, timing, DRC/LVS, RTL-vs-netlist
 equivalence, or fidelity to the pinned Surge reference. `galactic_core`
 remains unattested in `signoff/t1-item1/inventory.partial.json`, which this
 change does not touch.
+
+---
+
+# #657 (2026-11-16): the unsortable-cells / ABC loop condition traced, removed, and refuted as the dominant cost
+
+Verdict after this change: still **NO_VERDICT** for synthesizability. The
+third 1800 s run — on RTL whose loop reports are **all gone** — was killed in
+the same sub-step. So the memory-mapping hypothesis this issue suspected is
+**confirmed for the loop reports** (they are the memory mapping; removing it
+removes every report) and **refuted as the dominant ABC cost** (the run still
+times out without them). A timeout is a budget outcome, never a pass.
+
+## The probe (hand-run Yosys diagnostic, not a klt verdict)
+
+Tools, on this host, in a `/tmp` scratch directory, run once sequentially:
+`sv2v` v0.0.13 and `Yosys 0.67+post (git sha1 b8e7da6f40ae8f552c116bf6c359b07c6533e159)`
+— the same 0.67 series the committed klt log drives (`timeout-progress.txt`
+names `.cache/yosys-0.67/…/techmap.v`), so the probe is representative. The
+sv2v conversion used klt's own invocation shape:
+
+```
+sv2v --incdir=rtl/effects/aw-49 --define=SYNTHESIS \
+     -w /tmp/probe-657/galactic_core_sv2v.v rtl/effects/aw-49/galactic_core.sv
+```
+
+Two `scc` readings around the `MEMORY_MAP` boundary (`-all_cell_types` on the
+first one, because `scc` otherwise skips `$mem` cells and could not see a
+memory-port cycle; `-run :fine` stops before `MEMORY_MAP`):
+
+```
+yosys -p "read_verilog -D SYNTHESIS /tmp/probe-657/galactic_core_sv2v.v;
+          hierarchy -check -top galactic_core;
+          synth -top galactic_core -run :fine;
+          tee -o /tmp/probe-657/scc-before.txt scc -all_cell_types -nofeedback;
+          memory_map; opt -full;
+          tee -o /tmp/probe-657/scc-after.txt scc -nofeedback;
+          check"
+```
+
+Whole probe: 6.5 s. Results on the pre-#657 RTL (the #641 bytes):
+
+- **Before `MEMORY_MAP`** (`scc -all_cell_types -nofeedback`): **5 SCCs**.
+  The largest threads the `counts` `$mem` cell itself, the `advance`
+  ternaries (`sv2v` line 631), `memory_share` write-consolidation cells and
+  the `wcount` procmuxes; the other four run through `$ff` slice cells
+  (`st`/`k`/`ln`/advance counter feedback). Neither kind is a source-level
+  combinational loop: `counts`/`adv_idx` are written only under
+  non-blocking assignment on a clock edge, and `scc` treats a `$mem` cell's
+  write→read ports and an FF's Q→D as plain graph edges. Graph artifacts of
+  the sequential boundaries — but the `$mem`-threaded SCC is the smoke.
+- **After `MEMORY_MAP` + `opt -full`** (`scc -nofeedback`): **1 SCC of
+  purely combinational cells**, and `check` reports **8 "found logic loop"**
+  warnings — real netlist loops, not graph artifacts. The loop trace closes
+  through exactly the three sites the timed-out ABC logs name: the
+  `counts` read mux (`$memory\counts$rdmux…`) output feeds the `advance`
+  adder/comparison chain (`sv2v:631` ALU cells), whose carry feeds
+  `opt_share`'s activation logic (`$eq`/`$reduce_or` over the memory
+  write-enable conditions), which feeds the counts read-**address** select
+  back into the same read mux. All **20** `Couldn't topologically sort`
+  warnings of the klt runs reproduce in this 6.5 s probe log.
+
+## Where the cycles are, and the RTL change
+
+The cycles are **the memory mapping of `counts`/`adv_idx`**: both arrays
+infer as `$mem` cells from variable-indexed access, and
+`memory_map` + the opt passes turn their write-enable/address logic and the
+`advance` write-data path into one combinational tangle ABC must break one
+signal at a time. Read from source there is no cycle; created by
+`MEMORY_MAP`, there is.
+
+The change: every variable subscript on the two arrays is replaced by an
+explicit `case (ln[1:0])` decode with constant indices (`wcount`'s read, the
+three `em_addr` `adv_idx` reads, the three ADV states' writes), so Yosys
+infers the 12 + 4 words as plain registers. Ports, FSM schedule, per-block
+cycle count and `em_*` transaction order are untouched. The same probe on
+the new bytes: `scc -all_cell_types` before `MEMORY_MAP` reports **16 SCCs,
+every one through `$ff` slices** (counter feedback, no `$mem` threading);
+after `MEMORY_MAP`, **0 SCCs**; `check` reports **0 logic loops**; the probe
+log carries **0** unsortable-cell warnings. The 15 `$mem_v2` cells that
+remain in the coarse netlist are all `proc_rom` constant-table ROMs
+(`do_switch` cells), not the state arrays.
+
+## Synthesis at the same budget, on the changed RTL
+
+`python3 signoff/t1-item1/regen.py galactic_core` under the same pinned klt
+as #579/#641 (`0.9.2.dev890+gd9bc36811ddd`, throwaway `uvx` environment,
+never the host klt), `request.json` byte-identical to both prior runs,
+`yosys_timeout_s` 1800. Outcome: **killed at the budget again, in the same
+sub-step** (`4.22.1` blif extraction, `exit_status.txt` = 1, `failure.txt`
+records the timeout). `abc -liberty` and `stat` never ran, so there is still
+no instance count and `galactic_core` stays unattested. The run's orphaned
+`yosys-abc` child was killed afterwards (the #580/#695 edge case).
+
+| | #579 (128-bit RTL) | #641 (narrowed) | #657 (constant-indexed) |
+|---|---|---|---|
+| cells entering OPT_MERGE after TECHMAP (first hash count) | 394184 | 369383 | 375737 |
+| removed by OPT_MERGE (dedup) | 122276 | 99000 | 98643 |
+| cells after dedup | 271908 | 270383 | 277094 |
+| removed by the following OPT_CLEAN | 153496 cells, 20968 wires | 151342 cells, 15295 wires | 152272 cells, 18218 wires |
+| `Couldn't topologically sort cells` | 20 | 20 | **0** |
+| `Breaking loop` reports before truncation | 35 | 35 | **0** |
+| last step reached | `4.22.1` blif extraction | `4.22.1` blif extraction | `4.22.1` blif extraction |
+| outcome at 1800 s | killed | killed | killed |
+
+Coarse cells before TECHMAP (`read_verilog; hierarchy -top galactic_core;
+proc; opt_expr; opt_clean; memory_collect; stat -width` on the new `sv2v`
+output): **1611** cells / **42511** wire bits, multipliers still
+9 × `$mul_64` + 2 × `$mul_66` — was 1301 / 37201 in #641. The +310 cells and
++5310 wire bits are the explicit case-decode muxes that replace the memory
+representation (the mux logic was always there; it is now built by the
+frontend instead of by `memory_map`), not datapath growth.
+
+## What this establishes, and what it escalates
+
+1. **The loop reports were the memory mapping** (outcome (a), measured):
+   a change that removes memory inference removes all 20 unsortable-cell
+   warnings and all 35 `$abcloop` reports, at the same budget, with the
+   request bytes unchanged.
+2. **The loops were not the dominant ABC cost** (outcome (b), the
+   #641-style refutation): without a single loop report, `synth` still dies
+   at the same step with a slightly *higher* generic cell count (277094 vs
+   270383). The remaining obstacle is the generic ABC mapping of ~2.8e5
+   cells of arithmetic — a Yosys/ABC behaviour this repository cannot change
+   from the RTL side. Per the issue's stop condition that is an
+   upstream/tool-pin question (klayout-tools / Yosys / ABC version or
+   script), recorded here and in #657, not acted on. Raising
+   `yosys_timeout_s` stays rejected for the same budget arithmetic as
+   before: no run has emitted a single mapped gate.
+3. **Fidelity is unaffected**: `tools/compare_rtl_model_aw49.py` re-run under
+   the CI-pinned numpy 2.4.2 — **PASS**, all four cases integer-exact,
+   **four** mutant controls CONTROL-OK
+   (`reports/sxt-028a/rtl-exactness.json`), and all four real-case
+   `txn_log_sha256` values are byte-identical to the previously committed
+   record: the change moves no transaction. The fourth control,
+   `mutant-wrong-counter-map`, was added in this change and is shown
+   **FAILING** (wiring the stage-2 `adv_idx[0]` capture to the stage-1
+   counter must break the comparison, and does); `mutant-narrow-product`
+   still fails. The RTL lint baseline was re-keyed for the moved lines —
+   same 101 `galactic_core` entries, rule+message+count multiset identical,
+   total unchanged at 703 (`reports/rtl-lint/EVIDENCE.md`, #657 update).
+
+This file records synthesizability progress only. It establishes nothing
+about P&R, timing, area, RTL-vs-netlist equivalence, or fidelity.
+
+Reproduce (never the host klt):
+
+```
+KLT='uvx --from "git+https://github.com/2AMLogic/klayout-tools.git@d9bc36811ddd11fcf9c60d3a9275858296db8b44" klt' \
+  python3 signoff/t1-item1/regen.py galactic_core
+```
+
+The probe is a hand-run diagnostic: it is not a `klt synthesize` verdict and
+does not replace one; every item-1 verdict still comes from `regen.py`
+under the pinned klt.
