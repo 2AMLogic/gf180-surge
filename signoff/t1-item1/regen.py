@@ -7,6 +7,8 @@ commit-safe artifacts: request, report.json, netlist, synth_<top>.ys. On a
 non-zero exit it also distils the Yosys log klt writes beside the executed
 script into `timeout-progress.txt`, so a timeout record can state the cell
 count and the passes reached instead of only the error message (#579). The
+`failure.txt` error payload klt wrote is run through the same path
+substitution (#714). The
 raw log is not commit-safe (machine-local absolute paths, and hundreds of
 thousands of suppressed debug lines), for the same reason `synth_<top>.run.ys`
 is not; the excerpt keeps the load-bearing lines with paths substituted.
@@ -88,20 +90,30 @@ KEEP_RE = re.compile(
 )
 
 
+def neutral_paths(text):
+    """Machine-neutral form of a payload: ROOT -> <repo>, then home -> <home>.
+
+    ROOT is substituted first: it sits under home, so the home replacement
+    only fires on a path elsewhere under home. One shared helper for the
+    distil_log() excerpt and the failure.txt payload (#714), so a re-run
+    from any worktree reproduces both committed records byte for byte.
+    """
+    return text.replace(str(ROOT), "<repo>").replace(str(pathlib.Path.home()), "<home>")
+
+
 def distil_log(text):
     """Commit-safe excerpt of a Yosys log: kept lines, paths substituted.
 
     Deterministic (same log -> same excerpt), so re-running regen.py
     reproduces the committed artifact byte for byte.
     """
-    home = str(pathlib.Path.home())
     out_lines, dropped = [], 0
     for line in text.splitlines():
         if KEEP_RE.match(line):
             if dropped:
                 out_lines.append(f"[... {dropped} line(s) omitted ...]")
                 dropped = 0
-            out_lines.append(line.replace(str(ROOT), "<repo>").replace(home, "<home>"))
+            out_lines.append(neutral_paths(line))
         else:
             dropped += 1
     if dropped:
@@ -161,7 +173,7 @@ def main(only):
             # verdict it does not belong to.
             (d / "timeout-progress.txt").unlink(missing_ok=True)
         else:
-            (d / "failure.txt").write_text(p.stdout + "\n" + p.stderr)
+            (d / "failure.txt").write_text(neutral_paths(p.stdout + "\n" + p.stderr))
             # klt writes <script>.log beside the executed script even on a
             # timeout; distil it so the record can quote the progress reached.
             log = out / f"synth_{g['top']}.run.log"
