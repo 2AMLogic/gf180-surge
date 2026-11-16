@@ -167,14 +167,6 @@
       "path": "reports/sxt-037/EVIDENCE.md",
       "previous_sha256": "11845ef8ea57fa0bef74a5668a003b05271d9e7836ca45ff216e36f4bef395ff",
       "sha256": "f172a34da0714c72bb0f2e8dd308368bcf32c2bcb9553f7a1aa5713f5517c7da"
-    },
-    {
-      "decision": "RE-PIN (issue #657, 2026-11-16; legitimately edited after the last coverage publication; the file is correct and was not restored). NO verification status in this table moves by this re-pin: this leaf's rtl_vs_model stays PASS and model_vs_reference stays PASS. The RTL leg was RE-RUN, not re-asserted \u2014 tools/compare_rtl_model_aw49.py reports PASS on all four cases, integer-exact, against the unchanged frozen model (model/effects/aw-49/galactic_model.py, frozen revision 569bff13...c5c0cd, not edited), with FOUR mutant controls CONTROL-OK including the new mutant-wrong-counter-map, which is shown FAILING. The model_vs_reference leg was not re-run and is unchanged by this edit. Re-derived under the CI-pinned numpy 2.4.2: all four real-case txn_log_sha256 values are byte-identical to the previously committed record, so NO hash in reports/sxt-028a/rtl-exactness.json moves beyond the added fourth mutant entry. The edit's purpose is the synthesizability probe recorded in signoff/t1-item1/galactic_core/RECORD.md (#657), which moves no fidelity verdict.",
-      "issue": 657,
-      "moved_by": "issue #657: made galactic_core's counts/adv_idx constant-indexed (plain registers, no memory inference; no schedule, cycle-count or port change) and re-derived reports/sxt-028a/rtl-exactness.json under the CI-pinned numpy 2.4.2 \u2014 all four real-case txn_log_sha256 values are byte-identical to the previously committed record and the only diff is the added fourth mutant control (mutant-wrong-counter-map); the EVIDENCE record gained the fourth mutant row, the #657 constant-indexing note, and the four-mutant counts",
-      "path": "reports/sxt-028a/EVIDENCE.md",
-      "previous_sha256": "63f351b71b92e93dda0e22460e3cdbe8f9e17fc7a01dbaa0c360169201e7c563",
-      "sha256": "1ddfd5f3c4f77e93fb12889da4e1c39476e1ebde8e97a87f7ee21cf5d28cacac"
     }
   ],
   "gates": {

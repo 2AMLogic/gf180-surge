@@ -309,7 +309,7 @@
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "f96f1c8b9a8624df43c45b8c862e3855d7277b6e6c566f3c0cf256e36c5f31d1"
+   "sha256": "4f588d377e238850a96ddea0ab0e0ff776d237ff3d57d93cc469bb90697cc3f5"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
