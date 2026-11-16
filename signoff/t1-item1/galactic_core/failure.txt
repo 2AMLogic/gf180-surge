@@ -6,6 +6,6 @@ Installed 7 packages in 9ms
   "schema_version": 1,
   "error": {
     "command": "synthesize",
-    "message": "yosys did not complete within 1800.0s (script '/home/ubuntu/GitHub/gf180-surge/.loom/worktrees/issue-657/signoff/t1-item1/galactic_core/out/synth_galactic_core.run.ys') -- process killed"
+    "message": "yosys did not complete within 1800.0s (script '<repo>/signoff/t1-item1/galactic_core/out/synth_galactic_core.run.ys') -- process killed"
   }
 }

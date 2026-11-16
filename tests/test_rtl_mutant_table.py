@@ -51,8 +51,10 @@ import pytest
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, REPO)
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from tools import make_rtl_mutants as mk  # noqa: E402
+from evidence_scan import scanned  # noqa: E402
 
 SCRIPT = os.path.join(REPO, "tools", "make_rtl_mutants.py")
 DRIFTED = ("rtl/voice/voice_broken_mutant.sv", "rtl/voice/voice_uni_mutant.sv")
@@ -249,7 +251,11 @@ def test_no_other_generator_declares_a_mutation_rule():
     """The acceptance criterion of #623: no file defines a mutation rule for
     a mutant the shared table also declares. Scanned over tools/*.py, where
     the generators live -- a hit means a second definition came back."""
-    for py in sorted(glob.glob(os.path.join(REPO, "tools", "*.py"))):
+    for py in scanned(
+            sorted(glob.glob(os.path.join(REPO, "tools", "*.py"))),
+            what="tools/*.py generators scanned for a second mutation-rule "
+                 "declaration (#623)", where=os.path.join(REPO, "tools"),
+            at_least=1):
         if os.path.basename(py) == "make_rtl_mutants.py":
             continue
         with open(py, encoding="utf-8") as f:

@@ -92,9 +92,11 @@ MANIFEST = REPO / "decision-records" / "provenance.json"
 RECORD_DIR = REPO / "decision-records"
 
 sys.path.insert(0, str(REPO / "tools"))
+sys.path.insert(0, str(REPO / "tests"))
 
 import check_provenance as cp  # noqa: E402  (path set above)
 import check_provenance_controls as cpc  # noqa: E402  (path set above)
+from evidence_scan import scanned  # noqa: E402
 
 # `check_provenance` is the CLI facade and re-exports the audit; the layers
 # themselves live in sibling modules. A test that REBINDS a module-level
@@ -3691,7 +3693,10 @@ def test_every_decision_record_declaring_quoted_data_is_accounted_for():
     for name in (cp.REGISTER_GPL_SECTION, cp.REGISTER_MIT_SECTION):
         accounted |= {cells[6] for _l, cells in sections[name]}
     accounted |= {cells[1] for _l, cells in sections[cp.REGISTER_EXCLUSION_SECTION]}
-    for path in sorted(RECORD_DIR.glob("[0-9][0-9][0-9][0-9]-*.md")):
+    for path in scanned(
+            sorted(RECORD_DIR.glob("[0-9][0-9][0-9][0-9]-*.md")),
+            what="decision records declaring quoted data",
+            where=str(RECORD_DIR), at_least=1):
         if cp.QUOTED_RECORD_RE.search(path.read_text(encoding="utf-8")):
             assert path.name[:4] in accounted, path.name
     # the records the operator ruling names as GPL-boundary records, plus 0007's

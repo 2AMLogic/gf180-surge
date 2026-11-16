@@ -2,6 +2,18 @@
 
 Recent merged pull requests and closed issues. Entries record forge events only; acceptance and claim limits remain in each committed evidence record. Initial history window: 2026-09-30 onward.
 
+### 2026-11-16
+
+- **PR #697**: test: fold committed-evidence scan guards onto one shared non-vacuity helper
+- **Issue #683** (closed): Eight committed-evidence scans in tests/ pass vacuously when the directory goes empty: fold the hand-rolled count guards onto one shared helper
+- **Issue #715** (closed): Operator decision: strict required-status-checks policy blocks merging any PR whose branch is behind main (blocks #708)
+- **PR #693**: fix(tools): run the Reverb1 and AW49 RTL runners in the platform temp dir
+- **Issue #677** (closed): Make run_reverb_rtl.py and compare_rtl_model_aw49.py portable: drop the hardcoded per-user macOS temp directory
+- **PR #717**: fix: substitute machine-local paths in t1-item1 failure.txt payloads
+- **Issue #714** (closed): regen.py commits a machine-local worktree path in failure.txt
+- **PR #713**: signoff(t1-item1): attribute the five #580 synthesis timeouts by a pre-ABC operator census
+- **Issue #695** (closed): Five T1 item-1 cores reach 0.25M-2.0M cells and die in Yosys ABC at 1800 s: establish the cost driver
+
 ### 2026-11-15
 
 - **PR #710**: tools: drop dead extra_summary_fields/model_trace params from _publish_refusal
