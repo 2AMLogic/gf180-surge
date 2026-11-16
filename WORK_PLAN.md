@@ -29,7 +29,7 @@ Human-approved issues ready for implementation (`loom:issue`).
 
 - **#167**: Re-grade the 4 STALE SXT-034 spectral_corr artifacts on the oracle host under the #110 definition
 - **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus)
-- **#687**: run_negative_control's exit code and summary line do not detect a dropped control registration
+- **#679**: Commit a reproducible probe for the four open input pins behind the ext_mem_instr LVS mismatch
 
 ## In Progress
 
@@ -42,30 +42,25 @@ Issues currently being built (`loom:building`).
 - **#634**: Remove the five copy-pasted per-leaf RTL harness-reporting test files: fold onto one table-parametrized battery
 - **#649**: docs/byte-frozen-sources.json attested_inventories counts are stale and nothing re-derives them
 - **#657**: galactic_core: trace the unsortable-cells / ABC combinational-loop obstacle that survived the arithmetic narrowing (still NO_VERDICT)
-- **#660**: Measure F-640-1 under the pinned oracle: two committed references cite a release velocity of 100 but were rendered with 0
 - **#663**: Remove the private render_bus copy in tools/render_wt_reference.py: it is the shared _render_reference_common.render_bus with a different constructor call
-- **#666**: Extend the #455 duplicate-key refusal to the five live-pinned effect-family parse_tb_trace parsers
-- **#670**: Follow-on: Work identified in PR #659
+- **#668**: SXT-028a: AW-49 canonical stimulus quantization is numpy-major-version sensitive (NEP 50) — disposition needed
 - **#671**: Reference sidecars inherit engine identity from the extractor inputs, so it does not identify the rendering engine (F-660-1)
 - **#677**: Make run_reverb_rtl.py and compare_rtl_model_aw49.py portable: drop the hardcoded per-user macOS temp directory
-- **#679**: Commit a reproducible probe for the four open input pins behind the ext_mem_instr LVS mismatch
 - **#681**: compare_lp12_model.py: a present-but-silent engine tap still grades the engine stability leg BOUNDED (and refusals exit 1, not the documented 2)
 - **#683**: Eight committed-evidence scans in tests/ pass vacuously when the directory goes empty: fold the hand-rolled count guards onto one shared helper
+- **#695**: Five T1 item-1 cores reach 0.25M-2.0M cells and die in Yosys ABC at 1800 s: establish the cost driver
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-- **#705**: docs(evidence): disclose the item 9 envelope's producer klt, correct stale counts
+- **#708**: fix(model): coerce AW-49 input-boundary quantizer to double, restoring numpy-version-invariant stimulus
 
 ## Approved (Awaiting Merge)
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
 - **#658**: test(byte-frozen): derive the attested_inventories counts from the inventories
-- **#672**: evidence: measure F-640-1 under the pinned oracle — release velocity does not reach audio in either leaf
-- **#696**: evidence(t1-item1): re-measure the five #580 groups at 1800 s and record rf_ains34_core's netlist as input-less
-- **#706**: refactor(tools): route the five effect-family parse_tb_trace parsers through CheckpointKeys, re-deriving their byte-frozen records
 
 ## Proposed
 
@@ -97,16 +92,12 @@ Issues carrying `loom:curated`.
 - **#622**: Regenerate the two drifted tb_voice.sv negative controls and re-derive the T1 item 9 attestation *(curated)*
 - **#649**: docs/byte-frozen-sources.json attested_inventories counts are stale and nothing re-derives them *(curated)*
 - **#657**: galactic_core: trace the unsortable-cells / ABC combinational-loop obstacle that survived the arithmetic narrowing (still NO_VERDICT) *(curated)*
-- **#660**: Measure F-640-1 under the pinned oracle: two committed references cite a release velocity of 100 but were rendered with 0 *(curated)*
 - **#663**: Remove the private render_bus copy in tools/render_wt_reference.py: it is the shared _render_reference_common.render_bus with a different constructor call *(curated)*
-- **#666**: Extend the #455 duplicate-key refusal to the five live-pinned effect-family parse_tb_trace parsers *(curated)*
 - **#668**: SXT-028a: AW-49 canonical stimulus quantization is numpy-major-version sensitive (NEP 50) — disposition needed *(curated)*
-- **#670**: Follow-on: Work identified in PR #659 *(curated)*
 - **#671**: Reference sidecars inherit engine identity from the extractor inputs, so it does not identify the rendering engine (F-660-1) *(curated)*
 - **#677**: Make run_reverb_rtl.py and compare_rtl_model_aw49.py portable: drop the hardcoded per-user macOS temp directory *(curated)*
 - **#679**: Commit a reproducible probe for the four open input pins behind the ext_mem_instr LVS mismatch *(curated)*
 - **#681**: compare_lp12_model.py: a present-but-silent engine tap still grades the engine stability leg BOUNDED (and refusals exit 1, not the documented 2) *(curated)*
-- **#687**: run_negative_control's exit code and summary line do not detect a dropped control registration *(curated)*
 - **#695**: Five T1 item-1 cores reach 0.25M-2.0M cells and die in Yosys ABC at 1800 s: establish the cost driver *(curated)*
 
 ## Proposed (Architect / Hermit)
@@ -128,10 +119,10 @@ Issues carrying `loom:curated`.
 | Very important | 1 |
 | Important | 3 |
 | Ready (`loom:issue`) | 3 |
-| In Progress (`loom:building`) | 16 |
+| In Progress (`loom:building`) | 14 |
 | PRs awaiting review | 1 |
-| Approved PRs awaiting merge | 4 |
-| Curated | 37 |
+| Approved PRs awaiting merge | 1 |
+| Curated | 33 |
 | Architect / Hermit proposals | 1 |
 | Active epics | 4 |
 <!-- guide:plan-body:end -->
