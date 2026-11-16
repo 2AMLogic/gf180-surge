@@ -184,6 +184,7 @@
     "tests/test_t1_physical_flow.py",
     "tests/test_tail_gate.py",
     "tests/test_tail_shape_leg.py",
+    "tests/test_tools_portable_paths.py",
     "tests/test_wt_decimation_stage.py",
     "tools/aw49_negative_controls.py",
     "tools/aw4_negative_controls.py",
