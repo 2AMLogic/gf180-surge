@@ -4,6 +4,12 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-11-16
 
+- **PR #729**: ci: cap tests/rtl-sim checkout steps at 5 minutes so a stalled clone fails as setup
+- **PR #727**: test: self-test the shared non-vacuity guard's bounds and message
+- **PR #712**: trace galactic_core's ABC loop reports to the counts/adv_idx memory mapping and remove them
+- **Issue #728** (closed): CI: a 28-minute actions/checkout stall burned the pytest job's 40-minute budget and red-flagged a passing suite (PR #726)
+- **Issue #723** (closed): tests/evidence_scan.py is load-bearing for 11 non-vacuity guards but is attested by nothing: weakening it restores every vacuous PASS with no record going STALE
+- **Issue #657** (closed): galactic_core: trace the unsortable-cells / ABC combinational-loop obstacle that survived the arithmetic narrowing (still NO_VERDICT)
 - **PR #725**: fix: neutralize machine paths in t1-physical pnr.failure.txt payload
 - **Issue #718** (closed): signoff/t1-physical/regen.py writes pnr.failure.txt raw — same path churn #714 fixed for t1-item1
 - **PR #697**: test: fold committed-evidence scan guards onto one shared non-vacuity helper
