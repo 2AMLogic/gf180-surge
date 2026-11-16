@@ -8,6 +8,7 @@ This is a forge workflow snapshot. Issue closure and labels establish no fidelit
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
 
 - **#658**: test(byte-frozen): derive the attested_inventories counts from the inventories
+- **#708**: fix(model): coerce AW-49 input-boundary quantizer to double, restoring numpy-version-invariant stimulus
 
 ## Very Important
 
@@ -30,6 +31,7 @@ Human-approved issues ready for implementation (`loom:issue`).
 - **#167**: Re-grade the 4 STALE SXT-034 spectral_corr artifacts on the oracle host under the #110 definition
 - **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus)
 - **#679**: Commit a reproducible probe for the four open input pins behind the ext_mem_instr LVS mismatch
+- **#683**: Eight committed-evidence scans in tests/ pass vacuously when the directory goes empty: fold the hand-rolled count guards onto one shared helper
 
 ## In Progress
 
@@ -47,20 +49,22 @@ Issues currently being built (`loom:building`).
 - **#671**: Reference sidecars inherit engine identity from the extractor inputs, so it does not identify the rendering engine (F-660-1)
 - **#677**: Make run_reverb_rtl.py and compare_rtl_model_aw49.py portable: drop the hardcoded per-user macOS temp directory
 - **#681**: compare_lp12_model.py: a present-but-silent engine tap still grades the engine stability leg BOUNDED (and refusals exit 1, not the documented 2)
-- **#683**: Eight committed-evidence scans in tests/ pass vacuously when the directory goes empty: fold the hand-rolled count guards onto one shared helper
-- **#695**: Five T1 item-1 cores reach 0.25M-2.0M cells and die in Yosys ABC at 1800 s: establish the cost driver
+- **#714**: regen.py commits a machine-local worktree path in failure.txt (timeout-progress.txt is substituted, failure.txt is not)
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-- **#708**: fix(model): coerce AW-49 input-boundary quantizer to double, restoring numpy-version-invariant stimulus
+- **#712**: trace galactic_core's ABC loop reports to the counts/adv_idx memory mapping and remove them
 
 ## Approved (Awaiting Merge)
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
 - **#658**: test(byte-frozen): derive the attested_inventories counts from the inventories
+- **#708**: fix(model): coerce AW-49 input-boundary quantizer to double, restoring numpy-version-invariant stimulus
+- **#716**: chore(loom): resync installed Loom to v0.19.1302
+- **#717**: fix: substitute machine-local paths in t1-item1 failure.txt payloads
 
 ## Proposed
 
@@ -98,7 +102,7 @@ Issues carrying `loom:curated`.
 - **#677**: Make run_reverb_rtl.py and compare_rtl_model_aw49.py portable: drop the hardcoded per-user macOS temp directory *(curated)*
 - **#679**: Commit a reproducible probe for the four open input pins behind the ext_mem_instr LVS mismatch *(curated)*
 - **#681**: compare_lp12_model.py: a present-but-silent engine tap still grades the engine stability leg BOUNDED (and refusals exit 1, not the documented 2) *(curated)*
-- **#695**: Five T1 item-1 cores reach 0.25M-2.0M cells and die in Yosys ABC at 1800 s: establish the cost driver *(curated)*
+- **#714**: regen.py commits a machine-local worktree path in failure.txt (timeout-progress.txt is substituted, failure.txt is not) *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -115,13 +119,13 @@ Issues carrying `loom:curated`.
 
 | Bucket | Count |
 |------|-------|
-| Operator merge-risk holds | 1 |
+| Operator merge-risk holds | 2 |
 | Very important | 1 |
 | Important | 3 |
-| Ready (`loom:issue`) | 3 |
-| In Progress (`loom:building`) | 14 |
+| Ready (`loom:issue`) | 4 |
+| In Progress (`loom:building`) | 13 |
 | PRs awaiting review | 1 |
-| Approved PRs awaiting merge | 1 |
+| Approved PRs awaiting merge | 4 |
 | Curated | 33 |
 | Architect / Hermit proposals | 1 |
 | Active epics | 4 |
