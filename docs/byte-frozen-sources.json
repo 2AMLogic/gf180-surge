@@ -396,7 +396,7 @@
       "recorded_in": [
         "signoff/t1-item9-attestation.json"
       ],
-      "sha256": "d01a8a1dd7dcebcbfac670bcfe1322da3ee9001ebdff45cbb706183c49f0429e"
+      "sha256": "cf4dfa83a8b4220f037bdd243a34dc48cf71a4a9a2c4379590fb6500c88433c1"
     },
     {
       "covers": [
@@ -435,7 +435,7 @@
       "recorded_in": [
         "signoff/t1-item9-attestation.json"
       ],
-      "sha256": "3b706f4d4da93279d59e55dc8ddec8cfce8a4fdaa3cbf0636143cdfd71b586c6"
+      "sha256": "34f0a173f573f4c0a455476aea2bf6347a6d7cbb621ea5df28fbb6d4cb88c470"
     },
     {
       "covers": [
@@ -448,7 +448,7 @@
       "recorded_in": [
         "signoff/t1-item9-attestation.json"
       ],
-      "sha256": "0077ca86804db297c761803cf5a5e15d80093012e784ddba54e192d80db671e8"
+      "sha256": "244bb5bfa7fe1c348a10c6a5786d6de6a727b89febede348e6fd3024f426cd9e"
     },
     {
       "covers": [
@@ -474,7 +474,7 @@
       "recorded_in": [
         "signoff/t1-item9-attestation.json"
       ],
-      "sha256": "aa5be82ec5e253910782cfb399bbaf6f99c291f8b679b42d5b83835a0ee49ec8"
+      "sha256": "3a2dbc6610236fc1b10ce8aa14bcf572f6fa8799c4f84be2036b5e3c5748077e"
     },
     {
       "covers": [
@@ -487,7 +487,7 @@
       "recorded_in": [
         "signoff/t1-item9-attestation.json"
       ],
-      "sha256": "cf58dced6db8f1f2ba4b9340fba1e8b3dfabeb91cf05c6ed7f467b6e536eef2a"
+      "sha256": "10f7e108f21ce223636c89a8129d7f41341dda05b80dcee12519d1eb7a90ce7f"
     },
     {
       "covers": [
@@ -500,7 +500,7 @@
       "recorded_in": [
         "signoff/t1-item9-attestation.json"
       ],
-      "sha256": "c16270c7115dbbd15a4600ff9770b744ac4b835ba8f603d2b845e5efd9e58e0d"
+      "sha256": "4ac6ff4e3cd832a5fa623e432031604004f27b050a052f04d3c6a6310e1fa145"
     },
     {
       "covers": [
@@ -552,7 +552,7 @@
       "recorded_in": [
         "signoff/t1-item9-attestation.json"
       ],
-      "sha256": "65a98354ccf035fa9eae0cb2638dcb1b5f69e5012581ebf33fe9afd3d7386ccb"
+      "sha256": "956248bf314a8a519deca66fbae4234fcd0c4e54d158728c540de59486233d5b"
     },
     {
       "covers": [

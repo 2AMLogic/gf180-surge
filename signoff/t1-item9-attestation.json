@@ -3,14 +3,14 @@
   "kind": "generic",
   "status": "pass",
   "t1_item": 9,
-  "summary": "T1 item 9 (Testbenches shipped): 228/228 attestation checks passed (klt signoff --attest)",
+  "summary": "T1 item 9 (Testbenches shipped): 231/231 attestation checks passed (klt signoff --attest)",
   "source": "signoff/t1-item9-inventory.json",
   "attestation": {
     "producer": "klt signoff --attest",
     "inventory_schema_version": 1,
     "hash_algorithm": "sha256-raw-bytes",
-    "check_count": 228,
-    "passed_count": 228,
+    "check_count": 231,
+    "passed_count": 231,
     "checks": [
       {
         "check": "present",
@@ -437,7 +437,7 @@
         "role": "testbench",
         "path": "tests/test_ablation_delta.py",
         "passed": true,
-        "content_hash": "sha256:9544b4e3768ce7cd88b56e51e4f15ef87b750a09a8e6dcc80d8721dec53465f6"
+        "content_hash": "sha256:004faaadca31a4b07fca273350fe9312aae0f2d0dce2a22e0a25ed8ccc831d1b"
       },
       {
         "check": "present",
@@ -465,7 +465,7 @@
         "role": "testbench",
         "path": "tests/test_census_blob_common.py",
         "passed": true,
-        "content_hash": "sha256:0d581fbbb10236e4ff83645e1ea1fa81a0608b0773f6e7fba722eab8e8dfb317"
+        "content_hash": "sha256:cb730b64fc94095bcbfe5251a2eca1c084f4549259833765a5e2519124847eb2"
       },
       {
         "check": "present",
@@ -486,7 +486,7 @@
         "role": "testbench",
         "path": "tests/test_checkpoint_key_uniqueness.py",
         "passed": true,
-        "content_hash": "sha256:faaa010b01bfd261757731b942ed388537f5b4a52d0db67bbe8e965d56aeaf4d"
+        "content_hash": "sha256:939ff075f1499adf060021837f13b46f9fc5e3248326edb4d5b26989b6f6c54e"
       },
       {
         "check": "present",
@@ -536,6 +536,13 @@
         "path": "tests/test_effect_settle_boundaries.py",
         "passed": true,
         "content_hash": "sha256:c7e71528b6edda15f7b55e9919d50e6da0507c5ba233677c6a999a63f9a0b342"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_evidence_scan.py",
+        "passed": true,
+        "content_hash": "sha256:9055aeec0a77db1b57c22944abfa2642dc95e258816f81ee9b581df22a2c7f0b"
       },
       {
         "check": "present",
@@ -659,6 +666,13 @@
       {
         "check": "present",
         "role": "testbench",
+        "path": "tests/test_readme_signoff_claims.py",
+        "passed": true,
+        "content_hash": "sha256:3abdcaf961125f3967f0b71dbfae339ca6591d2874e8e98e99f4dadc497bcf4a"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
         "path": "tests/test_render_lp24_tap_reference.py",
         "passed": true,
         "content_hash": "sha256:3cf7e15f60ee368dba2425c73a36b3984a2e6e6e439ae9a639b1e4dfadb972bb"
@@ -710,14 +724,14 @@
         "role": "testbench",
         "path": "tests/test_rtl_lint.py",
         "passed": true,
-        "content_hash": "sha256:84237ac3fcd650333b556dd8316d11eeb63a478de2aba0c387f07bdb1a13ca3f"
+        "content_hash": "sha256:f5914131a643046e3e5ba8df22c72d11907308be9148a816acc5a77d1fba74d9"
       },
       {
         "check": "present",
         "role": "testbench",
         "path": "tests/test_rtl_mutant_table.py",
         "passed": true,
-        "content_hash": "sha256:70f9aa3d959ab896f3cde60aa2cf811d16daabe7b1797b48354a7b1c0b0aa7ba"
+        "content_hash": "sha256:1a7368702eab2c3dcbc26c923c8673c04dbd776b78124d70ad0f463c827a75b8"
       },
       {
         "check": "present",
@@ -822,7 +836,7 @@
         "role": "testbench",
         "path": "tests/test_sxt016_probes.py",
         "passed": true,
-        "content_hash": "sha256:63ce1e1c10e2a48e0c6f67f1f0993017467ef195dc1ab5218b5d9f7d53b86897"
+        "content_hash": "sha256:5cae36fc011b6bb8090564750dd6f310a8ab4f3f254c50c6fd113f2752e0561e"
       },
       {
         "check": "present",
@@ -843,7 +857,7 @@
         "role": "testbench",
         "path": "tests/test_sxt019_provenance.py",
         "passed": true,
-        "content_hash": "sha256:feec725d65fcf3905a9f88c76cf2911e5fe762d7c2bdd4b4075af00822c5849d"
+        "content_hash": "sha256:bd02e75dec5bde6940a9e10ce857ae651e7a2e36d15a3926366b04c5ed077d4e"
       },
       {
         "check": "present",
@@ -892,7 +906,7 @@
         "role": "testbench",
         "path": "tests/test_sxt024_reverb1.py",
         "passed": true,
-        "content_hash": "sha256:7efa23868dfa48852ce7adcb399a6f06ff42cb6c0b73d5aa3b3bc36cbb3f3e0c"
+        "content_hash": "sha256:84efa0653126522b46e0a0bd4e4f126c228488c982de5d0034cb34a399ffc866"
       },
       {
         "check": "present",
@@ -997,14 +1011,14 @@
         "role": "testbench",
         "path": "tests/test_sxt028e.py",
         "passed": true,
-        "content_hash": "sha256:324b52b7d4e869653b66280447c239905628dc3469687657ec13e072b67561a6"
+        "content_hash": "sha256:03c91ef07420577cc33fa209dff0b95204bdb828196a21038137f18642b0d867"
       },
       {
         "check": "present",
         "role": "testbench",
         "path": "tests/test_sxt028e_sse.py",
         "passed": true,
-        "content_hash": "sha256:6bdd395bbf1240279e65074baabee175e00c2b506ad45d588641109c520ce793"
+        "content_hash": "sha256:f6dc8e4e91cedd7d25fb51ae1b5bcd8579c28b7c328b48be8fbf4a649087b47d"
       },
       {
         "check": "present",
@@ -1137,7 +1151,7 @@
         "role": "testbench",
         "path": "tests/test_sxt037_lp12.py",
         "passed": true,
-        "content_hash": "sha256:b4387a2bb858398c02897a3552edf160641157559bee19c0c2e8221b9a508829"
+        "content_hash": "sha256:674f38b12df5ccb7fe0d54b241c45fe207d0e9f0a6e24de8d97c6cca78f5f9b4"
       },
       {
         "check": "present",
@@ -1235,7 +1249,7 @@
         "role": "testbench",
         "path": "tests/test_t1_item1_synthesis.py",
         "passed": true,
-        "content_hash": "sha256:afe07717321bd18fac6da294699fa84e7d2ebf973aeb58d63d25f7522841b117"
+        "content_hash": "sha256:be87a27636eb034b5a7d9c5f0de3f3eba0c6bd16e3a325359593f23dbc74d6a7"
       },
       {
         "check": "present",
@@ -1268,6 +1282,13 @@
       {
         "check": "present",
         "role": "testbench",
+        "path": "tests/test_tools_portable_paths.py",
+        "passed": true,
+        "content_hash": "sha256:73cba829134eaee63aab437bbfb0105612ac86a34de7cbfe387f9e31d1f4f876"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
         "path": "tests/test_wt_decimation_stage.py",
         "passed": true,
         "content_hash": "sha256:125433e83adc2c8390ad8e98bee845406d54c08726286a3cba93cd536d553c6b"
@@ -1291,7 +1312,7 @@
         "role": "testbench",
         "path": "tools/check_provenance_controls.py",
         "passed": true,
-        "content_hash": "sha256:d01a8a1dd7dcebcbfac670bcfe1322da3ee9001ebdff45cbb706183c49f0429e"
+        "content_hash": "sha256:cf4dfa83a8b4220f037bdd243a34dc48cf71a4a9a2c4379590fb6500c88433c1"
       },
       {
         "check": "present",
@@ -1312,14 +1333,14 @@
         "role": "testbench",
         "path": "tools/compare_rtl_model_aw49.py",
         "passed": true,
-        "content_hash": "sha256:3b706f4d4da93279d59e55dc8ddec8cfce8a4fdaa3cbf0636143cdfd71b586c6"
+        "content_hash": "sha256:34f0a173f573f4c0a455476aea2bf6347a6d7cbb621ea5df28fbb6d4cb88c470"
       },
       {
         "check": "present",
         "role": "testbench",
         "path": "tools/compare_rtl_model_chorus.py",
         "passed": true,
-        "content_hash": "sha256:0077ca86804db297c761803cf5a5e15d80093012e784ddba54e192d80db671e8"
+        "content_hash": "sha256:244bb5bfa7fe1c348a10c6a5786d6de6a727b89febede348e6fd3024f426cd9e"
       },
       {
         "check": "present",
@@ -1333,21 +1354,21 @@
         "role": "testbench",
         "path": "tools/compare_rtl_model_distortion.py",
         "passed": true,
-        "content_hash": "sha256:aa5be82ec5e253910782cfb399bbaf6f99c291f8b679b42d5b83835a0ee49ec8"
+        "content_hash": "sha256:3a2dbc6610236fc1b10ce8aa14bcf572f6fa8799c4f84be2036b5e3c5748077e"
       },
       {
         "check": "present",
         "role": "testbench",
         "path": "tools/compare_rtl_model_distortion_sse.py",
         "passed": true,
-        "content_hash": "sha256:cf58dced6db8f1f2ba4b9340fba1e8b3dfabeb91cf05c6ed7f467b6e536eef2a"
+        "content_hash": "sha256:10f7e108f21ce223636c89a8129d7f41341dda05b80dcee12519d1eb7a90ce7f"
       },
       {
         "check": "present",
         "role": "testbench",
         "path": "tools/compare_rtl_model_fx.py",
         "passed": true,
-        "content_hash": "sha256:c16270c7115dbbd15a4600ff9770b744ac4b835ba8f603d2b845e5efd9e58e0d"
+        "content_hash": "sha256:4ac6ff4e3cd832a5fa623e432031604004f27b050a052f04d3c6a6310e1fa145"
       },
       {
         "check": "present",
@@ -1375,7 +1396,7 @@
         "role": "testbench",
         "path": "tools/compare_rtl_model_phaser.py",
         "passed": true,
-        "content_hash": "sha256:65a98354ccf035fa9eae0cb2638dcb1b5f69e5012581ebf33fe9afd3d7386ccb"
+        "content_hash": "sha256:956248bf314a8a519deca66fbae4234fcd0c4e54d158728c540de59486233d5b"
       },
       {
         "check": "present",
@@ -1627,7 +1648,7 @@
     ]
   },
   "provenance": {
-    "klt_version": "0.9.2.dev887+gec7400b7d8e5",
+    "klt_version": "0.8.0",
     "klayout_version": null,
     "pdk": null,
     "deck": null,
@@ -1636,7 +1657,7 @@
         "path": "signoff/t1-item9-inventory.json",
         "scope": "repo"
       },
-      "content_hash": "sha256:198b29f75359ef143f3b30b125351b49e4480748fe06b88bdbf24c910122c191"
+      "content_hash": "sha256:4c718b48e0a65321169e58d789d1c7f261d405b19906e25e63c4eb2a2d3e3865"
     }
   }
 }
