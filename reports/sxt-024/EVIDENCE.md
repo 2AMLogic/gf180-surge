@@ -390,9 +390,15 @@ order), and — case A — the full final external-memory image:
 **Environment refutation (issue #720, 2026-11-17).** This record cites
 Icarus Verilog 13.0 while `signoff/t1-item9-inventory.json` declares the pin
 `12.0-2build2`. Measured on the Linux worker: the runner passes
-**byte-identically** under both versions — the pin is present at
-`/usr/bin/iverilog` (dpkg `iverilog 12.0-2build2`), shadowed in the default
-PATH by `~/.local/bin/iverilog` 13.0 (v13_0), the version cited above — and
+**byte-identically** under both versions — each leg quoted the `-V` line of
+the binary its PATH actually resolved (12.0 leg: dpkg-installed
+`/usr/bin/iverilog 12.0-2build2` on this measurement worker, shadowed in the
+default PATH by `~/.local/bin/iverilog` 13.0 (v13_0), the version cited
+above; the pin's dpkg presence is worker-dependent — another fleet worker
+has no distro iverilog — and `artifacts/issue-720/reproduce.sh` resolves the
+pin either way: `/usr/bin` when it reports 12.0, otherwise the exact
+12.0-2build2 deb unpacked into a throwaway directory with the baked-in
+`vvp` shebang rewritten, plus the numpy-1.26.4 venv the legs used) — and
 the mutant control stays CONTROL-OK under both. The committed
 `txn_log_sha256` *values* do not reproduce in any measured
 (tree × iverilog × numpy) cell — two tree states including this record's own

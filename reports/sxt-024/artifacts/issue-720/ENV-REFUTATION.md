@@ -10,19 +10,36 @@ Date: 2026-11-17 · Worker: Ubuntu 24.04.4 LTS (noble), x86_64 · Python 3.12.3
 Hypothesis to test: does the iverilog version change the simulation outputs,
 and can the committed record's digests be reproduced under the pin?
 
-## Where each version actually lives on this worker
+## What each leg ran, and where the pin binary comes from
 
-| Path | Self-report | Provenance |
+Quoted `iverilog -V` from the binary each leg's PATH resolved — that, not
+dpkg availability output, is the measurement of what ran:
+
+| Binary the leg resolved | `iverilog -V` (quoted) | Provenance on this measurement worker |
 |---|---|---|
-| `/usr/bin/iverilog` | `Icarus Verilog version 12.0 (stable) ()` | dpkg `ii iverilog 12.0-2build2` (`dpkg -S /usr/bin/iverilog` → `iverilog`) — **the pin** |
-| `~/.local/bin/iverilog` → `~/.cache/icarus-13.0/bin/iverilog` | `Icarus Verilog version 13.0 (stable) (v13_0)` | worker-local build |
-| `/opt/iverilog-13/bin/iverilog` | `13.0 (stable) (v13_0-dirty)` | unused in this measurement |
+| `/usr/bin/iverilog` (12.0 legs) | `Icarus Verilog version 12.0 (stable) ()` | dpkg `iverilog 12.0-2build2`, `Status: install ok installed` (`dpkg -S /usr/bin/iverilog` → `iverilog`) — **the pin** |
+| `~/.local/bin/iverilog` → `~/.cache/icarus-13.0/bin/iverilog` (13.0 legs) | `Icarus Verilog version 13.0 (stable) (v13_0)` | worker-local build |
 
 The default PATH puts `~/.local/bin` before `/usr/bin`, so a bare `iverilog`
 resolves to 13.0 — which is what the committed record's `iverilog` field
-cites, and why this worker *looks* like it "has only 13.0". The pinned
-12.0-2build2 is present the whole time at `/usr/bin`. Each leg below ran with
-an explicit `env PATH=…` selecting exactly one binary.
+cites. Each leg ran with an explicit `env PATH=…` selecting exactly one
+binary, and the runner's `rtl-exactness.json` `iverilog` field records the
+`-V` line of the binary that actually ran.
+
+**The pin's dpkg presence is worker-dependent, not fleet-wide**: another
+fleet worker measured on the same date has no distro iverilog at all
+(`dpkg -s iverilog` → not installed), with the same `~/.local/bin` 13.0.
+`reproduce.sh` therefore does not assume `/usr/bin`: it uses the distro
+`/usr/bin/iverilog` when that binary reports 12.0, and otherwise obtains the
+exact `iverilog 12.0-2build2` deb into a throwaway directory
+(`apt-get download` + `dpkg -x`; nothing host-wide, no sudo), running the
+extracted binary through a one-line shim that rewrites the deb's baked-in
+`#! /usr/bin/vvp` shebang to the extracted `vvp` (the runner executes
+`./sim.out` directly). Both resolution paths were measured on 2026-11-17 and
+produce byte-identical kept transaction logs. The numpy 1.26.4 legs ran in a
+throwaway venv (`python3 -m venv` + `pip install numpy==1.26.4` — the host
+numpy is ≥ 2.x and would move the click digest, finding 3); `reproduce.sh`
+creates it.
 
 ## Measurement
 
@@ -31,15 +48,17 @@ mutant control) under six environments, on two tree states: current HEAD of
 the issue branch (functionally the report's tree — the post-report commits
 touch the runner only in dead-code removal and temp-dir portability) and the
 report's own commit `fb58c0e2` (scratch tree; its hardcoded macOS temp path
-patched in the scratch copy only, never in git). Parsed
+patched in the scratch copy only, never in git). The numpy-1.26.4 legs ran
+in a throwaway venv created by `reproduce.sh` (host numpy ≥ 2.x would move
+the click digest; finding 3). Parsed
 `txn_log_sha256` (rtl side; model side equal wherever `txn_log_exact` is
 true, which is every real case in every leg):
 
 | # | Tree | iverilog | numpy | prs-256b-reset48 rtl | click-512b rtl | mutant rtl | Status |
 |---|---|---|---|---|---|---|---|
-| 1 | HEAD | 12.0-2build2 (`/usr/bin`) | 1.26.4 | `fbbeeba68273…ce2eb8` | `d75c9b899f2c…5db8e0` | `5a07312f4a58…4cbac0a` | PASS |
+| 1 | HEAD | 12.0-2build2 (resolved pin) | 1.26.4 | `fbbeeba68273…ce2eb8` | `d75c9b899f2c…5db8e0` | `5a07312f4a58…4cbac0a` | PASS |
 | 2 | HEAD | 13.0 (v13_0) | 1.26.4 | same | same | same | PASS |
-| 3 | fb58c0e2 | 12.0-2build2 | 1.26.4 | same | same | same | PASS |
+| 3 | fb58c0e2 | 12.0-2build2 (resolved pin) | 1.26.4 | same | same | same | PASS |
 | 4 | fb58c0e2 | 13.0 (v13_0) | 1.26.4 | same | same | same | PASS |
 | 5 | HEAD | 13.0 (v13_0) | 2.4.2 | same | `f617cc57df82…8bc9b0b` | same | PASS |
 | 6 | HEAD | 13.0 (v13_0) | 2.0.2 / 2.1.3 / 2.2.6 / 2.3.4 | same | `f617cc57df82…8bc9b0b` | same | PASS ×4 |

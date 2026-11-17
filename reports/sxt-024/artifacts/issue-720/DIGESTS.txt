@@ -2,8 +2,11 @@
 # Parsed txn_log_sha256 values (rtl side) reported by tools/run_reverb_rtl.py --keep.
 # All Linux legs: exit 0, exact=True for prs-256b-reset48 and click-512b,
 # mutant verdict CONTROL-OK. Committed row = reports/sxt-024/rtl-exactness.json as committed.
+# numpy-1.26.4 legs ran in a throwaway venv (created by reproduce.sh); the 12.0
+# pin binary is resolved by reproduce.sh (distro /usr/bin/iverilog when it
+# reports 12.0, else the exact 12.0-2build2 deb unpacked with a vvp-shebang shim).
 
-tree=HEAD            iverilog=12.0-2build2(/usr/bin)  numpy=1.26.4
+tree=HEAD            iverilog=12.0-2build2(pin-resolved)  numpy=1.26.4(venv)
   prs-256b-reset48 rtl=fbbeeba682738d0cb66375ebb28de1df22e4cf2f181b7bc0f0c7703894ce2eb8
   click-512b       rtl=d75c9b899f2c679152b7eb860c0ce9e5ac6f5830384f9c59fc8ac3cdf85db8e0
   mutant-tap7      rtl=5a07312f4a58738e42470f8a02e985dc3682897c0db85000598cb45334cbac0a
@@ -11,7 +14,7 @@ tree=HEAD            iverilog=13.0(v13_0,~/.local/bin)  numpy=1.26.4
   prs-256b-reset48 rtl=fbbeeba682738d0cb66375ebb28de1df22e4cf2f181b7bc0f0c7703894ce2eb8
   click-512b       rtl=d75c9b899f2c679152b7eb860c0ce9e5ac6f5830384f9c59fc8ac3cdf85db8e0
   mutant-tap7      rtl=5a07312f4a58738e42470f8a02e985dc3682897c0db85000598cb45334cbac0a
-tree=fb58c0e2        iverilog=12.0-2build2(/usr/bin)  numpy=1.26.4
+tree=fb58c0e2        iverilog=12.0-2build2(pin-resolved)  numpy=1.26.4(venv)
   prs-256b-reset48 rtl=fbbeeba682738d0cb66375ebb28de1df22e4cf2f181b7bc0f0c7703894ce2eb8
   click-512b       rtl=d75c9b899f2c679152b7eb860c0ce9e5ac6f5830384f9c59fc8ac3cdf85db8e0
   mutant-tap7      rtl=5a07312f4a58738e42470f8a02e985dc3682897c0db85000598cb45334cbac0a
