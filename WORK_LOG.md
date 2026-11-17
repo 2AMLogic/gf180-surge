@@ -4,6 +4,18 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-11-17
 
+- **PR #769**: docs(sxt-028): re-render NC-RNG-EXCLUSION gate-control transcript to post-#353 coverage counts
+- **Issue #766** (closed): SXT-028-rng gate-control transcript counts drifted from a fresh render (coverage table evolved since #122)
+- **PR #767**: docs(tools): describe the per-process scratch root in the coverage negative-controls header
+- **Issue #760** (closed): Coverage negative-controls transcript header names a scratch root the runner no longer uses
+- **PR #765**: fix(tools): per-run scratch root for rf_* negative controls
+- **Issue #762** (closed): Four rf_* negative-control tools share a fixed host-global WORKDIR with deterministic artifact names: concurrent same-tool runs can tear each other's traces
+- **PR #764**: ci: cap provenance-audit checkout step at 5 minutes (second stall, #763)
+- **Issue #763** (closed): CI: a 15-minute actions/checkout stall burned the provenance-audit job's entire 15-minute budget (PR #752); second occurrence after #728
+- **PR #752**: docs(signoff): record surgical-edit path for count-moving item 9 re-attests
+- **Issue #750** (closed): klt signoff --attest 9 cannot regenerate the item 9 envelope after a count-moving inventory edit (cold_start audits the stale envelope it is replacing)
+- **PR #698**: fix(fixtures): record the live rendering engine in reference sidecars (F-660-1)
+- **Issue #671** (closed): Reference sidecars inherit engine identity from the extractor inputs, so it does not identify the rendering engine (F-660-1)
 - **PR #761**: test(lpmoog): pin the comparator exit-2 coefficient-length boundary
 - **Issue #753** (closed): compare_lpmoog_model.py's exit-2 refusal boundary is not pinned by any test, so it can regress to 1 silently
 - **PR #759**: evidence: annotate open-pin corroboration with the measured tie-cell subset
