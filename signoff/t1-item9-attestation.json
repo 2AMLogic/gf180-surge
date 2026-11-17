@@ -1179,7 +1179,7 @@
         "role": "testbench",
         "path": "tests/test_sxt039_lpmoog.py",
         "passed": true,
-        "content_hash": "sha256:900197178dd48893f7450c1da084df5150215c1cee419109393fca2c0482b8f7"
+        "content_hash": "sha256:80eed2183d0b41ab9b744375010962e01c3fbbe74f3d9eedaf7c62c90e50491e"
       },
       {
         "check": "present",
