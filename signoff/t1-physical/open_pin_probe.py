@@ -17,6 +17,12 @@ left them, not that LVS can be fixed, not any fidelity or signoff claim.
 One group at a time, sequential:
     python3 signoff/t1-physical/open_pin_probe.py <group> [<group>...]
 Extraction is minutes-long per group; this is not a pytest-time run.
+
+The corroboration block annotates the committed P&R report's
+`def_net_names.single_pin_markers` with the tie-cell subset tally computed
+from the record's own findings (#747); re-derive that block alone, without
+re-extracting, with:
+    python3 signoff/t1-physical/open_pin_probe.py --rederive <group> [...]
 """
 import gzip
 import hashlib
@@ -47,6 +53,53 @@ ESCAPE_NOTE = (
 )
 # pg_type -> the direction string the record carries for supply/well pins.
 PG_TYPE = {"primary_power": "power", "primary_ground": "ground"}
+# Tie-cell masters (library-suffixed stems) and their output pin: the only
+# findings the pnr single-pin marker count agrees with (measured, #747).
+TIE_CELLS = {"tiel": "ZN", "tieh": "Z"}
+
+
+def tie_cell_tally(findings):
+    """Ordered {"master/pin": count} of the unused tie-cell output findings.
+    Always computed from the findings themselves -- never hand-typed -- so a
+    re-extraction that moves a net out of the tie subset changes the tally
+    with it."""
+    tally = {}
+    for f in findings:
+        stem = f["master"].rsplit("__", 1)[-1]
+        if TIE_CELLS.get(stem) == f["pin"]:
+            key = f"{f['master']}/{f['pin']}"
+            tally[key] = tally.get(key, 0) + 1
+    return dict(sorted(tally.items()))
+
+
+def corroboration_block(markers, findings, input_findings):
+    """The corroboration block: the committed P&R report's
+    def_net_names.single_pin_markers beside the measured decomposition of
+    this record's own findings (#747). The marker number agrees exactly with
+    the unused tie-cell output subset (tiel/ZN, tieh/Z) of
+    summary.single_pin_nets and with nothing else in the record; the
+    non-tie single-pin outputs and the open input pins are not corroborated
+    by it (this refutes #679's unmeasured "4 open inputs + 42 tie outputs"
+    arithmetic for ext_mem_instr: it is 46 tie outputs and 0 inputs). Still
+    a cheap corroboration only, not a substitute signal; no cause claim for
+    any open."""
+    tally = tie_cell_tally(findings)
+    tie_total = sum(tally.values())
+    return {
+        "pnr_single_pin_markers": markers,
+        "tie_cell_output_findings": tie_total,
+        "tie_cell_output_tally": tally,
+        "non_tie_single_pin_findings": len(findings) - tie_total,
+        "open_input_findings_not_in_markers": input_findings,
+        "marker_scope": "agrees exactly with the unused tie-cell output "
+                        "subset (tiel/ZN, tieh/Z) of "
+                        "summary.single_pin_nets, not with the total; "
+                        "single-pin nets outside that subset are not "
+                        "corroborated by it",
+        "note": "pnr.report.json def_net_names.single_pin_markers; a "
+                "cheap corroboration only, not a substitute signal: "
+                "wavetable_core matches with 480 of them",
+    }
 
 
 def klt(group, *args):
@@ -255,7 +308,7 @@ def probe(group):
     ver = (summary.get("provenance") or {}).get("klt_version") \
         or summary.get("klt_version")
     record = {
-        "schema": "gf180-surge.open-pin-probe/1",
+        "schema": "gf180-surge.open-pin-probe/2",
         "group": group,
         "doc": "Every abstracted-cell pin on a net with no other pin "
                "(top-level ports excluded), from `klt extract` of the "
@@ -296,12 +349,8 @@ def probe(group):
             "findings_by_direction": findings_dir_tally,
             "input_findings": findings_dir_tally.get("input", 0),
         },
-        "corroboration": {
-            "pnr_single_pin_markers": markers,
-            "note": "pnr.report.json def_net_names.single_pin_markers; a "
-                    "cheap corroboration only, not a substitute signal: "
-                    "wavetable_core matches with 480 of them",
-        },
+        "corroboration": corroboration_block(
+            markers, findings, findings_dir_tally.get("input", 0)),
         "notes": [NET_CAVEAT, ESCAPE_NOTE],
         "findings": findings,
     }
@@ -312,6 +361,29 @@ def probe(group):
           dir_tally.get("input", 0), flush=True)
 
 
+def rederive(group):
+    """Recompute the corroboration block of a committed record from its own
+    findings (#747) -- no re-extraction: the committed findings already
+    carry every (master, pin); provenance, netlist, summary and findings
+    are untouched."""
+    path = BASE / group / "open_pin_probe.json"
+    rec = json.loads(path.read_text())
+    rec["schema"] = "gf180-surge.open-pin-probe/2"
+    rec["corroboration"] = corroboration_block(
+        rec["corroboration"].get("pnr_single_pin_markers"), rec["findings"],
+        rec["summary"]["findings_by_direction"].get("input", 0))
+    write_json(path, rec)
+    print(group, "corroboration re-derived: tie",
+          rec["corroboration"]["tie_cell_output_findings"],
+          "markers", rec["corroboration"]["pnr_single_pin_markers"],
+          flush=True)
+
+
 if __name__ == "__main__":
-    for g in sys.argv[1:]:
-        probe(g)
+    args = sys.argv[1:]
+    if args and args[0] == "--rederive":
+        for g in args[1:]:
+            rederive(g)
+    else:
+        for g in args:
+            probe(g)
