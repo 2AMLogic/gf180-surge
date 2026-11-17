@@ -192,7 +192,7 @@ point-in-time: re-rendered 2026-11-17, the supported baseline had moved
 | **NC-R2** the refusal is live and not always-firing | one rule, two enforcement points | 5/6 refused at both; **every** deterministic wave 0–4 accepted at both — **CONTROL-OK** |
 | **NC-R3** silent exclusion | dropping affected presets from the corpus instead of publishing a reduction | REFUSED fail-closed with no artifact written; the untampered corpus is accepted, so the guard is not always-firing — **CONTROL-OK** |
 | **NC-R4** the characterisation's own detectors | a "not reproducible" verdict produced by an always-firing comparator | both fixed-seed comparators report IDENTICAL; the leg status is FAIL, never a pass — **CONTROL-OK** |
-| **NC-RNG-EXCLUSION** the coverage gate is load-bearing | a gate that changes nothing either way | in a declared counterfactual verified world, 5 synthetic exclusions downgrade supported 1,681 → 1,676, each with `fx_rng_gate=BLOCKED` and an `rng_stream_unpinnable:` reason; `--control-ignore-rng-exclusion` restores **exactly** 1,681; the denominator stays 3,561 — **PASS** |
+| **NC-RNG-EXCLUSION** the coverage gate is load-bearing | a gate that changes nothing either way | in a declared counterfactual verified world, 5 synthetic exclusions downgrade supported 1,682 → 1,677, each with `fx_rng_gate=BLOCKED` and an `rng_stream_unpinnable:` reason; `--control-ignore-rng-exclusion` restores **exactly** 1,682; the denominator stays 3,561 — **PASS** |
 
 NC-R1 is anchored on the **frozen SXT-028g model** and its declared
 threshold, never on the engine (there is no oracle here). Its
