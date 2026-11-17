@@ -4,7 +4,10 @@
 # mutant verdict CONTROL-OK. Committed row = reports/sxt-024/rtl-exactness.json as committed.
 # numpy-1.26.4 legs ran in a throwaway venv (created by reproduce.sh); the 12.0
 # pin binary is resolved by reproduce.sh (distro /usr/bin/iverilog when it
-# reports 12.0, else the exact 12.0-2build2 deb unpacked with a vvp-shebang shim).
+# reports 12.0, else the exact 12.0-2build2 deb unpacked with its ivl tree
+# pinned via -B and a vvp-shebang shim; a borrow control requires the deb leg
+# to FAIL to compile with the extracted ivl hidden, so the leg cannot borrow
+# a distro iverilog's ivl).
 
 tree=HEAD            iverilog=12.0-2build2(pin-resolved)  numpy=1.26.4(venv)
   prs-256b-reset48 rtl=fbbeeba682738d0cb66375ebb28de1df22e4cf2f181b7bc0f0c7703894ce2eb8

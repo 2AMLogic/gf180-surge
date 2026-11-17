@@ -299,7 +299,7 @@
           "reason": "The PASS claim is Reverb1 RTL==model exactness plus measured buffers and tail/stability controls. The reference comparison is against [PROPOSED] budgets (PENDING-FREEZE, one bounded budget finding recorded), not frozen ones; the profile freeze (#12 BLOCKED) can change word length and memory assumptions."
         }
       ],
-      "evidence_sha256": "e1f5d750c2e715c739d9e28e523c3221e1a23bcc9a0adad7e62a4ae693e9fb1f"
+      "evidence_sha256": "c4fad3692ba16eeb70e07df204225746c599745ad90b0b898622468b5db7e5d6"
     },
     {
       "id": 18,

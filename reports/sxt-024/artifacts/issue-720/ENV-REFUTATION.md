@@ -33,10 +33,23 @@ fleet worker measured on the same date has no distro iverilog at all
 `/usr/bin/iverilog` when that binary reports 12.0, and otherwise obtains the
 exact `iverilog 12.0-2build2` deb into a throwaway directory
 (`apt-get download` + `dpkg -x`; nothing host-wide, no sudo), running the
-extracted binary through a one-line shim that rewrites the deb's baked-in
-`#! /usr/bin/vvp` shebang to the extracted `vvp` (the runner executes
-`./sim.out` directly). Both resolution paths were measured on 2026-11-17 and
-produce byte-identical kept transaction logs. The numpy 1.26.4 legs ran in a
+extracted binary through a shim that (i) pins the extracted `ivl` support
+directory with `-B` — the driver's `ivl` lookup is a compiled-in absolute
+base, so without `-B` the deb leg would silently borrow a distro iverilog's
+`ivl` wherever one is installed (measuring nothing the `/usr/bin` branch
+does not) and die `rc=127` where none is — and (ii) rewrites the deb's
+baked-in `#! /usr/bin/vvp` shebang to the extracted `vvp` (the runner
+executes `./sim.out` directly). Both resolution paths were measured on
+2026-11-17 and produce byte-identical kept transaction logs. Provenance of
+that sentence: the original deb-leg run used a shim without `-B`, so on the
+dpkg-installed-12.0 measurement worker it could at best have borrowed the
+distro `ivl`; the deb leg was **re-measured** with the `-B`-pinning shim
+(same date, same worker profile — Ubuntu 24.04.4, Python 3.12.3, dpkg
+`12.0-2build2` at `/usr/bin`, `~/.local/bin` 13.0 shadowing) and reproduces
+the same digests, and `reproduce.sh` now carries a live **borrow control**:
+with the extracted `ivl` tree hidden the shim must FAIL to compile, else the
+script aborts (`CONTROL-LEAK`, exit 1). Measured: control OK — the deb leg's
+byte-identical logs are the deb's own. The numpy 1.26.4 legs ran in a
 throwaway venv (`python3 -m venv` + `pip install numpy==1.26.4` — the host
 numpy is ≥ 2.x and would move the click digest, finding 3); `reproduce.sh`
 creates it.

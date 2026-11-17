@@ -397,8 +397,12 @@ default PATH by `~/.local/bin/iverilog` 13.0 (v13_0), the version cited
 above; the pin's dpkg presence is worker-dependent — another fleet worker
 has no distro iverilog — and `artifacts/issue-720/reproduce.sh` resolves the
 pin either way: `/usr/bin` when it reports 12.0, otherwise the exact
-12.0-2build2 deb unpacked into a throwaway directory with the baked-in
-`vvp` shebang rewritten, plus the numpy-1.26.4 venv the legs used) — and
+12.0-2build2 deb unpacked into a throwaway directory with its `ivl` support
+tree pinned via `-B` (without which the deb leg would borrow a distro
+iverilog's `ivl` or fail outright), the baked-in `vvp` shebang rewritten,
+a borrow control requiring the deb leg to FAIL to compile with the
+extracted `ivl` hidden (measured CONTROL-OK), plus the numpy-1.26.4 venv
+the legs used) — and
 the mutant control stays CONTROL-OK under both. The committed
 `txn_log_sha256` *values* do not reproduce in any measured
 (tree × iverilog × numpy) cell — two tree states including this record's own
