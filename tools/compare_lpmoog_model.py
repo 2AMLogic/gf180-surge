@@ -43,9 +43,11 @@ import struct
 import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, REPO)
 sys.path.insert(0, os.path.join(REPO, "model", "voice"))
 sys.path.insert(0, os.path.join(REPO, "model", "voice", "filter_lpmoog"))
 
+from refusal import Refuse  # noqa: E402
 import voice_model as vm  # noqa: E402
 import filter_lpmoog_model as fp  # noqa: E402
 
@@ -146,8 +148,8 @@ def compare_case(run_dir, ref_dir):
     coefs = read_f32(os.path.join(ref_dir, f"refcoef-{case}.f32"))
     n_blocks = trace["n_blocks"]
     if len(coefs) != n_blocks * 21:
-        raise SystemExit(f"[refused] {case}: reference coefficient dump has "
-                         f"{len(coefs)} floats, expected {n_blocks * 21}")
+        raise Refuse(f"[refused] {case}: reference coefficient dump has "
+                     f"{len(coefs)} floats, expected {n_blocks * 21}")
 
     model_out = [v for blk in trace["trace_blocks"] for v in blk["out_model"]]
     ref_q = [q(v, FQ) for v in ref]
@@ -236,4 +238,8 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except Refuse as e:
+        print(f"REFUSING: {e}", file=sys.stderr)
+        sys.exit(2)

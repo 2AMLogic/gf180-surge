@@ -1165,7 +1165,7 @@
         "role": "testbench",
         "path": "tests/test_sxt037_lp12.py",
         "passed": true,
-        "content_hash": "sha256:674f38b12df5ccb7fe0d54b241c45fe207d0e9f0a6e24de8d97c6cca78f5f9b4"
+        "content_hash": "sha256:eac39d684329b49b81cb0f6ae76369f78a21052e38f753b39eb2a7e92817f0bc"
       },
       {
         "check": "present",

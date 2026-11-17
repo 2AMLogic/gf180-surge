@@ -230,8 +230,12 @@ def _lp12_budget_trace(case, **inst_over):
         "stability_verdict": "STABLE",
     }
     for k, v in inst_over.items():
-        if k == "l2a":
-            inst["l2a"].update(v)
+        if k == "l2a" and v is not None:
+            for lk, lv in v.items():
+                if lv is None:
+                    inst["l2a"].pop(lk, None)
+                else:
+                    inst["l2a"][lk] = lv
         elif v is None:
             inst.pop(k, None)
         else:
@@ -313,22 +317,91 @@ def test_model_stability_leg_reads_the_monitor_verdict_not_a_threshold(tmp_path)
 
 def test_comparator_refuses_trace_without_monitor_verdict(tmp_path):
     # Fail-closed: a trace predating `stability_verdict` cannot be graded on
-    # the model leg and must never be defaulted to STABLE.
+    # the model leg and must never be defaulted to STABLE.  Refusals exit 2
+    # (issue #681): the module docstring promises exit 2, and that is the
+    # house convention (exit 2 = REFUSED) across the sibling comparators.
     r, rec = _run_lp12_comparator(
         _lp12_budget_trace("no-verdict", stability_verdict=None), tmp_path)
-    assert r.returncode != 0
-    assert "stability_verdict" in r.stderr and "Refusing" in r.stderr
+    assert r.returncode == 2
+    assert "stability_verdict" in r.stderr and "REFUSING" in r.stderr
     assert rec is None                     # no record written
 
 
-def test_comparator_refuses_silent_engine_tap(tmp_path):
-    # `engine_peak_lsb` is floored at 1 LSB, so an absent engine tap would
-    # otherwise grade BOUNDED on no engine samples at all.
+def test_comparator_refuses_absent_engine_tap(tmp_path):
+    # The ABSENT half of the engine-tap refusal (issue #681): `n == 0` means
+    # no engine samples were recorded at all, so the engine stability leg has
+    # no measurement to bound.
     r, rec = _run_lp12_comparator(
-        _lp12_budget_trace("silent-tap", l2a={"n": 0, "engine_peak_lsb": 1}),
+        _lp12_budget_trace("absent-tap", l2a={"n": 0, "engine_peak_lsb": 1}),
         tmp_path)
-    assert r.returncode != 0
-    assert "no engine tap samples" in r.stderr and "Refusing" in r.stderr
+    assert r.returncode == 2
+    assert "no engine tap samples" in r.stderr and "REFUSING" in r.stderr
+    assert rec is None
+
+
+def test_comparator_refuses_present_but_silent_engine_tap(tmp_path):
+    # THE #681 control: the engine tap is PRESENT (n > 0) but SILENT
+    # (all-zero samples).  `engine_peak_lsb` is floored at 1 LSB by
+    # _audio_metrics (`max(...) or 1` in run_filter_leg.py), so the floored
+    # peak cannot distinguish "1 LSB of signal" from "no signal" and the
+    # refusal must cover `engine_peak_lsb <= 1`, not just `n == 0`.  Before
+    # the fix this graded stability_engine BOUNDED on the 1-LSB floor,
+    # exited 0 and wrote a record.
+    r, rec = _run_lp12_comparator(
+        _lp12_budget_trace("silent-tap", l2a={"n": 64, "engine_peak_lsb": 1}),
+        tmp_path)
+    assert r.returncode == 2, r.stderr
+    assert "silent" in r.stderr and "REFUSING" in r.stderr
+    assert "BOUNDED" not in r.stdout       # never graded, let alone passed
+    assert rec is None
+
+
+def test_engine_leg_grades_a_peak_just_above_the_silence_floor(tmp_path):
+    # Edge of the #681 floor: the refusal condition is `engine_peak_lsb <= 1`
+    # (1 is the all-zero floor), so a genuine 2-LSB peak must still grade.
+    r, rec = _run_lp12_comparator(
+        _lp12_budget_trace("quiet-tap", l2a={"engine_peak_lsb": 2}), tmp_path)
+    assert r.returncode == 0, r.stderr
+    v = rec["results"]["unit1.lane0"]
+    assert v["stability_engine"] == "BOUNDED"
+    assert v["engine_tap_peak_lsb"] == 2
+
+
+def test_comparator_refuses_trace_without_engine_peak_lsb(tmp_path):
+    # The field-less half of the engine-tap refusal: a trace predating the
+    # `engine_peak_lsb` field entirely must refuse cleanly, exactly like the
+    # `stability_verdict` predecessor-field case above -- never crash on
+    # KeyError.  Before the fix the comparator died with an unhandled
+    # KeyError and a traceback (rc 1) before reaching any refusal site.
+    r, rec = _run_lp12_comparator(
+        _lp12_budget_trace("no-tap-field", l2a={"engine_peak_lsb": None}),
+        tmp_path)
+    assert r.returncode == 2, r.stderr
+    assert "engine_peak_lsb" in r.stderr and "REFUSING" in r.stderr
+    assert "KeyError" not in r.stderr
+    assert rec is None
+
+
+def test_comparator_refuses_trace_without_l2a_block(tmp_path):
+    # Same predecessor-trace class, one level up: no `l2a` block at all.
+    # The guard folds the missing block (and a missing l2a.n) into the same
+    # refusal instead of crashing on `inst["l2a"]["n"]`/`["engine_peak_lsb"]`.
+    r, rec = _run_lp12_comparator(
+        _lp12_budget_trace("no-l2a", l2a=None), tmp_path)
+    assert r.returncode == 2, r.stderr
+    assert "REFUSING" in r.stderr and "KeyError" not in r.stderr
+    assert rec is None
+
+
+def test_comparator_refuses_neutrality_violation(tmp_path):
+    # Third refusal site (issue #681): tap neutrality violated on a
+    # deterministic case is out of scope and must refuse with exit 2,
+    # never grade.
+    trace = _lp12_budget_trace("neutral-broken")
+    trace["meta"]["neutrality_violated"] = True
+    r, rec = _run_lp12_comparator(trace, tmp_path)
+    assert r.returncode == 2
+    assert "neutrality" in r.stderr and "REFUSING" in r.stderr
     assert rec is None
 
 
