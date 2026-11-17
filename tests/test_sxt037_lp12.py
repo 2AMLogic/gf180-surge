@@ -230,8 +230,12 @@ def _lp12_budget_trace(case, **inst_over):
         "stability_verdict": "STABLE",
     }
     for k, v in inst_over.items():
-        if k == "l2a":
-            inst["l2a"].update(v)
+        if k == "l2a" and v is not None:
+            for lk, lv in v.items():
+                if lv is None:
+                    inst["l2a"].pop(lk, None)
+                else:
+                    inst["l2a"][lk] = lv
         elif v is None:
             inst.pop(k, None)
         else:
@@ -361,6 +365,32 @@ def test_engine_leg_grades_a_peak_just_above_the_silence_floor(tmp_path):
     v = rec["results"]["unit1.lane0"]
     assert v["stability_engine"] == "BOUNDED"
     assert v["engine_tap_peak_lsb"] == 2
+
+
+def test_comparator_refuses_trace_without_engine_peak_lsb(tmp_path):
+    # The field-less half of the engine-tap refusal: a trace predating the
+    # `engine_peak_lsb` field entirely must refuse cleanly, exactly like the
+    # `stability_verdict` predecessor-field case above -- never crash on
+    # KeyError.  Before the fix the comparator died with an unhandled
+    # KeyError and a traceback (rc 1) before reaching any refusal site.
+    r, rec = _run_lp12_comparator(
+        _lp12_budget_trace("no-tap-field", l2a={"engine_peak_lsb": None}),
+        tmp_path)
+    assert r.returncode == 2, r.stderr
+    assert "engine_peak_lsb" in r.stderr and "REFUSING" in r.stderr
+    assert "KeyError" not in r.stderr
+    assert rec is None
+
+
+def test_comparator_refuses_trace_without_l2a_block(tmp_path):
+    # Same predecessor-trace class, one level up: no `l2a` block at all.
+    # The guard folds the missing block (and a missing l2a.n) into the same
+    # refusal instead of crashing on `inst["l2a"]["n"]`/`["engine_peak_lsb"]`.
+    r, rec = _run_lp12_comparator(
+        _lp12_budget_trace("no-l2a", l2a=None), tmp_path)
+    assert r.returncode == 2, r.stderr
+    assert "REFUSING" in r.stderr and "KeyError" not in r.stderr
+    assert rec is None
 
 
 def test_comparator_refuses_neutrality_violation(tmp_path):
