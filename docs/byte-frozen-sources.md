@@ -246,7 +246,75 @@ or `cold_start` fails and the envelope records a failing check. `--check` skips
 it and carries the committed outcome (`[SKIP] cold_start … local_only, not run;
 committed outcome: pass`), which is why the `signoff` job never pays that cost.
 The wall-clock cost of a successful `cold_start` is **not timed by this
-section** — treat it as "a full suite run", not as a known number.
+section** — treat it as "a full suite run", not as a known number. Everything
+in this paragraph holds for a **hash-only** inventory move (a listed file's
+bytes change, the path list does not); a **count-moving** edit cannot run this
+path at all — the next paragraph records why and what to do instead.
+
+**A count-moving inventory edit makes `--attest 9` exit 3 by construction
+(#750, measured in #748); the sanctioned procedure for that case is a
+surgical envelope edit, with `--attest 9 --check` as the reproducer.** When
+the edit adds or removes a listed path, the suite's own audit
+(`tests/test_byte_frozen_sources.py` → `derive_inventory_counts()`) fails
+while the old envelope is still the committed one, printing exactly
+
+> item 9: signoff/t1-item9-attestation.json content-hashes 229 files,
+> signoff/t1-item9-inventory.json lists 230 -- the envelope is stale against
+> its inventory
+
+(the numbers PR #748 measured: the audit compares the count of the envelope's
+`content_hash`-bearing checks against the inventory's path list). Because
+`cold_start` runs that audit *inside* `--attest`, and a failing attestation
+writes nothing (klt 0.8.0's `signoff_cmd.py`: "a failing attestation exits
+``3`` and writes nothing, so a committed passing envelope is never silently
+replaced by a failing one"), the `-o` regeneration command above cannot
+complete for a count-moving edit — and each affected PR has to re-derive that
+fact (PR #748 spent two full runs, 27 and 25 minutes, on it). Every
+count-moving re-attest on record (3cdd570, 7b66c03, c05b7cb, 7db0190,
+9e92583, 44d5927, 980dfa1) was produced on a tree that did not carry the
+audit leg — `git merge-base --is-ancestor 5de6500 <sha>` is false for all
+seven, because 5de6500 was committed on `feature/issue-649` on 2026-11-13
+and reached `main` only at 93bf58c (2026-11-17 00:29), after each of those
+branches had taken its base. e054f24 set the surgical precedent for a
+hash-only move, and #748 (c641a89) is the only count-moving re-attest whose
+tree contains 5de6500 — it is surgical, not a completed `--attest … -o`.
+No count-moving re-attest has completed against a tree containing 5de6500.
+The procedure below is therefore the documented path for a count-moving
+edit, not a workaround:
+
+1. Edit `signoff/t1-item9-attestation.json` surgically: add or remove the
+   changed paths' `content_hash` checks in sorted position, move
+   `provenance.input.content_hash` to the new inventory's sha256, and update
+   the envelope's `summary` string and `check_count` / `passed_count` to the
+   new totals. Leave the `cold_start` check (`argv`, `exit_status`,
+   `local_only`) and `provenance.klt_version` untouched — see the evidence
+   bounds below.
+2. Re-render `signoff/block-manifest.signoff.json` and update
+   `signoff/block-manifest.json`'s declared inventory `content_hash` (the
+   section below measures exactly which fields move).
+3. Reproduce:
+
+   ```sh
+   /tmp/klt-venv/bin/klt signoff --attest 9 --inventory signoff/t1-item9-inventory.json \
+       --check signoff/t1-item9-attestation.json
+   ```
+
+4. CI's rtl-sim job ("pytest with Icarus Verilog (simulator skips are
+   failures)") then re-runs the `cold_start` pytest command on the PR
+   (`python3 -m pytest -q -rs -p no:cacheprovider tests` — the same suite
+   and plugin flag, plus `-rs` and a JUnit XML output) under the pinned
+   python and iverilog.
+
+What that evidence establishes: `--check` re-derives every `content_hash`
+plus the inventory digest, so the hand-edited envelope is verified against
+its inventory and tree; the rtl-sim job re-runs the full suite in the final
+tree under the pinned dependencies. What it does **not** establish: the
+envelope's `cold_start` record is **carried** from the commit that last
+completed a full `--attest`, not freshly recorded by `klt` — what it stores
+(the invocation and its outcome: `argv`, `cwd`, `exit_status`, `passed`,
+`local_only`) is not tree-specific output, but it is also not a fresh run. The claim is bounded to
+repo-evidence tooling: this procedure makes no fidelity, synthesis, P&R,
+hardware-playback, original-Surge-fidelity or preset-quality claim.
 
 `--attest 10 … -o` was verified here to reproduce the committed
 `signoff/item-10.attestation.json` byte-for-byte (exit 0). The item 9
