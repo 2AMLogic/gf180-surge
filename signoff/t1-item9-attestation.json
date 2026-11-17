@@ -3,14 +3,14 @@
   "kind": "generic",
   "status": "pass",
   "t1_item": 9,
-  "summary": "T1 item 9 (Testbenches shipped): 233/233 attestation checks passed (klt signoff --attest)",
+  "summary": "T1 item 9 (Testbenches shipped): 234/234 attestation checks passed (klt signoff --attest)",
   "source": "signoff/t1-item9-inventory.json",
   "attestation": {
     "producer": "klt signoff --attest",
     "inventory_schema_version": 1,
     "hash_algorithm": "sha256-raw-bytes",
-    "check_count": 233,
-    "passed_count": 233,
+    "check_count": 234,
+    "passed_count": 234,
     "checks": [
       {
         "check": "present",
@@ -458,7 +458,7 @@
         "role": "testbench",
         "path": "tests/test_byte_frozen_sources.py",
         "passed": true,
-        "content_hash": "sha256:a82ed5c1b709d545d63619f9f6c3842de03900f01420eaf18ec3c77bd564894d"
+        "content_hash": "sha256:4f9b56414bc56a9bf895c61826eb3d0747cc1dc9bd7bcb9e1ea3740b567b319c"
       },
       {
         "check": "present",
@@ -760,6 +760,13 @@
         "path": "tests/test_shared_refuse.py",
         "passed": true,
         "content_hash": "sha256:9e3ac0a0fdd8bbf22634f9263f106dca739ac014832bee8c4a7725db1ba275f7"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sidecar_engine_provenance.py",
+        "passed": true,
+        "content_hash": "sha256:36ef2aede4a4d7b8f654786b1b10be38c05b024bdd538b152d7699a5e5a6748c"
       },
       {
         "check": "present",
@@ -1671,7 +1678,7 @@
         "path": "signoff/t1-item9-inventory.json",
         "scope": "repo"
       },
-      "content_hash": "sha256:63bdb7179737ff9bc487b8918e39e4ae7a6bb452f4c672c46bdd91e6189c092b"
+      "content_hash": "sha256:35f4772e09e6a087133635b4bca0476b746c2c0cf593aa3e7e163267b473ad41"
     }
   }
 }
