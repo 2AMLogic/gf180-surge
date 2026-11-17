@@ -397,7 +397,7 @@
       "status": "PASS",
       "note": "Landed (#81): coverage-v1 — 3,561 rows, conservative conjunction; supported 0 (honest), adapted 165, unsupported 1,132, unresolved 2,264; counterfactual ceiling 1,681; downgrade + fail-closed controls. Republished (#353): adapted 164, unresolved 2,265 (Hell's Bells adapted -> unresolved under SXT-026a; supported still 0). Republished (#384): preset-scoped complete-wet integration gate added to the supported conjunction (integration_gate NOT_RUN on all 1,683 compiled rows; no headline moved; supported still 0).",
       "evidence": "reports/coverage-v1/README.md",
-      "evidence_sha256": "ca15670fda025c4f1e0a463b472013a4b68020612f336855cf3d5b5f136187eb",
+      "evidence_sha256": "9043041ef6aad5eab5359f2860c5b7b1a9b83a19a1ec309a190be0785a24555d",
       "prerequisite_waivers": [
         {
           "node": 18,
