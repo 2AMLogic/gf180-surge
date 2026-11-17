@@ -4,6 +4,8 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-11-17
 
+- **PR #746**: evidence(t1-physical): commit the open-pin extraction probe records and re-bind them in the flow test
+- **Issue #679** (closed): Commit a reproducible probe for the four open input pins behind the ext_mem_instr LVS mismatch
 - **PR #744**: docs(sxt-024): annotate rtl-exactness digest provenance; refresh DAG evidence hash
 - **PR #741**: chore(loom): resync installed Loom to v0.19.1306
 - **PR #740**: test(ci-policy): scan *.yaml workflows, accept subpath pins, exempt reusable-call jobs
