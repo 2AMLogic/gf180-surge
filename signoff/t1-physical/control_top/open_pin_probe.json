@@ -1,5 +1,5 @@
 {
-  "schema": "gf180-surge.open-pin-probe/1",
+  "schema": "gf180-surge.open-pin-probe/2",
   "group": "control_top",
   "doc": "Every abstracted-cell pin on a net with no other pin (top-level ports excluded), from `klt extract` of the committed routed stream. Records where the extraction opens are; no cause claim, no fix claim. The LVS verdict of this group stays whatever its committed lvs.report.json records.",
   "provenance": {
@@ -998,6 +998,14 @@
   },
   "corroboration": {
     "pnr_single_pin_markers": 38,
+    "tie_cell_output_findings": 38,
+    "tie_cell_output_tally": {
+      "gf180mcu_fd_sc_mcu9t5v0__tieh/Z": 1,
+      "gf180mcu_fd_sc_mcu9t5v0__tiel/ZN": 37
+    },
+    "non_tie_single_pin_findings": 144,
+    "open_input_findings_not_in_markers": 0,
+    "marker_scope": "agrees exactly with the unused tie-cell output subset (tiel/ZN, tieh/Z) of summary.single_pin_nets, not with the total; single-pin nets outside that subset are not corroborated by it",
     "note": "pnr.report.json def_net_names.single_pin_markers; a cheap corroboration only, not a substitute signal: wavetable_core matches with 480 of them"
   },
   "notes": [

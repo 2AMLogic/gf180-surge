@@ -92,6 +92,15 @@ time, `$PDK_ROOT` set for pin directions) and rewrites the committed record
 negative control, `control_top`. The records carry the exact argv, the
 uncompressed stream hash, the tool version and the pinned liberty identity;
 the test in `tests/test_t1_physical_flow.py` re-binds them to the streams.
+Each record's corroboration block annotates the P&R report's
+`def_net_names.single_pin_markers` with the tie-cell output subset tally
+(`tiel`/`ZN` + `tieh`/`Z`) computed from its own findings (#747): the marker
+number equals exactly that subset (ext_mem_instr 44+2=46, control_top
+37+1=38), not `single_pin_nets`, and the open input pins are not in it --
+still a cheap corroboration only, not a substitute signal, with no cause
+claim. `python3 signoff/t1-physical/open_pin_probe.py --rederive <group>`
+recomputes that block alone from the committed findings, without
+re-extracting.
 The Metal1/Via1 geometry observation above remains ad hoc and is NOT
 committed by that probe; it needs its own measurement.
 
