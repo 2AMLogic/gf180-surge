@@ -269,12 +269,15 @@ writes nothing (klt 0.8.0's `signoff_cmd.py`: "a failing attestation exits
 ``3`` and writes nothing, so a committed passing envelope is never silently
 replaced by a failing one"), the `-o` regeneration command above cannot
 complete for a count-moving edit — and each affected PR has to re-derive that
-fact (PR #748 spent two full runs, 27 and 25 minutes, on it). Every
-count-moving re-attest on record (7b66c03, 980dfa1, 3cdd570) predates the
-audit hardening 5de6500 (2026-11-13); e054f24 set the surgical precedent for
-a hash-only move, and #748 followed it for the count move. The procedure
-below is therefore the documented path for a count-moving edit, not a
-workaround:
+fact (PR #748 spent two full runs, 27 and 25 minutes, on it). The two
+pre-hardening count-moving re-attests on record (3cdd570, 7b66c03) predate
+the audit hardening 5de6500 (2026-11-13); 980dfa1 (2026-11-17) is also
+count-moving but was branched from 290fe05, 39 minutes before the hardening
+landed, so its tree never carried the audit leg either — no count-moving
+re-attest has completed against a tree containing 5de6500. e054f24 set the
+surgical precedent for a hash-only move, and #748 followed it for the count
+move. The procedure below is therefore the documented path for a
+count-moving edit, not a workaround:
 
 1. Edit `signoff/t1-item9-attestation.json` surgically: add or remove the
    changed paths' `content_hash` checks in sorted position, move
