@@ -74,6 +74,7 @@
     "tests/test_checkpoint_key_uniqueness.py",
     "tests/test_checkpoint_width_validation.py",
     "tests/test_ci_dependency_pins.py",
+    "tests/test_ci_workflow_policy.py",
     "tests/test_compare_rtl_model_fx_window.py",
     "tests/test_compare_rtl_model_live.py",
     "tests/test_compile_backlog_dag_waivers.py",
