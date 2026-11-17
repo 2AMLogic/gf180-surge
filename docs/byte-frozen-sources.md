@@ -269,15 +269,19 @@ writes nothing (klt 0.8.0's `signoff_cmd.py`: "a failing attestation exits
 ``3`` and writes nothing, so a committed passing envelope is never silently
 replaced by a failing one"), the `-o` regeneration command above cannot
 complete for a count-moving edit — and each affected PR has to re-derive that
-fact (PR #748 spent two full runs, 27 and 25 minutes, on it). The two
-pre-hardening count-moving re-attests on record (3cdd570, 7b66c03) predate
-the audit hardening 5de6500 (2026-11-13); 980dfa1 (2026-11-17) is also
-count-moving but was branched from 290fe05, 39 minutes before the hardening
-landed, so its tree never carried the audit leg either — no count-moving
-re-attest has completed against a tree containing 5de6500. e054f24 set the
-surgical precedent for a hash-only move, and #748 followed it for the count
-move. The procedure below is therefore the documented path for a
-count-moving edit, not a workaround:
+fact (PR #748 spent two full runs, 27 and 25 minutes, on it). Every
+count-moving re-attest on record (3cdd570, 7b66c03, c05b7cb, 7db0190,
+9e92583, 44d5927, 980dfa1) was produced on a branch whose base predates
+5de6500 — `git merge-base --is-ancestor 5de6500 <sha>` is false for all
+seven, so no tree that produced one carried the audit leg. 980dfa1
+(2026-11-17 01:22) even postdates the hardening's landing on `main`
+(93bf58c, 2026-11-17 00:29) by 53 minutes — but its branch base is 290fe05
+(2026-11-13 16:20), so 5de6500 is not in its history. e054f24 set the
+surgical precedent for a hash-only move, and #748 (c641a89) is the only
+count-moving re-attest whose tree contains 5de6500 — it is surgical, not a
+completed `--attest … -o`. No count-moving re-attest has completed against a
+tree containing 5de6500. The procedure below is therefore the documented
+path for a count-moving edit, not a workaround:
 
 1. Edit `signoff/t1-item9-attestation.json` surgically: add or remove the
    changed paths' `content_hash` checks in sorted position, move
@@ -307,9 +311,9 @@ plus the inventory digest, so the hand-edited envelope is verified against
 its inventory and tree; the rtl-sim job re-runs the full suite in the final
 tree under the pinned dependencies. What it does **not** establish: the
 envelope's `cold_start` record is **carried** from the commit that last
-completed a full `--attest`, not freshly recorded by `klt` — only `argv` and
-`exit_status` are stored, so the carried value carries no tree-specific
-output, but it is also not a fresh run. The claim is bounded to
+completed a full `--attest`, not freshly recorded by `klt` — what it stores
+(the invocation and its outcome: `argv`, `cwd`, `exit_status`, `passed`,
+`local_only`) is not tree-specific output, but it is also not a fresh run. The claim is bounded to
 repo-evidence tooling: this procedure makes no fidelity, synthesis, P&R,
 hardware-playback, original-Surge-fidelity or preset-quality claim.
 
