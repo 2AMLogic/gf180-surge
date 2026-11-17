@@ -279,8 +279,8 @@ branches had taken its base. e054f24 set the surgical precedent for a
 hash-only move, and #748 (c641a89) is the only count-moving re-attest whose
 tree contains 5de6500 — it is surgical, not a completed `--attest … -o`.
 No count-moving re-attest has completed against a tree containing 5de6500.
-tree containing 5de6500. The procedure below is therefore the documented
-path for a count-moving edit, not a workaround:
+The procedure below is therefore the documented path for a count-moving
+edit, not a workaround:
 
 1. Edit `signoff/t1-item9-attestation.json` surgically: add or remove the
    changed paths' `content_hash` checks in sorted position, move
