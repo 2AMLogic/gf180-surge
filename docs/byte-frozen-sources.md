@@ -120,16 +120,16 @@ human-readable index.
 | `signoff/t1-item9-attestation.json` check for `tools/slfo_negative_controls.py` | `tools/slfo_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
 | `signoff/t1-item9-attestation.json` check for `tools/vel_negative_controls.py` | `tools/vel_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
 
-The 46 `T1 item 9` rows are testbench and negative-control scripts whose bytes
+The `T1 item 9` rows are testbench and negative-control scripts whose bytes
 `signoff/t1-item9-attestation.json` (klt `--attest 9`, #538) records as `content_hash`
 values and `signoff.yml` re-checks live. They are live pins like any other row: any
 edit, including lint or whitespace, makes that attestation and the item 9 verdict
 in `signoff/block-manifest.signoff.json` STALE until both are re-derived in the same
 change. They are covered by the audit's live equality check in
 `tests/test_byte_frozen_sources.py`; they have no leaf-specific freshness test.
-They are 46 of the 229 files that attestation content-hashes — see
+They are among the files that attestation content-hashes — see
 [Whole-inventory attestation pins](#whole-inventory-attestation-pins-tests-rtl-benches-hygiene-files)
-for the other 183, for the item 10 hygiene files, and for exactly what a
+for the rest, for the item 10 hygiene files, and for exactly what a
 regeneration has to re-commit.
 
 Two of the self-hash pins are also recorded in their RTL traces as a **revision
@@ -153,13 +153,13 @@ file in an inventory, and `.github/workflows/signoff.yml` re-checks both on ever
 
 | Envelope | Inventory — the authoritative list | Content-hashed files | Rest of the envelope |
 |---|---|---|---|
-| `signoff/t1-item9-attestation.json` | `signoff/t1-item9-inventory.json`, key `testbenches` | 229 of 232 checks: 124 under `tests/`, 59 `rtl/*.sv` benches and mutant controls, 45 `tools/*.py`, and `model/integration/negative_controls.py` | one `cold_start` command check, two `pin` checks |
+| `signoff/t1-item9-attestation.json` | `signoff/t1-item9-inventory.json`, key `testbenches` | 228 of 231 checks: 123 under `tests/`, 59 `rtl/*.sv` benches and mutant controls, 45 `tools/*.py`, and `model/integration/negative_controls.py` | one `cold_start` command check, two `pin` checks |
 | `signoff/item-10.attestation.json` | `signoff/hygiene-inventory.json`, key `hygiene` | 5 of 9 checks: `README.md`, `LICENSE`, `.github/workflows/ci.yml`, `.github/workflows/signoff.yml`, `.github/workflows/slow-controls.yml` | four `command` audit checks |
 
-**Read the inventories; this registry does not transcribe them.** The 46
+**Read the inventories; this registry does not transcribe them.** The
 `T1 item 9` rows in the [Live pins](#live-pins) table are only the `tools/` +
-`model/` subset the registry audit can discover on its own. The other 183 item 9
-files and the five item 10 hygiene files deliberately have no rows there:
+`model/` subset the registry audit can discover on its own. The remaining item 9
+files and the item 10 hygiene files deliberately have no rows there:
 enumerating them would duplicate the inventories verbatim and rot on every new
 test or bench.
 
@@ -177,9 +177,9 @@ is in an inventory but has no [Live pins](#live-pins) row:
   stated at the top of this file: do not edit, and a lint finding inside one is
   permanently kept. Nothing here relaxes that. That covers the 13 `self_hash`
   pins, the two other `manifest_entry` pins (`fixtures/control/manifest.json`
-  and the SXT-043 evidence table), and the 46 item 9 rows.
+  and the SXT-043 evidence table), and the item 9 rows.
 
-The 46 item 9 rows sit in both camps — they are listed pins *and* they are item 9
+The item 9 rows sit in both camps — they are listed pins *and* they are item 9
 inventory entries — so the stronger rule wins for them.
 
 ### The registry audit does not fire for inventory-only files
