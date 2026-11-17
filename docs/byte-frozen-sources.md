@@ -153,7 +153,7 @@ file in an inventory, and `.github/workflows/signoff.yml` re-checks both on ever
 
 | Envelope | Inventory — the authoritative list | Content-hashed files | Rest of the envelope |
 |---|---|---|---|
-| `signoff/t1-item9-attestation.json` | `signoff/t1-item9-inventory.json`, key `testbenches` | 229 of 232 checks: 124 under `tests/`, 59 `rtl/*.sv` benches and mutant controls, 45 `tools/*.py`, and `model/integration/negative_controls.py` | one `cold_start` command check, two `pin` checks |
+| `signoff/t1-item9-attestation.json` | `signoff/t1-item9-inventory.json`, key `testbenches` | 230 of 233 checks: 125 under `tests/`, 59 `rtl/*.sv` benches and mutant controls, 45 `tools/*.py`, and `model/integration/negative_controls.py` | one `cold_start` command check, two `pin` checks |
 | `signoff/item-10.attestation.json` | `signoff/hygiene-inventory.json`, key `hygiene` | 5 of 9 checks: `README.md`, `LICENSE`, `.github/workflows/ci.yml`, `.github/workflows/signoff.yml`, `.github/workflows/slow-controls.yml` | four `command` audit checks |
 
 **Read the inventories; this registry does not transcribe them.** The
