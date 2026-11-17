@@ -271,15 +271,14 @@ replaced by a failing one"), the `-o` regeneration command above cannot
 complete for a count-moving edit — and each affected PR has to re-derive that
 fact (PR #748 spent two full runs, 27 and 25 minutes, on it). Every
 count-moving re-attest on record (3cdd570, 7b66c03, c05b7cb, 7db0190,
-9e92583, 44d5927, 980dfa1) was produced on a branch whose base predates
-5de6500 — `git merge-base --is-ancestor 5de6500 <sha>` is false for all
-seven, so no tree that produced one carried the audit leg. 980dfa1
-(2026-11-17 01:22) even postdates the hardening's landing on `main`
-(93bf58c, 2026-11-17 00:29) by 53 minutes — but its branch base is 290fe05
-(2026-11-13 16:20), so 5de6500 is not in its history. e054f24 set the
-surgical precedent for a hash-only move, and #748 (c641a89) is the only
-count-moving re-attest whose tree contains 5de6500 — it is surgical, not a
-completed `--attest … -o`. No count-moving re-attest has completed against a
+9e92583, 44d5927, 980dfa1) was produced on a tree that did not carry the
+audit leg — `git merge-base --is-ancestor 5de6500 <sha>` is false for all
+seven, because 5de6500 was committed on `feature/issue-649` on 2026-11-13
+and reached `main` only at 93bf58c (2026-11-17 00:29), after each of those
+branches had taken its base. e054f24 set the surgical precedent for a
+hash-only move, and #748 (c641a89) is the only count-moving re-attest whose
+tree contains 5de6500 — it is surgical, not a completed `--attest … -o`.
+No count-moving re-attest has completed against a tree containing 5de6500.
 tree containing 5de6500. The procedure below is therefore the documented
 path for a count-moving edit, not a workaround:
 
