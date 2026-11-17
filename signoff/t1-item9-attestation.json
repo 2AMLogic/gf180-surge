@@ -1480,7 +1480,7 @@
         "role": "testbench",
         "path": "tools/coverage_negative_controls.py",
         "passed": true,
-        "content_hash": "sha256:c51221150aaf726fdd05c62adbfe7f6c60a47051c8583e206036a1fdffb6375b"
+        "content_hash": "sha256:89d8405a0709a1c6160a7a78bff4883dba013185e90c9ab1b7ce38655cee9dd8"
       },
       {
         "check": "present",

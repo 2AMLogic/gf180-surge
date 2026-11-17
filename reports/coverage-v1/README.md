@@ -213,8 +213,9 @@ evidence pins) and `coverage.json` (`leaf_ledger`).
 
 ## Negative controls (live; each must demonstrably fail the check it targets)
 
-Run `python3 tools/coverage_negative_controls.py` (scratch space
-`/tmp/sxt029-negative-controls`; published outputs untouched):
+Run `python3 tools/coverage_negative_controls.py` (scratch space: a
+per-process temporary directory under /tmp, created and removed per
+run; published outputs untouched):
 
 - **NC-STALE-HASH** — in a declared counterfactual world (synthetic table:
   all leaves verified, freeze PASS → 1,682 supported with the synthetic integration ledger; see NC-INTEGRATION), the fx:EQ evidence
