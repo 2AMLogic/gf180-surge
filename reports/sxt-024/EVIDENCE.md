@@ -412,7 +412,11 @@ portability fix `9e925830`), not to 13.0-on-Linux. numpy ≥ 2.0 alone moves
 the click-512b digest (stimulus quantization float32 path) while leaving
 every verdict `exact=True`. Full matrix, digests and reproduce script:
 `artifacts/issue-720/`. Verdicts unchanged; the committed record was not
-regenerated.
+regenerated. Digest-value provenance — the generation environment of the
+committed values, which fields are contract-bearing, and the
+pinned-environment digests — is annotated in
+`artifacts/issue-737/DIGEST-ENVIRONMENT.md` (issue #737); the record itself
+is unchanged.
 
 ## 5. Measured buffer requirement (per instance)
 
