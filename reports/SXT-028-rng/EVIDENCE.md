@@ -180,7 +180,11 @@ against a counterfactual rather than asserted (§4, NC-RNG-EXCLUSION).
 `tools/fx_rng_negative_controls.py` (exits non-zero if any control fails to
 fire) → `negative-controls/negative-controls.{json,txt}`;
 `tools/coverage_negative_controls.py --only rng_exclusion` →
-`negative-controls/coverage-gate-control.txt`.
+`negative-controls/coverage-gate-control.txt`. The transcript's count lines are
+point-in-time: re-rendered 2026-11-17, the supported baseline had moved
+1,681 → 1,682 (after-gate 1,676 → 1,677) with coverage-state commit `132c2876`
+(#353, SXT-029 voice-scope-ledger reconciliation); the control verdict
+(gate-only downgrade, exact restore) is unchanged.
 
 | Control | Targets | Result |
 |---|---|---|
