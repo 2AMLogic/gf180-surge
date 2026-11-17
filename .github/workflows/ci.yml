@@ -16,12 +16,15 @@
 # started_at->completed_at timings from the Actions API, re-derived in #736).
 # Raise a limit deliberately if a job legitimately grows.
 #
-# Checkout cap: the two long-budget jobs (tests, rtl-sim) also carry a
-# step-level timeout-minutes: 5 on their actions/checkout step, so a stalled
-# clone fails fast as a visibly-named setup failure instead of consuming the
-# job's test budget and red-flagging a passing suite (#728: one 28m33s
-# checkout stall, 2026-11-16; 30-run sample same day: median 8 s, p95 13 s,
-# one 569 s outlier).
+# Checkout cap: the long-budget jobs (tests, rtl-sim) and the tight-budget
+# provenance-audit job carry a step-level timeout-minutes: 5 on their
+# actions/checkout step, so a stalled clone fails fast as a visibly-named
+# setup failure instead of consuming the job's budget and red-flagging a
+# passing suite or a clean tree (#728: one 28m33s checkout stall,
+# 2026-11-16; 30-run sample same day: median 8 s, p95 13 s, one 569 s
+# outlier; #763: an 896 s stall on 2026-11-17 consumed 99.6% of
+# provenance-audit's 15-minute budget -- the second occurrence, so that
+# job's checkout is capped too; its normal checkout is 10-12 s).
 #
 # Concurrency: superseded pull_request runs are cancelled; push runs on main
 # are never cancelled, so a cancelled main run cannot hide a failure.
@@ -59,6 +62,9 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        # Fails fast as a setup failure if the clone stalls, instead of
+        # burning this job's 15-minute budget (see header, #763).
+        timeout-minutes: 5
         with:
           # The per-commit gate below needs this branch's own commits AND the
           # base-branch tip as real objects. actions/checkout@v4 fetches depth

@@ -153,7 +153,7 @@ file in an inventory, and `.github/workflows/signoff.yml` re-checks both on ever
 
 | Envelope | Inventory — the authoritative list | Content-hashed files | Rest of the envelope |
 |---|---|---|---|
-| `signoff/t1-item9-attestation.json` | `signoff/t1-item9-inventory.json`, key `testbenches` | 230 of 233 checks: 125 under `tests/`, 59 `rtl/*.sv` benches and mutant controls, 45 `tools/*.py`, and `model/integration/negative_controls.py` | one `cold_start` command check, two `pin` checks |
+| `signoff/t1-item9-attestation.json` | `signoff/t1-item9-inventory.json`, key `testbenches` | 231 of 234 checks: 126 under `tests/`, 59 `rtl/*.sv` benches and mutant controls, 45 `tools/*.py`, and `model/integration/negative_controls.py` | one `cold_start` command check, two `pin` checks |
 | `signoff/item-10.attestation.json` | `signoff/hygiene-inventory.json`, key `hygiene` | 5 of 9 checks: `README.md`, `LICENSE`, `.github/workflows/ci.yml`, `.github/workflows/signoff.yml`, `.github/workflows/slow-controls.yml` | four `command` audit checks |
 
 **Read the inventories; this registry does not transcribe them.** The
@@ -283,15 +283,15 @@ the regeneration actually moves bytes the report echoes.
 
 These scripts stamp a sha256 of their own bytes into the records they produce.
 The stamp says *which bytes produced this record*, so superseded values are
-expected: of the ten scripts below, **eight** have current bytes that match
-no committed stamp (`current_bytes_recorded: false`). Two are exceptions:
+expected: of the ten scripts below, **nine** have current bytes that match
+no committed stamp (`current_bytes_recorded: false`). One is an exception:
 `fixtures/render_fixture.py`, re-rendered under the pinned oracle by #126 and
-again by #136, and `fixtures/render_slfo_fixture.py`, added by SXT-041 (#75),
-whose current bytes are hashed into the reference sidecars it produced
-because that leaf's records were rendered from the file as committed — both
-detailed below. That flag is bookkeeping about resolvability, **not** a live
+again by #136 — detailed below. (`fixtures/render_slfo_fixture.py` was a
+second exception by the never-lapsed route until #671 edited the file;
+its stamp no longer resolves and it reads `false` since that change.)
+That flag is bookkeeping about resolvability, **not** a live
 pin: no test asserts byte-equality for anything in this table, and an edit to
-any of the nine still invalidates no record.
+any of the ten still invalidates no record.
 Editing one therefore invalidates no record. What it does cost is resolvability:
 the record's provenance digest no longer names any file in the tree, and only a
 re-render under the pinned oracle restores that. (The tenth entry is the
@@ -309,21 +309,22 @@ This is exactly the re-render case flagged under
 — it is **not** a live pin (nothing re-derives the stamp, and the entry still
 carries no `sha256` field), but its lint disposition was revisited rather than
 assumed, and the #269 "resolvability is already spent" argument no longer applies
-to that one entry. The ninth entry is a second, independent exception —
+to that one entry. The ninth entry was the second, independent exception —
 `fixtures/render_slfo_fixture.py`, added by SXT-041 (#75) after #269 and so not
-one of its eight; see its own note below. The tenth entry (`reports/sxt-013/
+one of its eight — until #671 edited the file and spent that stamp; see its own
+note below. The tenth entry (`reports/sxt-013/
 audition-gate/generate-samples.py`, added by #447) also reads `false`: it
 writes the samples' `harness.tool_sha256` as the literal placeholder
 `<omitted>`, stamping no digest of any file — the audit's heuristic flags it
 on the quoted field literal plus `__file__`, and it is declared here with
-that nuance rather than restructured around the check. The remaining eight stay `false`.
+that nuance rather than restructured around the check. The remaining nine stay `false`.
 
 | Script | Stamped field | Lint-finding disposition (#269; revisited for `fixtures/render_fixture.py` in #126, and stated for `fixtures/render_slfo_fixture.py` in SXT-041 (#75) on the same terms) |
 |---|---|---|
 | `fixtures/render_fixture.py` | `script_sha256` | cleanable, cost no longer zero — an edit now makes a **resolvable** stamp unresolvable until **both** the SXT-028f (#126) and the SXT-028e-sse (#136) bundles are re-rendered (the F841 `preset_slug` finding was cleaned in #269) |
 | `fixtures/render_lfo_fixture.py` | `script_sha256` | cleanable — no finding as of #269 |
 | `fixtures/render_mw_fixture.py` | `script_sha256` | cleanable — no finding as of #269 |
-| `fixtures/render_slfo_fixture.py` | `script_sha256` | cleanable, cost no longer zero — an edit makes a **resolvable** stamp unresolvable until the SXT-041 (#75) references (the six `reports/SXT-041/artifacts/reference-*.json` sidecars) are re-rendered under the pinned oracle, and fails `test_historical_provenance_carries_no_live_equality_claim` until either that re-render lands or the flag is set `false` in the same change (no finding as of SXT-041) |
+| `fixtures/render_slfo_fixture.py` | `script_sha256` | cleanable — ordinary code on the #269 terms; no finding as of SXT-041. The stamp stopped resolving when #671 edited the file: restoring a resolvable stamp requires re-rendering the SXT-041 (#75) references under the pinned oracle, declared and deliberately not done in decision-records/0021 (not a live pin) |
 | `tools/ablate_fx.py` | `script_sha256` | cleanable — no finding as of #269 |
 | `tools/ablation_delta.py` | `script_sha256` | cleanable — no finding as of #269 |
 | `tools/render_lp12_reference.py` | `script_sha256` | cleanable — the two F401 `struct`/`zlib` findings were cleaned in #269 |
@@ -359,17 +360,20 @@ code and still not a live pin — but clean it in a change that either re-render
 the SXT-028f bundles or says plainly that the stamp stopped resolving. This is
 the "does not survive a re-render" clause below, applied rather than deferred.
 
-**The ninth entry inherits the same disposition (SXT-041, #75).**
-`fixtures/render_slfo_fixture.py` is ordinary code on the same terms: a lint
-finding in it is cleanable with no registry ceremony and no leaf re-run. Its
-stamp is currently *resolvable* (`current_bytes_recorded: true`), as
-`fixtures/render_fixture.py`'s has been since #126; what differs is the route.
-`fixtures/render_fixture.py` regained resolvability by being re-rendered, while
-this entry's never lapsed: SXT-041's references were rendered from the file as
-committed. Either way the #126 precedent applies — an edit spends that
-resolvability, which costs no committed record its validity, and is restored
-by re-rendering the SXT-041 references under the pinned oracle; its row in the
-table above records that cost.
+**The ninth entry inherited the same disposition (SXT-041, #75), then spent
+its stamp (#671).** `fixtures/render_slfo_fixture.py` is ordinary code on the
+same terms: a lint finding in it is cleanable with no registry ceremony and no
+leaf re-run. Its stamp was *resolvable* (`current_bytes_recorded: true`) from
+SXT-041 onwards — by the never-lapsed route: its references were rendered from
+the file as committed, where `fixtures/render_fixture.py` regained
+resolvability by being re-rendered. #671 edited the file (live engine identity
+in the render sidecars, F-660-1) and, because those references could not be
+re-rendered in the same change (7 of the 13 name tap builds this repo cannot
+reach; re-rendering them on the stock oracle would be the relabel issue #671
+forbids), it stated the lost resolvability instead — the route the #126
+precedent names as the alternative to a re-render. The flag reads `false`
+since #671; a resolvable stamp comes back only by re-rendering the SXT-041
+references under the pinned oracle. Still ordinary code, still not a live pin.
 
 **The tenth entry inherits the same disposition (#447).**
 `reports/sxt-013/audition-gate/generate-samples.py` is ordinary code on the
@@ -381,7 +385,7 @@ Which counts are #269's: this subsection's heading ("these eight scripts"), its
 "seven of the eight" paragraph, and the "eight scripts' own write sites" check
 below are #269's ruling over the eight entries that existed when it was made,
 and are deliberately not renumbered. The whole-registry counts at the top of
-this section — ten entries, eight `false`, two exceptions — describe the
+this section — ten entries, nine `false`, one exception — describe the
 registry as it stands and do move with it.
 
 What this decision does **not** license:

@@ -3,14 +3,14 @@
   "kind": "generic",
   "status": "pass",
   "t1_item": 9,
-  "summary": "T1 item 9 (Testbenches shipped): 233/233 attestation checks passed (klt signoff --attest)",
+  "summary": "T1 item 9 (Testbenches shipped): 234/234 attestation checks passed (klt signoff --attest)",
   "source": "signoff/t1-item9-inventory.json",
   "attestation": {
     "producer": "klt signoff --attest",
     "inventory_schema_version": 1,
     "hash_algorithm": "sha256-raw-bytes",
-    "check_count": 233,
-    "passed_count": 233,
+    "check_count": 234,
+    "passed_count": 234,
     "checks": [
       {
         "check": "present",
@@ -458,7 +458,7 @@
         "role": "testbench",
         "path": "tests/test_byte_frozen_sources.py",
         "passed": true,
-        "content_hash": "sha256:a82ed5c1b709d545d63619f9f6c3842de03900f01420eaf18ec3c77bd564894d"
+        "content_hash": "sha256:4f9b56414bc56a9bf895c61826eb3d0747cc1dc9bd7bcb9e1ea3740b567b319c"
       },
       {
         "check": "present",
@@ -760,6 +760,13 @@
         "path": "tests/test_shared_refuse.py",
         "passed": true,
         "content_hash": "sha256:9e3ac0a0fdd8bbf22634f9263f106dca739ac014832bee8c4a7725db1ba275f7"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_sidecar_engine_provenance.py",
+        "passed": true,
+        "content_hash": "sha256:36ef2aede4a4d7b8f654786b1b10be38c05b024bdd538b152d7699a5e5a6748c"
       },
       {
         "check": "present",
@@ -1473,7 +1480,7 @@
         "role": "testbench",
         "path": "tools/coverage_negative_controls.py",
         "passed": true,
-        "content_hash": "sha256:c51221150aaf726fdd05c62adbfe7f6c60a47051c8583e206036a1fdffb6375b"
+        "content_hash": "sha256:89d8405a0709a1c6160a7a78bff4883dba013185e90c9ab1b7ce38655cee9dd8"
       },
       {
         "check": "present",
@@ -1578,14 +1585,14 @@
         "role": "testbench",
         "path": "tools/rf_ains34_negative_controls.py",
         "passed": true,
-        "content_hash": "sha256:4b835de9ef0f0cf1669b49e87a7165aaf4117c0a73c164b3017e2e27874439bf"
+        "content_hash": "sha256:16929f82ba5c908d30392524dbf7bb327f9febc0da490e2438800f80dd5490a7"
       },
       {
         "check": "present",
         "role": "testbench",
         "path": "tools/rf_bins12_negative_controls.py",
         "passed": true,
-        "content_hash": "sha256:a1ce63a0fe3f732b26de96db4974f6ae9e4d390dde1533ccfcbbc3d2f8b38567"
+        "content_hash": "sha256:2c56570e4bc4c2a8f5178c10eac69e69d7fe342d24884fe2b96ce036ab9ca93e"
       },
       {
         "check": "present",
@@ -1599,14 +1606,14 @@
         "role": "testbench",
         "path": "tools/rf_global34_negative_controls.py",
         "passed": true,
-        "content_hash": "sha256:5b8633e512cf6859d71dccb00039219b45cef41afa98b12f0550e4f48c79d03f"
+        "content_hash": "sha256:8e5fcea7a3a215082a05495e1e460144988a9bea6cdeb2f3499f5b7261d9eea0"
       },
       {
         "check": "present",
         "role": "testbench",
         "path": "tools/rf_send34_negative_controls.py",
         "passed": true,
-        "content_hash": "sha256:e77b4a1e6f9eab740bced8e83c4df76cf987b2396e5dc38b055df869d860efa7"
+        "content_hash": "sha256:d34081b8439866ae5b98d00ee1b401753e249a086da5654351373b325f31beab"
       },
       {
         "check": "present",
@@ -1671,7 +1678,7 @@
         "path": "signoff/t1-item9-inventory.json",
         "scope": "repo"
       },
-      "content_hash": "sha256:63bdb7179737ff9bc487b8918e39e4ae7a6bb452f4c672c46bdd91e6189c092b"
+      "content_hash": "sha256:35f4772e09e6a087133635b4bca0476b746c2c0cf593aa3e7e163267b473ad41"
     }
   }
 }

@@ -1099,9 +1099,9 @@ def main() -> int:
     try:
         transcript = [
             "SXT-029 negative controls — coverage pipeline (issue #22 acceptance)",
-            "runner: tools/coverage_negative_controls.py; scratch root: "
-            "/tmp/sxt029-negative-controls (recreated each run; published "
-            "outputs never touched)",
+            "runner: tools/coverage_negative_controls.py; scratch root: a "
+            "per-process temporary directory under /tmp (created and "
+            "removed per run; published outputs never touched)",
             "controls are healthy when the PIPELINE fails as designed: a stale "
             "or missing leaf evidence must DOWNGRADE affected presets from "
             "supported to unresolved (never report them supported); a corpus "

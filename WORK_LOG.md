@@ -4,6 +4,14 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-11-17
 
+- **PR #761**: test(lpmoog): pin the comparator exit-2 coefficient-length boundary
+- **Issue #753** (closed): compare_lpmoog_model.py's exit-2 refusal boundary is not pinned by any test, so it can regress to 1 silently
+- **PR #759**: evidence: annotate open-pin corroboration with the measured tie-cell subset
+- **Issue #747** (closed): Annotate the open-pin probe's pnr corroboration with the measured tie-cell decomposition
+- **PR #756**: gitignore: ignore signoff re-derivation venvs
+- **Issue #754** (closed): .gitignore has no venv rule, so the envelope-re-derivation venv a worktree needs is stageable by a stray git add -A
+- **PR #755**: fix(tools): per-process scratch root for coverage negative controls
+- **Issue #751** (closed): tools/coverage_negative_controls.py rmtree's a fixed /tmp scratch root, so two concurrent runs on one host fail each other
 - **PR #748**: test(signoff): assert each committed envelope names the klayout-tools pin
 - **Issue #743** (closed): item-10 envelope provenance records a local dev klt build, not the signoff pin, and no check notices
 - **PR #703**: fix: refuse silent engine taps and honor the exit-2 refusal contract
