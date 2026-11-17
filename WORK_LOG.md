@@ -4,6 +4,15 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-11-17
 
+- **PR #744**: docs(sxt-024): annotate rtl-exactness digest provenance; refresh DAG evidence hash
+- **PR #741**: chore(loom): resync installed Loom to v0.19.1306
+- **PR #740**: test(ci-policy): scan *.yaml workflows, accept subpath pins, exempt reusable-call jobs
+- **PR #739**: ci: correct the rtl-lint cache-miss figures in the timeout comments
+- **PR #738**: docs(sxt-024): measure the iverilog-pin vs 13.0 exactness question; land the environment refutation record (#720)
+- **Issue #737** (closed): SXT-024 rtl-exactness.json: annotate digest values with their generation environment; record pinned-env digests (follow-up to #720)
+- **Issue #736** (closed): Correct the rtl-lint cache-miss timing figures committed in ci.yml (re-derived during PR #733 review)
+- **Issue #735** (closed): Widen workflow policy glob to *.yaml (follow-up from PR #733 review)
+- **Issue #720** (closed): SXT-024 Reverb1 txn_log_sha256 digests may be environment-dependent (reported, not re-derived)
 - **PR #734**: test(byte-frozen): remove the stored attested_inventories counts; gate one prose statement per item
 - **PR #733**: ci: bound the rtl-lint job and SHA-pin every workflow action, with a live policy test
 - **PR #658**: test(byte-frozen): derive the attested_inventories counts from the inventories
