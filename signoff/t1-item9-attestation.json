@@ -507,7 +507,7 @@
         "role": "testbench",
         "path": "tests/test_ci_workflow_policy.py",
         "passed": true,
-        "content_hash": "sha256:a6e850fa74cd6945e7e0e4dc6aa62aa3a7d5a8510fd625d55687b171f99d3b22"
+        "content_hash": "sha256:7c5139d0a92dafdfda9cfb66fe3583c83d499856a234dd12b260a32405b2fed5"
       },
       {
         "check": "present",
