@@ -66,6 +66,7 @@
     "rtl/voice/voice_wrongparam_mutant.sv",
     "tests/test_ablation_delta.py",
     "tests/test_agent_instruction_parity.py",
+    "tests/test_attestation_klt_pin.py",
     "tests/test_byte_frozen_sources.py",
     "tests/test_carrier_drift_screen.py",
     "tests/test_census_blob_common.py",
