@@ -385,7 +385,7 @@ def validate_leaf(lf):
     return True
 
 
-def make_spec(lf, order, letter, presets, b4):
+def make_spec(lf, order, letter, b4):
     fid = f"SXT-028{letter}"
     ab = lf.get("ablation")
     cand = lf["candidates"]
@@ -819,7 +819,7 @@ def main():
     bodies = {}
     for lf in leaves:
         fid = f"SXT-028{lf['letter']}"
-        spec = make_spec(lf, lf["order"], lf["letter"], presets, b4)
+        spec = make_spec(lf, lf["order"], lf["letter"], b4)
         ne = {
             "schema_version": SCHEMA_VERSION,
             "leaf_id": fid,
@@ -872,7 +872,7 @@ def main():
         path.write_text(text, encoding="utf-8")
 
     if args.self_test:
-        run_self_test(out, presets, ablation, b4, letters)
+        run_self_test(out)
 
     print(f"leaves generated: {len(leaves)} "
           f"(filed now: {len(filed)} -> "
@@ -881,7 +881,7 @@ def main():
         f"SXT-028{lf['letter']}" for lf in backlog))
 
 
-def run_self_test(out, presets, ablation, b4, letters):
+def run_self_test(out):
     lines = [
         "SXT-028 generator negative controls (live, this run)",
         "Generator: " + GENERATED_BY,

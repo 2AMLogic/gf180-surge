@@ -11,11 +11,13 @@ import sys
 import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from probes import probe_fx_eq, probe_scheduler
 from probes.emit import write_record
 from probes.probe_fx_reverb1 import stability_analysis
 from probes.validate import make_invalid_record, validate_record
+from evidence_scan import scanned  # noqa: E402
 
 
 def test_invalid_record_is_rejected():
@@ -46,7 +48,10 @@ def test_probe_rerun_is_byte_identical():
         probe_fx_eq.run(os.path.join(d, "eq"))
         probe_scheduler.run(os.path.join(d, "sched"))
         dirs.append(d)
-    for name in sorted(os.listdir(dirs[0] + "/eq")):
+    eq0 = os.path.join(dirs[0], "eq")
+    for name in scanned(sorted(os.listdir(eq0)),
+                        what="sxt-016 probe eq records (rerun "
+                             "byte-identity)", where=eq0, at_least=1):
         a = open(os.path.join(dirs[0], "eq", name), "rb").read()
         b = open(os.path.join(dirs[1], "eq", name), "rb").read()
         assert a == b

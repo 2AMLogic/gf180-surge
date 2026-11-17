@@ -154,11 +154,18 @@ def run_chain(ains, sends, in_l, in_r, a_q):
     return out_l, out_r, send_peaks
 
 
-def checkpoint_set(n_total):
+def checkpoint_set(n_total, settle):
     """Declared checkpoints: last settle block, render blocks 0/1, every 64th,
-    and the final block (absolute block indices)."""
-    cps = {SETTLE_BLOCKS - 1, SETTLE_BLOCKS, SETTLE_BLOCKS + 1, n_total - 1}
-    b = SETTLE_BLOCKS
+    and the final block (absolute block indices).
+
+    `settle` is the CALLER's own pre-roll in blocks and is required: this
+    helper is shared across runners whose pre-rolls are independent constants
+    (this module and run_chorus_model.py are 375 today;
+    model/integration/integration_model.py is 240), so the grid must never
+    silently inherit one module's SETTLE_BLOCKS into another's trace.
+    """
+    cps = {settle - 1, settle, settle + 1, n_total - 1}
+    b = settle
     while b < n_total:
         cps.add(b)
         b += 64
@@ -280,7 +287,7 @@ def main():
             m.ctrl["gain_tgt"] = to_q(db_to_linear_d(m.p.gain_out_f), G_FMT)
             m.ctrl["mix_tgt"] = to_q(clip(m.p.mix_f, -1.0, 1.0), G_FMT)
 
-    cps = checkpoint_set(n_total)
+    cps = checkpoint_set(n_total, settle=SETTLE_BLOCKS)
     trace_blocks = []
     blocks_in = []
     ctrl_words_per_block = []

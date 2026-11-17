@@ -6,11 +6,16 @@ bound by content hash to its DRC, LVS and ERC reports; a recorded tool failure
 is never silently dropped; reports carry no absolute host paths; the
 supply-spec declares ties[]; and `signoff/block-manifest.json` cites items
 2/3/4/11 only once all `product` groups have passing physical-flow evidence
-(live negative control included).
+(live negative control included). The open-pin probe records
+(`<g>/open_pin_probe.json`) are bound by content hash to the committed routed
+stream and carry the pinned tool identity; their input findings are asserted
+only on (instance, pin) identity, never on `$N` net names (klt issue #1063).
 DOES NOT: establish that DRC/LVS/ERC are clean (outcomes are recorded as the
-tools reported them), timing, corners, "gf180mcu implementation", or fidelity.
+tools reported them), timing, corners, "gf180mcu implementation", or fidelity;
+explain why the open pins are open or attribute them to the router.
 Coverage (groups with a stream / all product groups) is reported separately.
 """
+import copy
 import gzip
 import hashlib
 import json
@@ -251,6 +256,103 @@ class T1PhysicalNegativeControl(unittest.TestCase):
         # failure is attributable to the injected defect.
         self.assertEqual(load("wavetable_core", "lvs.report.json")["status"], "match")
         self.assertEqual(load("wavetable_core", "drc.report.json")["status"], "clean")
+
+
+# #679 -- committed open-pin probe records: `signoff/t1-physical/<g>/
+# open_pin_probe.json`, produced by `signoff/t1-physical/open_pin_probe.py`
+# (not a pytest-time run). The records are the artifact; these tests only
+# re-bind them: stream hash, pinned tool identity, and the input findings on
+# (instance, pin) identity. Net names stay unasserted (klt issue #1063).
+PROBE_GROUPS = ("control_top", "ext_mem_instr")
+EXPECT_OPEN_INPUTS = {
+    ("gf180mcu_fd_sc_mcu9t5v0__clkinv_12_0", "I"),
+    ("gf180mcu_fd_sc_mcu9t5v0__clkinv_12_1", "I"),
+    ("gf180mcu_fd_sc_mcu9t5v0__clkinv_16_0", "I"),
+    ("gf180mcu_fd_sc_mcu9t5v0__inv_8_0", "I"),
+}
+
+
+def probe_record(group):
+    return load(group, "open_pin_probe.json")
+
+
+def probe_violations(rec):
+    """Everything wrong with one open-pin probe record, as a list of strings,
+    so the live negative controls can mutate a copy and re-audit with the
+    same code the positive tests run. An unresolved liberty is NO_VERDICT and
+    an examined-input-pin tally of 0 is the anti-vacuity leg: both fail
+    loudly instead of letting "zero input findings" pass vacuously."""
+    v = []
+    g = rec["group"]
+    prov = rec["provenance"]
+    if prov["pin"] != (ROOT / "signoff" / "requirements.txt").read_text().strip():
+        v.append(f"{g}: recorded pin differs from signoff/requirements.txt")
+    if prov["stream_content_hash"] != stream_hash(g):
+        v.append(f"{g}: stream hash differs from the committed .gds.gz")
+    pin = json.loads((ROOT / "signoff" / "t1-item1" / "pdk-pin.json").read_text())
+    lib = prov["liberty"]
+    if lib["content_hash"] != pin["liberty"]["content_hash"] \
+            or lib["revision"] != pin["pdk"]["revision"]:
+        v.append(f"{g}: liberty identity differs from signoff/t1-item1/pdk-pin.json")
+    if not prov["klt_version"]:
+        v.append(f"{g}: record carries no klt version")
+    if not lib["resolved"]:
+        v.append(f"NO_VERDICT: {g}: liberty unresolved, directions are null "
+                 f"({lib['reason']})")
+    if rec["pins_examined"].get("input", 0) <= 0:
+        v.append(f"NO_VERDICT: {g}: zero input pins examined -- the "
+                 f"zero-input-findings check would pass vacuously")
+    inputs = sorted((f["instance"], f["pin"]) for f in rec["findings"]
+                    if f["direction"] == "input")
+    if g == "ext_mem_instr" and inputs != sorted(EXPECT_OPEN_INPUTS):
+        v.append(f"{g}: open input pins {inputs} != the recorded four")
+    if g == "control_top" and inputs:
+        v.append(f"{g}: negative control has open input pins {inputs}")
+    return v
+
+
+class T1PhysicalOpenPinProbe(unittest.TestCase):
+    """#679: the committed open-pin probe records re-bind to their streams.
+
+    Pins the record's binding to the stream and its input findings on
+    (instance, pin) identity. DOES NOT: explain the opens, attribute them to
+    the router, or establish anything about fidelity, synthesis or hardware.
+    """
+
+    def test_records_rebind_to_streams_and_pins(self):
+        for g in PROBE_GROUPS:
+            rec = probe_record(g)
+            self.assertEqual(rec["group"], g)
+            self.assertEqual(probe_violations(rec), [], g)
+
+    def test_negative_control_zero_input_tally_fails_the_anti_vacuity_leg(self):
+        rec = copy.deepcopy(probe_record("control_top"))
+        rec["pins_examined"]["input"] = 0
+        bad = probe_violations(rec)
+        self.assertTrue(any("vacuously" in x for x in bad), bad)
+
+    def test_negative_control_flipped_direction_fails_control_top(self):
+        rec = copy.deepcopy(probe_record("control_top"))
+        self.assertTrue(rec["findings"])
+        rec["findings"][0]["direction"] = "input"
+        bad = probe_violations(rec)
+        self.assertTrue(any("negative control has open input pins" in x
+                            for x in bad), bad)
+
+    def test_negative_control_mutated_stream_hash_fails_the_binding(self):
+        rec = copy.deepcopy(probe_record("ext_mem_instr"))
+        rec["provenance"]["stream_content_hash"] = \
+            "sha256:" + "0" * 64
+        bad = probe_violations(rec)
+        self.assertTrue(any("stream hash differs" in x for x in bad), bad)
+
+    def test_records_carry_the_non_contractual_net_name_caveat(self):
+        # The observed `$N` values are explicitly non-contractual (klt issue
+        # #1063): the records must say so, and no assertion in this file reads
+        # a finding's net (probe_violations keys on instance/pin only).
+        for g in PROBE_GROUPS:
+            rec = probe_record(g)
+            self.assertTrue(any("#1063" in n for n in rec["notes"]), g)
 
 
 if __name__ == "__main__":

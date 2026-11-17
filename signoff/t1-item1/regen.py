@@ -7,6 +7,8 @@ commit-safe artifacts: request, report.json, netlist, synth_<top>.ys. On a
 non-zero exit it also distils the Yosys log klt writes beside the executed
 script into `timeout-progress.txt`, so a timeout record can state the cell
 count and the passes reached instead of only the error message (#579). The
+`failure.txt` error payload klt wrote is run through the same path
+substitution (#714). The
 raw log is not commit-safe (machine-local absolute paths, and hundreds of
 thousands of suppressed debug lines), for the same reason `synth_<top>.run.ys`
 is not; the excerpt keeps the load-bearing lines with paths substituted.
@@ -41,7 +43,27 @@ NATIVE_GROUPS = {"control_top", "ext_mem_instr", "wavetable_core"}
 # well past 300 s (#579, decision of 2026-11-13). Why it is that expensive is
 # NOT established by any run here -- see #641 for the suspected, unverified
 # cause; do not restate one as fact in this file.
-YOSYS_TIMEOUT_S = {"galactic_core": 1800}
+#
+# The five #580 groups below need more than 300 s because exposing the result
+# ports made their datapath observable. 1800 s is NOT known to be sufficient
+# for them: all five were measured at that budget and all five were still
+# killed inside the same Yosys step (see RECORD.md). The figure is kept at the
+# measured one so the committed failure records are reproducible, not because
+# it is a requirement. Raising it further is not the next step -- klt's cap is
+# 3600 s, only 2x what already failed; see RECORD.md and #579/#641/#657 for
+# why a budget argument is exhausted here.
+#
+# rf_ains34_core is deliberately NOT in this table: it keeps the 300 s default
+# because it exits 0 there -- but only because its own inputs are not ports,
+# so Yosys constant-folds its datapath away (RECORD.md "rf_ains34_core").
+YOSYS_TIMEOUT_S = {
+    "galactic_core": 1800,
+    "logical4_core": 1800,
+    "rf_bins12_core": 1800,
+    "rf_global2_core": 1800,
+    "rf_global34_core": 1800,
+    "rf_send34_core": 1800,
+}
 # The klt to run; override for a pinned/throwaway environment (never install
 # over the host-wide klt). NOTE: a klt without `yosys_timeout_s` support
 # rejects a request that declares it, and this script then records that
@@ -68,20 +90,30 @@ KEEP_RE = re.compile(
 )
 
 
+def neutral_paths(text):
+    """Machine-neutral form of a payload: ROOT -> <repo>, then home -> <home>.
+
+    ROOT is substituted first: it sits under home, so the home replacement
+    only fires on a path elsewhere under home. One shared helper for the
+    distil_log() excerpt and the failure.txt payload (#714), so a re-run
+    from any worktree reproduces both committed records byte for byte.
+    """
+    return text.replace(str(ROOT), "<repo>").replace(str(pathlib.Path.home()), "<home>")
+
+
 def distil_log(text):
     """Commit-safe excerpt of a Yosys log: kept lines, paths substituted.
 
     Deterministic (same log -> same excerpt), so re-running regen.py
     reproduces the committed artifact byte for byte.
     """
-    home = str(pathlib.Path.home())
     out_lines, dropped = [], 0
     for line in text.splitlines():
         if KEEP_RE.match(line):
             if dropped:
                 out_lines.append(f"[... {dropped} line(s) omitted ...]")
                 dropped = 0
-            out_lines.append(line.replace(str(ROOT), "<repo>").replace(home, "<home>"))
+            out_lines.append(neutral_paths(line))
         else:
             dropped += 1
     if dropped:
@@ -141,7 +173,7 @@ def main(only):
             # verdict it does not belong to.
             (d / "timeout-progress.txt").unlink(missing_ok=True)
         else:
-            (d / "failure.txt").write_text(p.stdout + "\n" + p.stderr)
+            (d / "failure.txt").write_text(neutral_paths(p.stdout + "\n" + p.stderr))
             # klt writes <script>.log beside the executed script even on a
             # timeout; distil it so the record can quote the progress reached.
             log = out / f"synth_{g['top']}.run.log"

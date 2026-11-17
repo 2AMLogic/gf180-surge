@@ -2,7 +2,7 @@
   "schema_version": 1,
   "kind": "t1-attestation-inventory",
   "t1_item": 1,
-  "description": "PARTIAL (4 of 11 product groups: control_top, ext_mem_instr, wavetable_core native; reverb1_core via pinned sv2v 0.0.13, RTL as written). The other 7 groups are not attested: 6 report a control skeleton only (#580) and galactic_core is NO_VERDICT (#579); see signoff/t1-item1/README.md. Not cited by signoff/block-manifest.json.",
+  "description": "PARTIAL (4 of 11 product groups: control_top, ext_mem_instr, wavetable_core native; reverb1_core via pinned sv2v 0.0.13, RTL as written). The other 7 groups are not attested: of the 6 #580 groups, 5 have no netlist at all (NO_VERDICT -- Yosys killed at a 1800 s budget) and rf_ains34_core exits 0 but its netlist is a constant-folded shell, because that core's own inputs are internal logic rather than ports; galactic_core is NO_VERDICT (#579). See signoff/t1-item1/README.md and signoff/t1-item1/RECORD.md. Not cited by signoff/block-manifest.json.",
   "sources": [
     "rtl/control/control_top.sv",
     "rtl/effects/reverb1/reverb1_core.sv",
