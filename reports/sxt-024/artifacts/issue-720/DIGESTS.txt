@@ -1,0 +1,38 @@
+# Machine-readable companion to ENV-REFUTATION.md (issue #720, 2026-11-17)
+# Parsed txn_log_sha256 values (rtl side) reported by tools/run_reverb_rtl.py --keep.
+# All Linux legs: exit 0, exact=True for prs-256b-reset48 and click-512b,
+# mutant verdict CONTROL-OK. Committed row = reports/sxt-024/rtl-exactness.json as committed.
+
+tree=HEAD            iverilog=12.0-2build2(/usr/bin)  numpy=1.26.4
+  prs-256b-reset48 rtl=fbbeeba682738d0cb66375ebb28de1df22e4cf2f181b7bc0f0c7703894ce2eb8
+  click-512b       rtl=d75c9b899f2c679152b7eb860c0ce9e5ac6f5830384f9c59fc8ac3cdf85db8e0
+  mutant-tap7      rtl=5a07312f4a58738e42470f8a02e985dc3682897c0db85000598cb45334cbac0a
+tree=HEAD            iverilog=13.0(v13_0,~/.local/bin)  numpy=1.26.4
+  prs-256b-reset48 rtl=fbbeeba682738d0cb66375ebb28de1df22e4cf2f181b7bc0f0c7703894ce2eb8
+  click-512b       rtl=d75c9b899f2c679152b7eb860c0ce9e5ac6f5830384f9c59fc8ac3cdf85db8e0
+  mutant-tap7      rtl=5a07312f4a58738e42470f8a02e985dc3682897c0db85000598cb45334cbac0a
+tree=fb58c0e2        iverilog=12.0-2build2(/usr/bin)  numpy=1.26.4
+  prs-256b-reset48 rtl=fbbeeba682738d0cb66375ebb28de1df22e4cf2f181b7bc0f0c7703894ce2eb8
+  click-512b       rtl=d75c9b899f2c679152b7eb860c0ce9e5ac6f5830384f9c59fc8ac3cdf85db8e0
+  mutant-tap7      rtl=5a07312f4a58738e42470f8a02e985dc3682897c0db85000598cb45334cbac0a
+tree=fb58c0e2        iverilog=13.0(v13_0,~/.local/bin)  numpy=1.26.4
+  prs-256b-reset48 rtl=fbbeeba682738d0cb66375ebb28de1df22e4cf2f181b7bc0f0c7703894ce2eb8
+  click-512b       rtl=d75c9b899f2c679152b7eb860c0ce9e5ac6f5830384f9c59fc8ac3cdf85db8e0
+  mutant-tap7      rtl=5a07312f4a58738e42470f8a02e985dc3682897c0db85000598cb45334cbac0a
+tree=HEAD            iverilog=13.0(v13_0,~/.local/bin)  numpy=2.4.2
+  prs-256b-reset48 rtl=fbbeeba682738d0cb66375ebb28de1df22e4cf2f181b7bc0f0c7703894ce2eb8
+  click-512b       rtl=f617cc57df8248dc2239c910a457c50b5c90b46aad8cf6044e56f9cfd8bc9b0b
+  mutant-tap7      rtl=5a07312f4a58738e42470f8a02e985dc3682897c0db85000598cb45334cbac0a
+tree=HEAD            iverilog=13.0(v13_0,~/.local/bin)  numpy=2.0.2,2.1.3,2.2.6,2.3.4
+  prs-256b-reset48 rtl=fbbeeba682738d0cb66375ebb28de1df22e4cf2f181b7bc0f0c7703894ce2eb8
+  click-512b       rtl=f617cc57df8248dc2239c910a457c50b5c90b46aad8cf6044e56f9cfd8bc9b0b
+  mutant-tap7      rtl=5a07312f4a58738e42470f8a02e985dc3682897c0db85000598cb45334cbac0a
+tree=fb58c0e2        iverilog=13.0(v13_0)  numpy=unknown  platform=macOS  (committed record)
+  prs-256b-reset48 rtl=f74affb0e3820a91d7a0501fd5280d5141cffeca166d467d70c69872c00e108f
+  click-512b       rtl=b8f5c0ac2bac9eac99f3d315824984ae8517215e50ded5852ef52c0f76c49f84
+  mutant-tap7      rtl=6e8bf8a8849402b18a89d338e57aaed0e81ad8d3965cd00872fd3a7cd5381c16
+
+# Raw kept-file identity across the four Linux (tree x iverilog) cells:
+#   txn_rtl.txt prs-256b-reset48 sha256 = b4d04c5bbcb1f04494207d2d3ae92390ae62e56eb4410636e9677ddb5f4c4269
+#   txn_rtl.txt click-512b       sha256 = 402febe4b66995759fa16b63a654ab9db6b11cde7dfb9188cfecdf4667d2c178
+#   tb_trace.txt / mem_rtl.hex identical; only sim.out (compiled binary) differs.

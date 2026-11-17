@@ -387,6 +387,23 @@ order), and — case A — the full final external-memory image:
 | click-512b | 512 | committed click-dry send input (real preset params) | EXACT | EXACT | EXACT (557,056 = 512·32·34) | implied by write log | 34 words/frame ✓ |
 | reverb1_broken_mutant (tap-7 write silently skipped) | 256 | = case A | — | — | — | — | **CONTROL-OK: FAILS the comparison** (stale-buffer stub detected) |
 
+**Environment refutation (issue #720, 2026-11-17).** This record cites
+Icarus Verilog 13.0 while `signoff/t1-item9-inventory.json` declares the pin
+`12.0-2build2`. Measured on the Linux worker: the runner passes
+**byte-identically** under both versions — the pin is present at
+`/usr/bin/iverilog` (dpkg `iverilog 12.0-2build2`), shadowed in the default
+PATH by `~/.local/bin/iverilog` 13.0 (v13_0), the version cited above — and
+the mutant control stays CONTROL-OK under both. The committed
+`txn_log_sha256` *values* do not reproduce in any measured
+(tree × iverilog × numpy) cell — two tree states including this record's own
+commit `fb58c0e2`, six numpy versions: they belong to the macOS generation
+environment (the runner at `fb58c0e2` hardcoded a `/var/folders/…` temp dir;
+portability fix `9e925830`), not to 13.0-on-Linux. numpy ≥ 2.0 alone moves
+the click-512b digest (stimulus quantization float32 path) while leaving
+every verdict `exact=True`. Full matrix, digests and reproduce script:
+`artifacts/issue-720/`. Verdicts unchanged; the committed record was not
+regenerated.
+
 ## 5. Measured buffer requirement (per instance)
 
 `buffer-requirement.json` (sha256
