@@ -7,22 +7,20 @@ This is a forge workflow snapshot. Issue closure and labels establish no fidelit
 
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
 
-- **#658**: test(byte-frozen): derive the attested_inventories counts from the inventories
-- **#708**: fix(model): coerce AW-49 input-boundary quantizer to double, restoring numpy-version-invariant stimulus
-- **#716**: chore(loom): resync installed Loom to v0.19.1302
+_None._
 
 ## Very Important
 
 `loom:very-important` (one counts per workspace); every stage takes these first.
 
-- **#16**: SXT-023: Implement Delay and EQ
+- **#16**: SXT-023: Implement Delay and EQ *(held)*
 
 ## Important
 
 `loom:important`; taken before unlabelled work.
 
 - **#167**: Re-grade the 4 STALE SXT-034 spectral_corr artifacts on the oracle host under the #110 definition
-- **#381**: SXT-012 follow-up (#310): implement the one-command carrier reproducibility census per decision record 0019
+- **#381**: SXT-012 follow-up (#310): implement the one-command carrier reproducibility census per decision record 0019 *(held)*
 - **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus)
 
 ## Ready
@@ -31,8 +29,6 @@ Human-approved issues ready for implementation (`loom:issue`).
 
 - **#167**: Re-grade the 4 STALE SXT-034 spectral_corr artifacts on the oracle host under the #110 definition
 - **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus)
-- **#679**: Commit a reproducible probe for the four open input pins behind the ext_mem_instr LVS mismatch
-- **#720**: SXT-024 Reverb1 txn_log_sha256 digests may be environment-dependent (reported, not re-derived)
 
 ## In Progress
 
@@ -43,89 +39,83 @@ Issues currently being built (`loom:building`).
 - **#622**: Regenerate the two drifted tb_voice.sv negative controls and re-derive the T1 item 9 attestation
 - **#631**: Remove the private build_and_run/main copies in compare_vel_rtl_model.py and compare_pm_rtl_model.py: last two leaf harnesses off the shared run_leaf_comparison path
 - **#634**: Remove the five copy-pasted per-leaf RTL harness-reporting test files: fold onto one table-parametrized battery
-- **#649**: docs/byte-frozen-sources.json attested_inventories counts are stale and nothing re-derives them
-- **#657**: galactic_core: trace the unsortable-cells / ABC combinational-loop obstacle that survived the arithmetic narrowing (still NO_VERDICT)
 - **#663**: Remove the private render_bus copy in tools/render_wt_reference.py: it is the shared _render_reference_common.render_bus with a different constructor call
 - **#668**: SXT-028a: AW-49 canonical stimulus quantization is numpy-major-version sensitive (NEP 50) — disposition needed
 - **#671**: Reference sidecars inherit engine identity from the extractor inputs, so it does not identify the rendering engine (F-660-1)
 - **#681**: compare_lp12_model.py: a present-but-silent engine tap still grades the engine stability leg BOUNDED (and refusals exit 1, not the documented 2)
-- **#723**: tests/evidence_scan.py is load-bearing for 11 non-vacuity guards but is attested by nothing: weakening it restores every vacuous PASS with no record going STALE
+- **#743**: item-10 envelope provenance records a local dev klt build, not the signoff pin, and no check notices
+- **#747**: Annotate the open-pin probe's pnr corroboration with the measured tie-cell decomposition
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-- **#712**: trace galactic_core's ABC loop reports to the counts/adv_idx memory mapping and remove them
+- **#748**: test(signoff): assert each committed envelope names the klayout-tools pin
 
 ## Approved (Awaiting Merge)
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-- **#658**: test(byte-frozen): derive the attested_inventories counts from the inventories
-- **#708**: fix(model): coerce AW-49 input-boundary quantizer to double, restoring numpy-version-invariant stimulus
-- **#716**: chore(loom): resync installed Loom to v0.19.1302
+_None._
 
 ## Proposed
 
 Issues carrying `loom:curated`.
 
-- **#12**: SXT-017: Freeze profile v1 *(curated)*
-- **#16**: SXT-023: Implement Delay and EQ *(curated)*
+- **#12**: SXT-017: Freeze profile v1 *(curated)* *(held)*
+- **#16**: SXT-023: Implement Delay and EQ *(curated)* *(held)*
 - **#70**: SXT-036: voice leaf — modulation behavior: velocity *(curated)*
-- **#72**: SXT-038: voice leaf — filter algorithm: LP 24 dB *(curated)*
-- **#94**: SXT-028c follow-up: pin the tap re-render hash pair for committed reference fixtures *(curated)*
-- **#107**: Champion: Merge-Risk Hold Digest *(curated)*
-- **#135**: SXT-028e-sse follow-up: discharge the FuzzTable<1> re-derivation on the pinned arm64/libc++ oracle host *(curated)*
-- **#155**: SXT-028l follow-up (F-028l-1/2/3): oracle-host reference leg + re-verify the declared send-routing contracts for the send3/send4 leaf *(curated)*
-- **#270**: Re-grade sxt-028a (oracle host) and SXT-028e-sse (glibc host) spectral_corr artifacts left pre-#110 by #165 *(curated)*
-- **#305**: Oracle infra gap: no reachable source/build for sxt028c-tap sibling commit (narrower than #232) *(curated)*
-- **#307**: Oracle infra gap: no DR-0005-class tap patch/build exists for the LP 24 dB (SXT-038/#101) full-engine leg *(curated)*
-- **#310**: SXT-028f follow-up (F-028f-3): SXT-012 fixture policy for source-nondeterministic presets (39/49 Reverb 2 carriers refused by the 3x render gate) *(curated)*
-- **#317**: SXT-028e-sse follow-up (F-028e-sse-1): re-run the Distortion SSE reference leg on the arm64 macOS evidence host (rcp_ps is implementation-defined) *(curated)*
-- **#318**: Audit every leaf's run_*_model.py for the silent-pre-roll settle boundary measured in #136 (worth 73 dB on one leaf) *(curated)*
+- **#72**: SXT-038: voice leaf — filter algorithm: LP 24 dB *(curated)* *(held)*
+- **#94**: SXT-028c follow-up: pin the tap re-render hash pair for committed reference fixtures *(curated)* *(held)*
+- **#107**: Champion: Merge-Risk Hold Digest *(curated)* *(held)*
+- **#135**: SXT-028e-sse follow-up: discharge the FuzzTable<1> re-derivation on the pinned arm64/libc++ oracle host *(curated)* *(held)*
+- **#155**: SXT-028l follow-up (F-028l-1/2/3): oracle-host reference leg + re-verify the declared send-routing contracts for the send3/send4 leaf *(curated)* *(held)*
+- **#270**: Re-grade sxt-028a (oracle host) and SXT-028e-sse (glibc host) spectral_corr artifacts left pre-#110 by #165 *(curated)* *(held)*
+- **#305**: Oracle infra gap: no reachable source/build for sxt028c-tap sibling commit (narrower than #232) *(curated)* *(held)*
+- **#307**: Oracle infra gap: no DR-0005-class tap patch/build exists for the LP 24 dB (SXT-038/#101) full-engine leg *(curated)* *(held)*
+- **#310**: SXT-028f follow-up (F-028f-3): SXT-012 fixture policy for source-nondeterministic presets (39/49 Reverb 2 carriers refused by the 3x render gate) *(curated)* *(held)*
+- **#317**: SXT-028e-sse follow-up (F-028e-sse-1): re-run the Distortion SSE reference leg on the arm64 macOS evidence host (rcp_ps is implementation-defined) *(curated)* *(held)*
+- **#318**: Audit every leaf's run_*_model.py for the silent-pre-roll settle boundary measured in #136 (worth 73 dB on one leaf) *(curated)* *(held)*
 - **#331**: SXT-028h/028d/028g: six declared render carriers fail the engine-side per-scene drift gate (measured by #322) — screen drift-0 replacements or record bounded gaps *(curated)*
 - **#372**: Settle-boundary audit: input-only effect tap so Delay/EQ, Chorus and Reverb 2 get a verdict (split from #318) *(curated)*
-- **#381**: SXT-012 follow-up (#310): implement the one-command carrier reproducibility census per decision record 0019 *(curated)*
+- **#381**: SXT-012 follow-up (#310): implement the one-command carrier reproducibility census per decision record 0019 *(curated)* *(held)*
 - **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus) *(curated)*
 - **#475**: RTL: rf_ains34_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN) *(curated)*
 - **#497**: Track the gap to T1 (klayout-tools design-evidence-tiers.md) *(curated)*
-- **#554**: T1 items 2/3/4/11 Phase B: gf180mcu physical flow for the 8 groups blocked on #537 *(curated)*
-- **#565**: Rebuild the DR-0006 tap-patched oracle builds (sxt028a-tap, sxt028c-tap) from source with a recorded identity *(curated)*
-- **#580**: T1 item 1: logical4_core and rf_* cores expose only block_done, so synthesis removes the datapath *(curated)*
+- **#554**: T1 items 2/3/4/11 Phase B: gf180mcu physical flow for the 8 groups blocked on #537 *(curated)* *(held)*
+- **#565**: Rebuild the DR-0006 tap-patched oracle builds (sxt028a-tap, sxt028c-tap) from source with a recorded identity *(curated)* *(held)*
+- **#580**: T1 item 1: logical4_core and rf_* cores expose only block_done, so synthesis removes the datapath *(curated)* *(held)*
 - **#622**: Regenerate the two drifted tb_voice.sv negative controls and re-derive the T1 item 9 attestation *(curated)*
-- **#649**: docs/byte-frozen-sources.json attested_inventories counts are stale and nothing re-derives them *(curated)*
-- **#657**: galactic_core: trace the unsortable-cells / ABC combinational-loop obstacle that survived the arithmetic narrowing (still NO_VERDICT) *(curated)*
 - **#663**: Remove the private render_bus copy in tools/render_wt_reference.py: it is the shared _render_reference_common.render_bus with a different constructor call *(curated)*
 - **#668**: SXT-028a: AW-49 canonical stimulus quantization is numpy-major-version sensitive (NEP 50) — disposition needed *(curated)*
 - **#671**: Reference sidecars inherit engine identity from the extractor inputs, so it does not identify the rendering engine (F-660-1) *(curated)*
-- **#679**: Commit a reproducible probe for the four open input pins behind the ext_mem_instr LVS mismatch *(curated)*
 - **#681**: compare_lp12_model.py: a present-but-silent engine tap still grades the engine stability leg BOUNDED (and refusals exit 1, not the documented 2) *(curated)*
-- **#720**: SXT-024 Reverb1 txn_log_sha256 digests may be environment-dependent (reported, not re-derived) *(curated)*
-- **#723**: tests/evidence_scan.py is load-bearing for 11 non-vacuity guards but is attested by nothing: weakening it restores every vacuous PASS with no record going STALE *(curated)*
+- **#743**: item-10 envelope provenance records a local dev klt build, not the signoff pin, and no check notices *(curated)*
+- **#747**: Annotate the open-pin probe's pnr corroboration with the measured tie-cell decomposition *(curated)*
 
 ## Proposed (Architect / Hermit)
 
-- **#635**: Remove never-instantiated fx_line_ext.sv: the SXT-023 'external-memory model' is dead and has drifted from the inline arrays the bench uses *(hermit)*
+- **#635**: Remove never-instantiated fx_line_ext.sv: the SXT-023 'external-memory model' is dead and has drifted from the inline arrays the bench uses *(hermit)* *(held)*
 
 ## Epics
 
-- **#1**: Epic: E1 — Reference, corpus, and product profile
-- **#2**: Epic: E2 — Verified core: first complete wet patch
-- **#3**: Epic: E3 — Coverage expansion and hardware qualification
+- **#1**: Epic: E1 — Reference, corpus, and product profile *(held)*
+- **#2**: Epic: E2 — Verified core: first complete wet patch *(held)*
+- **#3**: Epic: E3 — Coverage expansion and hardware qualification *(held)*
 - **#331**: SXT-028h/028d/028g: six declared render carriers fail the engine-side per-scene drift gate (measured by #322) — screen drift-0 replacements or record bounded gaps
 
 ## Backlog Balance
 
 | Bucket | Count |
 |------|-------|
-| Operator merge-risk holds | 3 |
+| Operator merge-risk holds | 0 |
 | Very important | 1 |
 | Important | 3 |
-| Ready (`loom:issue`) | 4 |
-| In Progress (`loom:building`) | 12 |
+| Ready (`loom:issue`) | 2 |
+| In Progress (`loom:building`) | 11 |
 | PRs awaiting review | 1 |
-| Approved PRs awaiting merge | 3 |
-| Curated | 33 |
+| Approved PRs awaiting merge | 0 |
+| Curated | 30 |
 | Architect / Hermit proposals | 1 |
 | Active epics | 4 |
 <!-- guide:plan-body:end -->
