@@ -4,6 +4,10 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-11-17
 
+- **PR #748**: test(signoff): assert each committed envelope names the klayout-tools pin
+- **Issue #743** (closed): item-10 envelope provenance records a local dev klt build, not the signoff pin, and no check notices
+- **PR #703**: fix: refuse silent engine taps and honor the exit-2 refusal contract
+- **Issue #681** (closed): compare_lp12_model.py: a present-but-silent engine tap still grades the engine stability leg BOUNDED (and refusals exit 1, not the documented 2)
 - **PR #746**: evidence(t1-physical): commit the open-pin extraction probe records and re-bind them in the flow test
 - **Issue #679** (closed): Commit a reproducible probe for the four open input pins behind the ext_mem_instr LVS mismatch
 - **PR #744**: docs(sxt-024): annotate rtl-exactness digest provenance; refresh DAG evidence hash
