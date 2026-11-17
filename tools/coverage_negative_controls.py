@@ -61,6 +61,7 @@ import json
 import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
@@ -1093,62 +1094,65 @@ def main() -> int:
                          "gate control under reports/SXT-028-rng/.")
     args = ap.parse_args()
 
-    if NC_ROOT.exists():
-        shutil.rmtree(NC_ROOT)
-    NC_ROOT.mkdir(parents=True)
+    global NC_ROOT
+    NC_ROOT = Path(tempfile.mkdtemp(prefix="sxt029-negative-controls-"))
+    try:
+        transcript = [
+            "SXT-029 negative controls — coverage pipeline (issue #22 acceptance)",
+            "runner: tools/coverage_negative_controls.py; scratch root: "
+            "/tmp/sxt029-negative-controls (recreated each run; published "
+            "outputs never touched)",
+            "controls are healthy when the PIPELINE fails as designed: a stale "
+            "or missing leaf evidence must DOWNGRADE affected presets from "
+            "supported to unresolved (never report them supported); a corpus "
+            "entry without a coverage row must REFUSE fail-closed.",
+            "",
+        ]
+        controls = [
+            control_stale_hash,
+            control_stale_missing,
+            control_row_missing,
+            control_sha_disagree,
+            control_rng_exclusion,
+            control_f1_original_stage,
+            control_voice_pin_corrupt,
+            control_integration_gate,
+            control_evidence_readiness,
+        ]
+        if args.only:
+            wanted = set(args.only)
+            unknown = wanted - {c.__name__[len("control_"):] for c in controls}
+            if unknown:
+                print(f"unknown control(s): {sorted(unknown)}", file=sys.stderr)
+                return 2
+            controls = [c for c in controls
+                        if c.__name__[len("control_"):] in wanted]
+            transcript.insert(3, f"SUBSET RUN: only {sorted(wanted)}")
+        failed = []
+        for c in controls:
+            try:
+                c(transcript)
+            except AssertionError as e:
+                failed.append(c.__name__)
+                transcript.append(f"    FAIL: {e}")
+            transcript.append("")
 
-    transcript = [
-        "SXT-029 negative controls — coverage pipeline (issue #22 acceptance)",
-        "runner: tools/coverage_negative_controls.py; scratch root: "
-        "/tmp/sxt029-negative-controls (recreated each run; published "
-        "outputs never touched)",
-        "controls are healthy when the PIPELINE fails as designed: a stale "
-        "or missing leaf evidence must DOWNGRADE affected presets from "
-        "supported to unresolved (never report them supported); a corpus "
-        "entry without a coverage row must REFUSE fail-closed.",
-        "",
-    ]
-    controls = [
-        control_stale_hash,
-        control_stale_missing,
-        control_row_missing,
-        control_sha_disagree,
-        control_rng_exclusion,
-        control_f1_original_stage,
-        control_voice_pin_corrupt,
-        control_integration_gate,
-        control_evidence_readiness,
-    ]
-    if args.only:
-        wanted = set(args.only)
-        unknown = wanted - {c.__name__[len("control_"):] for c in controls}
-        if unknown:
-            print(f"unknown control(s): {sorted(unknown)}", file=sys.stderr)
-            return 2
-        controls = [c for c in controls
-                    if c.__name__[len("control_"):] in wanted]
-        transcript.insert(3, f"SUBSET RUN: only {sorted(wanted)}")
-    failed = []
-    for c in controls:
-        try:
-            c(transcript)
-        except AssertionError as e:
-            failed.append(c.__name__)
-            transcript.append(f"    FAIL: {e}")
-        transcript.append("")
-
-    if failed:
-        transcript.append(f"RESULT: FAIL — unhealthy controls: {', '.join(failed)}")
-        status = 1
-    else:
-        transcript.append("RESULT: PASS — all controls healthy (each "
-                          "demonstrably fails the check it targets)")
-        status = 0
-    transcript_path = REPO / args.transcript
-    transcript_path.parent.mkdir(parents=True, exist_ok=True)
-    transcript_path.write_text("\n".join(transcript) + "\n", encoding="utf-8")
-    print("\n".join(transcript))
-    return status
+        if failed:
+            transcript.append(f"RESULT: FAIL — unhealthy controls: "
+                              f"{', '.join(failed)}")
+            status = 1
+        else:
+            transcript.append("RESULT: PASS — all controls healthy (each "
+                              "demonstrably fails the check it targets)")
+            status = 0
+        transcript_path = REPO / args.transcript
+        transcript_path.parent.mkdir(parents=True, exist_ok=True)
+        transcript_path.write_text("\n".join(transcript) + "\n",
+                                   encoding="utf-8")
+        print("\n".join(transcript))
+        return status
+    finally:
+        shutil.rmtree(NC_ROOT, ignore_errors=True)
 
 
 if __name__ == "__main__":

@@ -69,6 +69,18 @@ def write_json(path, obj):
     path.write_text(json.dumps(obj, indent=2) + "\n")
 
 
+def neutral_paths(text):
+    """Machine-neutral form of a payload: ROOT -> <repo>, then home -> <home>.
+
+    ROOT is substituted first: it sits under home, so the home replacement
+    only fires on a path elsewhere under home. Same tokens and ordering as
+    signoff/t1-item1/regen.py's neutral_paths (#714), so a pnr.failure.txt
+    record committed from any worktree or host carries no machine-local
+    path and later re-runs reproduce it byte for byte.
+    """
+    return text.replace(str(ROOT), "<repo>").replace(str(pathlib.Path.home()), "<home>")
+
+
 PACKED = ("*.gds", "drc.report.json", "erc.report.json", "lvs.report.json",
           "pnr.report.json")
 
@@ -113,7 +125,8 @@ def run_group(top):
     status["place-and-route"] = p.returncode
     (d / "pnr.report.json").write_text(p.stdout)
     if p.returncode != 0:
-        (d / "pnr.failure.txt").write_text(p.stdout + "\n" + p.stderr)
+        (d / "pnr.failure.txt").write_text(
+            neutral_paths(p.stdout + "\n" + p.stderr))
         write_json(d / "exit_status.json", status)
         shutil.rmtree(scratch, ignore_errors=True)
         print(top, "place-and-route FAILED", flush=True)

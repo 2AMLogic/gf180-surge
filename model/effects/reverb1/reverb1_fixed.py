@@ -320,10 +320,6 @@ class Reverb1Fixed:
             h.update(v.to_bytes(4, "little", signed=True))
         return h.hexdigest()
 
-    def buffer_json(self):
-        return {"taps_words": len(self.delay), "predelay_words": len(self.predelay),
-                "tap_bits": STORAGE_BITS, "predelay_bits": STORAGE_BITS}
-
 
 class SchroederGeneric:
     """NEGATIVE CONTROL ONLY (issue #17 acceptance: a generic reverb under a

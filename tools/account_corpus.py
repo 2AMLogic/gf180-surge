@@ -62,7 +62,7 @@ def _event_profile():
     }
 
 
-def scan_corpus(limit_free_only=False):
+def scan_corpus():
     """Account every graph; returns (per-entry minimal records, counts)."""
     ep = _event_profile()
     records = []
@@ -215,7 +215,7 @@ def cross_check_census(records):
     }
 
 
-def pick_examples(records, lines_by_path):
+def pick_examples(lines_by_path):
     """Deterministic worked-example selection from real corpus entries."""
     def enabled(d):
         return [s for s in d["g"]["fx"] if s.get("on")]
@@ -592,7 +592,7 @@ def main():
     _dump(os.path.join(args.outdir, "decision-239-modroute-shape.json"), shape)
 
     # worked examples ----------------------------------------------------------
-    picks = pick_examples(records, lines_by_path)
+    picks = pick_examples(lines_by_path)
     for key, fname in (("four_fx_instances", "example-a-four-fx-instances.json"),
                        ("two_scene_unison", "example-b-two-scene-unison.json"),
                        ("all_fx_off", "example-c-all-fx-off-baseline.json")):

@@ -113,6 +113,38 @@ re-keyed only for line/column/fingerprint/source-hash drift (same rule and
 message, same count; no diagnostic added). The figures in this file otherwise
 describe the original #434 run. This is lint evidence only.
 
+**Update (#641):** `galactic_core`'s arithmetic was narrowed from
+128-bit-everywhere to its integer-exact widths (no port, schedule or
+behaviour change). Its waivers were re-derived against the new bytes under
+the same pinned Verilator 5.050: **98 -> 101** entries for that group, so the
+committed baseline is **700 -> 703** waivers in total, severe waivers
+unchanged at 11. 99 of the 101 are the same rules and messages re-keyed for
+line/column/fingerprint/source-hash drift; the two genuinely new entries are
+`UNUSEDSIGNAL` on the upper bits of the two rounding accumulators
+(`rndsat32`'s `r[65:38]`, `rndmul`'s `p[63:38]`), which the narrowing makes
+provably redundant. Those two carry a distinct explanation: deliberate, not
+tolerated debt. No other group's waivers were touched, and no RTL, frozen
+model, fixture or tool byte was edited to remove a warning. This is lint
+evidence only.
+
+**Update (#657):** `counts` and `adv_idx` in `galactic_core` were made
+constant-indexed everywhere (explicit `case (ln[1:0])` decodes replace the
+variable subscripts), so Yosys infers them as plain registers instead of
+memories — the RTL change that removes the post-`memory_map` combinational
+loops (#657's probe). No port, schedule or behaviour change. The group's
+waivers were re-derived against the new bytes under the same pinned Verilator
+5.050: still **101** entries for `galactic_core`, and the
+rule+message+count multiset is **identical** to the #641 baseline (verified
+programmatically before committing) — every entry is the same diagnostic
+re-keyed for line/column/fingerprint/source-hash drift only, with the two
+`UNUSEDSIGNAL` explanations #641 added (the `'r'[65:38]` / `'p'[63:38]`
+rounding-accumulator entries) carried forward unchanged, still reading
+"Deliberate (#641): … Intended, not tolerated debt". The committed
+baseline stays **703** waivers in total, severe waivers unchanged at 11
+(both asserted by `tests/test_rtl_lint.py`). No diagnostic was added or
+removed, and no RTL, frozen model, fixture or tool byte was edited to remove
+a warning. This is lint evidence only.
+
 **A green `rtl-lint` job does not mean these 96 severe waivers are
 accepted.** The checker returns PASS (exit 0) when the diagnostic multiset
 matches the baseline, whether or not the severe waivers' `review_decision`

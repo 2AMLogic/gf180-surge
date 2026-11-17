@@ -121,3 +121,9 @@ __pycache__/
 
 # Repo Skills Codex-side machine-local install metadata (never committed)
 .agents/skills/repo/.install-local.json
+
+# Throwaway pinned venvs for klt signoff --attest envelope re-derivation,
+# created inside worktrees per docs/byte-frozen-sources.md (regenerable;
+# pins live in signoff/requirements.txt and requirements-ci.txt)
+.venv/
+.venv-*/
