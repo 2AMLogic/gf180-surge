@@ -2,8 +2,18 @@
 
 Recent merged pull requests and closed issues. Entries record forge events only; acceptance and claim limits remain in each committed evidence record. Initial history window: 2026-09-30 onward.
 
+### 2026-11-17
+
+- **PR #734**: test(byte-frozen): remove the stored attested_inventories counts; gate one prose statement per item
+- **PR #733**: ci: bound the rtl-lint job and SHA-pin every workflow action, with a live policy test
+- **PR #658**: test(byte-frozen): derive the attested_inventories counts from the inventories
+- **Issue #730** (closed): ci.yml: the rtl-lint job has no timeout-minutes and four unpinned actions/* uses:, both contradicting the file's own header policies
+- **Issue #688** (closed): Derive attested_inventories counts at check time so inventory-touching PRs stop re-counting by hand
+- **Issue #649** (closed): docs/byte-frozen-sources.json attested_inventories counts are stale and nothing re-derives them
+
 ### 2026-11-16
 
+- **PR #716**: chore(loom): resync installed Loom to v0.19.1302
 - **PR #729**: ci: cap tests/rtl-sim checkout steps at 5 minutes so a stalled clone fails as setup
 - **PR #727**: test: self-test the shared non-vacuity guard's bounds and message
 - **PR #712**: trace galactic_core's ABC loop reports to the counts/adv_idx memory mapping and remove them
