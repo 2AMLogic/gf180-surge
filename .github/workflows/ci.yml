@@ -10,9 +10,11 @@
 # of running to GitHub's 360-minute default. Sized at ~2.5-3x the durations of
 # recent successful runs (2026-10-09: rtl-sim ~985-1010 s, tests ~610-780 s,
 # provenance 37-62 s, other jobs ~25 s; rtl-lint ~18-25 s on a Verilator
-# cache hit, 5m43s-9m11s across ten cache-miss runs when the pinned Verilator
-# build executes, measured 2026-10-20/21 from run job timings). Raise a limit
-# deliberately if a job legitimately grows.
+# cache hit, 5m43s-9m27s across 17 cache-miss runs when the pinned Verilator
+# build executes: the first-ever rtl-lint run (2026-10-20 16:36 UTC) through
+# the first cache-saving success (2026-10-21 17:24 UTC), job-level
+# started_at->completed_at timings from the Actions API, re-derived in #736).
+# Raise a limit deliberately if a job legitimately grows.
 #
 # Checkout cap: the two long-budget jobs (tests, rtl-sim) also carry a
 # step-level timeout-minutes: 5 on their actions/checkout step, so a stalled
@@ -262,9 +264,12 @@ jobs:
     name: rtl-lint (pinned Verilator static lint gate, #434)
     runs-on: ubuntu-24.04
     # Sized for the cache-miss case: the pinned Verilator build from source
-    # measured 5m43s-9m11s across ten runs (2026-10-20/21); 24 min is ~2.6x
-    # the slowest observed miss and ~3.1x the median (~7m37s). Cache-hit jobs
-    # finish in ~25 s.
+    # measured 5m43s-9m27s across 17 cache-miss runs: the first-ever
+    # rtl-lint run (2026-10-20 16:36 UTC) through the first cache-saving
+    # success (2026-10-21 17:24 UTC), job-level started_at->completed_at
+    # timings from the Actions API, re-derived in #736. 24 min is ~2.54x
+    # the slowest observed miss and ~3.03x the median (~7m56s). Cache-hit
+    # jobs finish in ~25 s.
     timeout-minutes: 24
     env:
       # Pinned tool: upstream tag v5.050 (annotated tag object

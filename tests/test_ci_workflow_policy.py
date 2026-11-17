@@ -5,9 +5,12 @@ a trailing comment (#730).
 
 What this pins, and what it does NOT:
 
-  * PINS: across `.github/workflows/*.yml`, each job block under `jobs:`
-    contains a job-level `    timeout-minutes:` with an integer value, and
-    each `uses:` value is `owner/repo[@subpath]@<40 lowercase hex>` followed
+  * PINS: across `.github/workflows/*.yml` and `*.yaml`, each job block
+    under `jobs:` contains a job-level `    timeout-minutes:` with an
+    integer value, except a `jobs.<id>.uses:` reusable-workflow-call job
+    (GitHub rejects `timeout-minutes` on the calling side; the called
+    workflow's own jobs carry the bound), and
+    each `uses:` value is `owner/repo[/subpath]@<40 lowercase hex>` followed
     by ` # v<N>`-style tag comment. Local `./`-relative `uses:` are exempt
     (none exist today).
   * DOES NOT: run any workflow, verify a SHA against the upstream tag (the
@@ -33,12 +36,15 @@ WORKFLOW_DIR = ROOT / ".github" / "workflows"
 
 USES_RE = re.compile(r"^\s*(?:-\s+)?uses:\s*(.+?)\s*$")
 PINNED_USES_RE = re.compile(
-    r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+(?://[^@\s]+)?"  # owner/repo[/subpath]
+    r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+(?:/[^@\s]+)?"   # owner/repo[/subpath]
     r"@[0-9a-f]{40}"                                   # full commit SHA
     r"\s+#\s*v[0-9][A-Za-z0-9.\-]*$"                   # trailing tag comment
 )
 JOB_RE = re.compile(r"^  ([^\s#][^\s]*):\s*(?:#.*)?$")
 JOB_TIMEOUT_RE = re.compile(r"^    timeout-minutes:\s*([0-9]+)\s*$")
+# A job's own 4-space `uses:` key marks it a reusable-workflow-call job.
+# Deeper indents (a step's `      - uses:`) do not match.
+JOB_USES_RE = re.compile(r"^    uses:\s*\S")
 
 
 def iter_job_blocks(text):
@@ -74,9 +80,16 @@ def iter_job_blocks(text):
 
 
 def scan_timeout_policies(text, source="<text>"):
-    """Findings: jobs with no job-level `timeout-minutes: <int>`."""
+    """Findings: jobs with no job-level `timeout-minutes: <int>`.
+
+    A `jobs.<id>.uses:` reusable-workflow-call job is exempt: GitHub does
+    not accept `timeout-minutes` on the calling side, so the called
+    workflow's own jobs carry the bound.
+    """
     findings = []
     for job_id, block in iter_job_blocks(text):
+        if any(JOB_USES_RE.match(line) for line in block):
+            continue
         values = [JOB_TIMEOUT_RE.match(line) for line in block]
         values = [m.group(1) for m in values if m]
         if not values:
@@ -99,10 +112,19 @@ def scan_use_pins(text, source="<text>"):
     return findings
 
 
-def workflow_texts():
-    paths = sorted(WORKFLOW_DIR.glob("*.yml"))
-    assert paths, f"no workflow files found under {WORKFLOW_DIR}"
-    return [(p.relative_to(ROOT).as_posix(), p.read_text(encoding="utf-8")) for p in paths]
+def workflow_texts(workflow_dir=None, root=None):
+    """(relative name, text) for every `*.yml` and `*.yaml` workflow.
+
+    `workflow_dir`/`root` default to the repo's `.github/workflows/` and
+    repo root; the negative controls pass a temp dir so they never touch
+    the real workflows.
+    """
+    workflow_dir = WORKFLOW_DIR if workflow_dir is None else Path(workflow_dir)
+    root = ROOT if root is None else Path(root)
+    paths = sorted(p for pattern in ("*.yml", "*.yaml")
+                   for p in workflow_dir.glob(pattern))
+    assert paths, f"no workflow files found under {workflow_dir}"
+    return [(p.relative_to(root).as_posix(), p.read_text(encoding="utf-8")) for p in paths]
 
 
 # ------------------------------------------------------------ live policies
@@ -150,3 +172,90 @@ def test_negative_control_job_without_timeout_is_found():
     doctored = text.replace(line, "", 1)
     findings = scan_timeout_policies(doctored, source)
     assert findings, "scan did not detect a job without timeout-minutes (control is vacuous)"
+
+
+def test_negative_control_yaml_workflow_is_scanned(tmp_path):
+    """A timeout defect in a `.yaml` workflow (not `.yml`) is found.
+
+    Fails against a `*.yml`-only glob: the `.yaml` file is never read.
+    """
+    wf_dir = tmp_path / "workflows"
+    wf_dir.mkdir()
+    (wf_dir / "nw.yaml").write_text(
+        "jobs:\n"
+        "  slow:\n"
+        "    runs-on: ubuntu-latest\n"
+        "    steps:\n"
+        "      - run: echo hi\n",
+        encoding="utf-8",
+    )
+    texts = workflow_texts(workflow_dir=wf_dir, root=wf_dir)
+    assert [name for name, _ in texts] == ["nw.yaml"], texts
+    findings = []
+    for name, text in texts:
+        findings.extend(scan_timeout_policies(text, name))
+    assert findings, "scan did not detect a defect inside a .yaml workflow (control is vacuous)"
+    assert "nw.yaml" in findings[0]
+
+
+def test_yaml_and_yml_of_one_stem_are_both_scanned(tmp_path):
+    """`ci.yml` and `ci.yaml` coexist: both are read, both checked."""
+    wf_dir = tmp_path / "workflows"
+    wf_dir.mkdir()
+    good = (
+        "jobs:\n"
+        "  ok:\n"
+        "    runs-on: ubuntu-latest\n"
+        "    timeout-minutes: 10\n"
+        "    steps:\n"
+        "      - run: echo hi\n"
+    )
+    (wf_dir / "ci.yml").write_text(good, encoding="utf-8")
+    (wf_dir / "ci.yaml").write_text(
+        good.replace("    timeout-minutes: 10\n", ""), encoding="utf-8"
+    )
+    texts = workflow_texts(workflow_dir=wf_dir, root=wf_dir)
+    assert [name for name, _ in texts] == ["ci.yaml", "ci.yml"], texts
+    findings = []
+    for name, text in texts:
+        findings.extend(scan_timeout_policies(text, name))
+    assert findings == ["ci.yaml: job 'ok' has no job-level timeout-minutes"], findings
+
+
+def test_subpath_action_pin_is_accepted():
+    """`owner/repo/sub@<40hex> # vN` (one-slash subpath) is pinned."""
+    for ref in (
+        "actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4",
+        "github/codeql-action/analyze@"
+        "0000000000000000000000000000000000000000 # v3",
+    ):
+        assert PINNED_USES_RE.match(ref), f"pinned subpath rejected: {ref!r}"
+        findings = scan_use_pins(f"      - uses: {ref}\n", "<text>")
+        assert findings == [], findings
+
+
+def test_negative_control_subpath_unpinned_is_found():
+    """A subpath action pinned only by tag still fails the scan."""
+    ref = "actions/cache/restore@v4"
+    findings = scan_use_pins(f"      - uses: {ref}\n", "<text>")
+    assert findings, "scan did not detect an unpinned subpath uses: (control is vacuous)"
+    assert "@v4" in findings[0]
+
+
+def test_reusable_workflow_call_job_needs_no_timeout():
+    """A `uses:` job is exempt from timeout-minutes; a plain job is not."""
+    text = (
+        "jobs:\n"
+        "  call:\n"
+        "    uses: acme/infra/.github/workflows/ci.yml@0057852bfaa89a56745cba8c7296529d2fc39830\n"
+        "    with:\n"
+        "      target: lint\n"
+        "  plain:\n"
+        "    runs-on: ubuntu-latest\n"
+        "    steps:\n"
+        "      - run: echo hi\n"
+    )
+    findings = scan_timeout_policies(text, "<text>")
+    assert findings == [
+        "<text>: job 'plain' has no job-level timeout-minutes"
+    ], findings
