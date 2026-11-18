@@ -4,6 +4,8 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-11-18
 
+- **PR #777**: docs: append merged-tree re-derivation addendum to voice mutant evidence record
+- **Issue #775** (closed): Append a dated merged-tree addendum to reports/voice-mutant-regeneration/EVIDENCE.md
 - **PR #636**: fix(rtl): regenerate the two voice negative controls as single-line mutants
 - **Issue #622** (closed): Regenerate the two drifted tb_voice.sv negative controls and re-derive the T1 item 9 attestation
 - **PR #774**: ci: run required checks on merge_group and audit the queue's trial merges
