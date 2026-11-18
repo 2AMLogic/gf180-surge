@@ -3,14 +3,14 @@
   "kind": "generic",
   "status": "pass",
   "t1_item": 9,
-  "summary": "T1 item 9 (Testbenches shipped): 235/235 attestation checks passed (klt signoff --attest)",
+  "summary": "T1 item 9 (Testbenches shipped): 236/236 attestation checks passed (klt signoff --attest)",
   "source": "signoff/t1-item9-inventory.json",
   "attestation": {
     "producer": "klt signoff --attest",
     "inventory_schema_version": 1,
     "hash_algorithm": "sha256-raw-bytes",
-    "check_count": 235,
-    "passed_count": 235,
+    "check_count": 236,
+    "passed_count": 236,
     "checks": [
       {
         "check": "present",
@@ -752,7 +752,7 @@
         "role": "testbench",
         "path": "tests/test_shared_event_dispatcher.py",
         "passed": true,
-        "content_hash": "sha256:193605517b52f98d7502e64ae62293ddd52162eb87841d27ffe9716e88fde759"
+        "content_hash": "sha256:c85b8a42dece51f2c98e1152479ac4cbd15c1013e4f651588026e79aec138aa5"
       },
       {
         "check": "present",
@@ -760,6 +760,13 @@
         "path": "tests/test_shared_refuse.py",
         "passed": true,
         "content_hash": "sha256:9e3ac0a0fdd8bbf22634f9263f106dca739ac014832bee8c4a7725db1ba275f7"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tests/test_shared_render_bus_fold.py",
+        "passed": true,
+        "content_hash": "sha256:fb5a97660c64124bf5cdbfa3b871a3addd3d84d3cdebf5fbe9998def0b2f3c7d"
       },
       {
         "check": "present",
@@ -1685,7 +1692,7 @@
         "path": "signoff/t1-item9-inventory.json",
         "scope": "repo"
       },
-      "content_hash": "sha256:340cafb98d5beca664239dacb4c48ade4c1a558bd5644e13c79fcf7901d14470"
+      "content_hash": "sha256:d06910b501969d8a597b0ca8cc5fd56f49516447011297e791d47aaf2a39a9d3"
     }
   }
 }
