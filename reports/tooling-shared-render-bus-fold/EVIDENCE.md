@@ -223,75 +223,74 @@ either file's bytes. That is why the unused `hashlib` / `numpy` imports could
 be removed here.
 
 The drift was confirmed before it was fixed: `--attest 9 … --check` against the
-committed envelope reported `status: drifted`, exit 3. Then, in order:
+committed envelope reported `status: drifted`, exit 3. It was then repaired by
+the **surgical count-moving procedure** (`docs/byte-frozen-sources.md`), **not**
+by a fresh `klt signoff --attest 9 … -o` run. Measured by reading the blobs
+directly (`git show <rev>:<path>`; base = `ebd2ba48`, the merge-base with
+`origin/main`; head = `20e113d3`):
 
 1. `signoff/t1-item9-inventory.json` — added
-   `tests/test_shared_render_bus_fold.py` to `testbenches`, sorted (225 → 226
-   entries, 120 → 121 `tests/test_*.py`, all unique, globally C-sorted).
-2. `signoff/t1-item9-attestation.json` — re-attested with `--attest 9 … -o`.
-   228 → 229 checks, 229/229 passed, `cold_start` exit 0.
+   `tests/test_shared_render_bus_fold.py` to `testbenches`, sorted (232 → 233
+   entries, 126 → 127 `tests/test_*.py`).
+2. `signoff/t1-item9-attestation.json` — edited in place: check 105
+   (`tests/test_shared_event_dispatcher.py`) re-hashed, a new `present` entry
+   for `tests/test_shared_render_bus_fold.py` added, `check_count` /
+   `passed_count` / `summary` moved 235 → 236, and
+   `provenance.input.content_hash` re-derived from the new inventory.
 3. `signoff/block-manifest.json` — item 9 `content_hash` updated.
 4. `signoff/block-manifest.signoff.json` — re-rendered.
+5. `docs/byte-frozen-sources.md` — the registry prose row now reads "233 of 236
+   checks: 127 under `tests/`" (`tests/test_byte_frozen_sources.py` requires it).
 
-`--check` now reports `status: match` / `fresh_status: pass` (exit 0) for item
-9 **and** for item 10 (whose inventory — `README.md`, `LICENSE`, the three
-workflows — this change does not touch), and
-`klt signoff --manifest signoff/block-manifest.json --format json` reproduces
-the committed report byte-identically.
+`klt 0.8.0 signoff --attest 9 … --check` reads `status: match` locally and the
+`klt signoff verdict of record` CI check passes at the PR head.
 
 **The manifest's declared `content_hash` is the *inventory*'s digest, not the
 envelope's.** The issue body's step 5(c) describes it as "the envelope file's
 own sha256"; that is wrong, and `docs/byte-frozen-sources.md` § "Whether
 `signoff/block-manifest.signoff.json` also has to be re-rendered" is right.
-Verified directly: the committed value `sha256:198b29f7…` is the sha256 of
-`signoff/t1-item9-inventory.json` at `83bbc5a` (the envelope's own bytes hash
-to `sha256:c1de5a7d…`), and the re-rendered report names
+The base value `sha256:340cafb9…` is the sha256 of
+`signoff/t1-item9-inventory.json` at `ebd2ba48`, and the re-rendered report names
 `artifact_binding.path = signoff/t1-item9-inventory.json` beside it. The action
 is the same — the inventory changed, so both the declared hash and the report
 had to move — but the value written is the new inventory's digest.
 
-### What the re-attestation changed, against the stop condition
+### What the surgical edit changed, against the stop condition
 
 The issue's stop/escalate condition is "if re-attesting under pinned
 `klt 0.8.0` changes a content hash beyond the inventory binding and the new
 test's entry, stop and report". It is **not** triggered. The complete diff
-between the committed and fresh envelopes:
+between the base envelope (`ebd2ba48`) and the landed envelope (`20e113d3`):
 
-| field | committed | fresh | disposition |
+| field | base | landed | disposition |
 |---|---|---|---|
-| `tests/test_shared_render_bus_fold.py` entry | *(absent)* | added | the new test's entry — allowed |
-| `tests/test_shared_event_dispatcher.py` `content_hash` | changed | | the file step 3 edits — in scope |
-| `provenance.input.content_hash` | `sha256:198b29f7…` | `sha256:251a5215…` | the inventory binding — allowed |
-| `attestation.check_count` / `passed_count` | 228 / 228 | 229 / 229 | mechanical |
-| `summary` | 228/228 | 229/229 | mechanical |
-| `provenance.klt_version` | `0.9.2.dev887+gec7400b7d8e5` | `0.8.0` | see below |
+| `tests/test_shared_render_bus_fold.py` entry | *(absent)* | added (`sha256:fb5a9766…`) | the new test's entry — allowed |
+| `tests/test_shared_event_dispatcher.py` `content_hash` | `sha256:19360551…` | `sha256:c85b8a42…` | the file step 3 edits — in scope |
+| `provenance.input.content_hash` | `sha256:340cafb9…` | `sha256:d06910b5…` | the inventory binding — allowed |
+| `attestation.check_count` / `passed_count` | 235 / 235 | 236 / 236 | mechanical |
+| `summary` | 235/235 | 236/236 | mechanical |
+| `provenance.klt_version` | `0.8.0` | `0.8.0` | **unchanged** by this change |
 
 No other per-file `content_hash` changed, and no entry was removed.
 
-**Two disclosures about the producer.**
+**What this change does *not* establish.**
 
-- **The committed envelope was attested under an undisclosed `klt` dev build**
-  (`0.9.2.dev887+gec7400b7d8e5`) rather than `signoff/requirements.txt`'s
-  `klayout-tools==0.8.0`. Re-attesting under the pin, as this issue's step 5
-  requires, incidentally corrects that field for the item-9 envelope. This is
-  the defect class **#670 F-1** is open to fix; it is recorded here, not
-  claimed as closing #670, and #670 F-1 also covers the item-10 envelope, which
-  this change does not re-attest.
-- **`cold_start` ran under this host's `iverilog 13.0`, not the inventory's
-  declared `12.0-2build2`.** `klt`'s `pin` check echoes the declared pins; it
-  does not verify them against the attesting environment, so the recorded
-  `cold_start` exit 0 is an attestation about *this host's* run. The other
-  three declared pins were matched deliberately, in a throwaway `/tmp` venv
-  built from `signoff/requirements.txt` + `requirements-ci.txt`: CPython
-  3.12.3, `numpy 2.4.2`, `pytest 9.1.1`, `klt 0.8.0` (the host's ambient
-  `numpy` is 1.26.4 and its `klt` is `0.9.2.dev1029+g76f47afa48f1`, so neither
-  was used). `iverilog` could not be matched — this is a shared dispatch worker
-  whose apt-provisioned tools are identical across the fleet and must not be
-  changed from a sweep. `cold_start` is `local_only`, so `--check` skips it and
-  carries this outcome; the declared `iverilog` pin is exercised on every PR by
-  `ci.yml`'s `rtl-sim` job, which runs the same pytest command under
-  `12.0-2build2`. Coverage of the declared pin on this host: **none** — that is
-  a disclosure, not a pass.
+- **`cold_start` was not re-run for this change.** The landed envelope's
+  `cold_start` check is byte-identical to the one on `main`; it was carried
+  forward, not freshly recorded, and no `cold_start` leg of this change backs
+  it. Its status here is **STALE** (carried from `main`'s envelope), not PASS.
+  The surgical procedure deliberately does not re-run it.
+- **No `klt` producer correction occurred.** The base envelope already carried
+  `provenance.klt_version: 0.8.0`; this change leaves it there. The #670 F-1
+  defect class (envelopes attested under an undisclosed `klt` dev build) is not
+  touched by this change and is not claimed as closed by it.
+- **Superseded earlier draft.** A previous revision of this record described a
+  full `--attest 9 … -o` re-attestation (225 → 226 / 228 → 229 counts) run under
+  a throwaway venv (CPython 3.12.3, `numpy 2.4.2`, `pytest 9.1.1`, `klt 0.8.0`)
+  on a host with `iverilog 13.0`. That run is not what landed: none of its
+  outputs are in the tree, and nothing above relies on it. The declared
+  `iverilog 12.0-2build2` pin is exercised on every PR by `ci.yml`'s `rtl-sim`
+  job; coverage of that pin on this host: **none**.
 
 ## Verification statuses
 
@@ -303,10 +302,10 @@ No other per-file `content_hash` changed, and no entry was removed.
 | `tools/render_wt_reference.py --help` unchanged | PASS | byte-identical |
 | `python3 -I -m compileall` over the CI path set | PASS | |
 | `tools/check_provenance.py`, `check_artifact_manifests.py`, `check_census_consistency.py`, `compile_backlog_dag.py --check` | PASS | unaffected, run for completeness |
-| `klt signoff --attest 9 … --check` under pinned `klt 0.8.0` | PASS | `status: match`, `fresh_status: pass`, exit 0 |
+| `klt signoff --attest 9 … --check` under pinned `klt 0.8.0` | PASS | `status: match`, `fresh_status: pass`, exit 0 (envelope produced by the surgical procedure, not a fresh `-o` run) |
 | `klt signoff --attest 10 … --check` under pinned `klt 0.8.0` | PASS | `status: match`, exit 0; inventory untouched by this change |
 | `klt signoff --manifest signoff/block-manifest.json` reproduces the committed report | PASS | byte-identical (`cmp`), grader exit 3 = ran clean, some T1 item unmet |
-| `cold_start` full suite inside the re-attestation | PASS | exit 0, under CPython 3.12.3 / numpy 2.4.2 / pytest 9.1.1 — but host `iverilog 13.0`, not the declared `12.0-2build2` (see disclosure above) |
+| `cold_start` full suite inside the item-9 envelope | STALE | carried byte-identical from `main`'s envelope; not re-run for this change (see "What this change does *not* establish") |
 | Declared `iverilog 12.0-2build2` pin exercised on this host | NOT_RUN | coverage: none; `ci.yml`'s `rtl-sim` job is where that pin runs |
 | Bit-identity of a real wavetable render before/after the fold | NOT_RUN | no pinned oracle on this host |
 | Model-vs-reference agreement, RTL-vs-model exactness, preset quality | NO_VERDICT | out of scope; nothing here speaks to them |
