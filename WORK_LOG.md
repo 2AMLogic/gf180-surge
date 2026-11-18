@@ -4,6 +4,8 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-11-18
 
+- **PR #689**: refactor(tools): delegate the wavetable renderer's render loop to the shared harness
+- **Issue #663** (closed): Remove the private render_bus copy in tools/render_wt_reference.py: it is the shared _render_reference_common.render_bus with a different constructor call
 - **PR #708**: fix(model): coerce AW-49 input-boundary quantizer to double, restoring numpy-version-invariant stimulus
 - **Issue #668** (closed): SXT-028a: AW-49 canonical stimulus quantization is numpy-major-version sensitive (NEP 50) — disposition needed
 - **PR #777**: docs: append merged-tree re-derivation addendum to voice mutant evidence record
