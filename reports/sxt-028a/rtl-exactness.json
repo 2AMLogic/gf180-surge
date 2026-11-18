@@ -190,6 +190,33 @@
         "rtl": "8c0431a9d73ac55ad5737d12db2964a8cff62cda0a5ea06baf213cf8f8bb520f"
       },
       "verdict": "CONTROL-OK (mutant FAILS the exactness comparison)"
+    },
+    {
+      "blocks": 64,
+      "case": "mutant-wrong-counter-map",
+      "checkpoints_exact": false,
+      "claim": "RTL-vs-frozen-model EXACT",
+      "exact": false,
+      "ext_mem_exact": null,
+      "injected_defect": "stage-2 adv_idx[0] captured from the stage-1 counter: the constant-indexed counts/adv_idx decode is mis-wired",
+      "outputs_exact": false,
+      "revision_pin": {
+        "expected": 2924061779,
+        "ok": true,
+        "rtl_trace": 2924061779
+      },
+      "rtl_measured_traffic": {
+        "reads": 57344,
+        "words_per_frame": 1728,
+        "writes": 53248
+      },
+      "txn_lines_rtl": 110592,
+      "txn_log_exact": false,
+      "txn_log_sha256": {
+        "model": "40a6108126024e7e04417f3392cf1fc2011d341107f763f0c755dc4e12cbf230",
+        "rtl": "2adcd9032c52633d26d784984ab4613d5ee26444883e32a232e9dd62f84210f3"
+      },
+      "verdict": "CONTROL-OK (mutant FAILS the exactness comparison)"
     }
   ],
   "status": "PASS"

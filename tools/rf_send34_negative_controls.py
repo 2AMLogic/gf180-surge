@@ -61,6 +61,7 @@ import random
 import shutil
 import subprocess
 import sys
+import tempfile
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "model", "effects", "rf-rf-send34"))
@@ -72,7 +73,6 @@ import compare_rtl_model_rf_send34 as cmp_rtl  # noqa: E402
 OUT = os.path.join(REPO, "reports", "SXT-028l", "negative-controls")
 MUTANT = os.path.join(REPO, "rtl", "effects", "rf-rf-send34",
                       "rf_send34_mutants.sv")
-WORKDIR = "/tmp/sxt028l_nc"
 
 BLOCK = rm.BLOCK
 COEFFS_A = cmp_rtl.COEFFS_3
@@ -623,46 +623,51 @@ REQUIRED_CONTROL_PREFIXES = ("NC-A", "NC-B", "NC-C", "NC-D", "NC-E")
 
 
 def main():
-    os.makedirs(OUT, exist_ok=True)
-    results = [
-        nc_generic_substitute(),
-        nc_dropped_tail(),
-        nc_wrong_order(),
-        nc_shared_state(),
-        nc_stale_stub(),
-        nc_gain_placement(),
-    ]
-    ok = all(r["ok"] for r in results)
-    not_run = [f"{r['control']} / {x['leg']}" for r in results
-               for x in r["legs"] if x["status"] == "NOT_RUN"]
-    out_doc = {"schema_version": 1, "leaf": "SXT-028l",
-               "claim": "negative controls; each must fail the check it "
-                        "targets",
-               "model_revision": rm.model_revision(),
-               "iverilog_available": iverilog_available(),
-               "required_controls": list(REQUIRED_CONTROL_PREFIXES),
-               "legs_not_run": not_run,
-               "controls": results,
-               "status": "PASS" if ok else "FAIL (broken control!)"}
-    with open(os.path.join(OUT, "negative-controls.json"), "w") as f:
-        json.dump(out_doc, f, indent=2, sort_keys=True)
-        f.write("\n")
-    lines = []
-    for r in results:
-        lines.append(f"{r['control']}: {r['verdict']}")
-        for x in r["legs"]:
-            lines.append(f"    - {x['leg']}: {x['status']}")
-    with open(os.path.join(OUT, "negative-controls.txt"), "w") as f:
-        f.write("\n".join(lines) + "\n")
-    for line in lines:
-        print(line)
-    if not_run:
-        print("legs NOT_RUN (never counted as demonstrated failures):")
-        for n in not_run:
-            print("   ", n)
-    print("status:", out_doc["status"])
-    return 0 if ok else 1
+    global WORKDIR
+    WORKDIR = tempfile.mkdtemp(prefix="sxt028l-nc-")
+    try:
+        os.makedirs(OUT, exist_ok=True)
+        results = [
+            nc_generic_substitute(),
+            nc_dropped_tail(),
+            nc_wrong_order(),
+            nc_shared_state(),
+            nc_stale_stub(),
+            nc_gain_placement(),
+        ]
+        ok = all(r["ok"] for r in results)
+        not_run = [f"{r['control']} / {x['leg']}" for r in results
+                   for x in r["legs"] if x["status"] == "NOT_RUN"]
+        out_doc = {"schema_version": 1, "leaf": "SXT-028l",
+                   "claim": "negative controls; each must fail the check it "
+                            "targets",
+                   "model_revision": rm.model_revision(),
+                   "iverilog_available": iverilog_available(),
+                   "required_controls": list(REQUIRED_CONTROL_PREFIXES),
+                   "legs_not_run": not_run,
+                   "controls": results,
+                   "status": "PASS" if ok else "FAIL (broken control!)"}
+        with open(os.path.join(OUT, "negative-controls.json"), "w") as f:
+            json.dump(out_doc, f, indent=2, sort_keys=True)
+            f.write("\n")
+        lines = []
+        for r in results:
+            lines.append(f"{r['control']}: {r['verdict']}")
+            for x in r["legs"]:
+                lines.append(f"    - {x['leg']}: {x['status']}")
+        with open(os.path.join(OUT, "negative-controls.txt"), "w") as f:
+            f.write("\n".join(lines) + "\n")
+        for line in lines:
+            print(line)
+        if not_run:
+            print("legs NOT_RUN (never counted as demonstrated failures):")
+            for n in not_run:
+                print("   ", n)
+        print("status:", out_doc["status"])
+        return 0 if ok else 1
 
+    finally:
+        shutil.rmtree(WORKDIR, ignore_errors=True)
 
 if __name__ == "__main__":
     sys.exit(main())

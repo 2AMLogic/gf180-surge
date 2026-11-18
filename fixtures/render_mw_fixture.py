@@ -193,6 +193,11 @@ def main():
 
     surgepy = oc.import_surgepy()
     oc.apply_engine_env()
+    s_probe = surgepy.createSurge(float(SR))
+    try:
+        engine = rf.engine_identity(surgepy, s_probe)
+    finally:
+        del s_probe
     seq, seq_path = load_sequence(args.sequence)
 
     renders = []
@@ -243,8 +248,13 @@ def main():
         "wav": os.path.relpath(wav_path, REPO),
         "wav_sha256": oc.sha256_file(wav_path),
         "tool": tool_version(),
-        "engine": {"commit": mw_in["engine"]["commit"],
-                   "version_string": mw_in["engine"]["version_string"]},
+        # engine = the live rendering engine; inputs_engine = the extractor
+        # inputs' engine, inherited and NOT evidence about the render
+        # (F-660-1, decision-records/0021)
+        "engine": engine,
+        "inputs_engine": {"commit": mw_in["engine"]["commit"],
+                          "version_string":
+                          mw_in["engine"]["version_string"]},
     }
     with open(os.path.join(args.out_dir, f"reference-{seq['id']}.json"),
               "w", encoding="utf-8") as f:

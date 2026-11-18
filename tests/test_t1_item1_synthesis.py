@@ -65,6 +65,27 @@ OBSERVABLE_GROUPS = ("galactic_core", "logical4_core", "rf_ains34_core",
                      "rf_bins12_core", "rf_global2_core", "rf_global34_core",
                      "rf_send34_core")
 
+# #695: the five groups whose committed records are 1800 s timeouts, now
+# carrying a pre-ABC operator census (census.md) beside the timeout record.
+CENSUS_GROUPS = ("logical4_core", "rf_bins12_core", "rf_global2_core",
+                 "rf_global34_core", "rf_send34_core")
+
+
+def synthesis_instance_count(gid):
+    """The committed `instance_count` of a group's synthesis record.
+
+    Defined ONLY for an exit-0 record: a timeout (NO_VERDICT) has no
+    report.json and therefore no instance count, no area and no cell count
+    that could back a "cost reduced" or any other verdict claim.
+    """
+    d = BASE / gid
+    rc_text = (d / "exit_status.txt").read_text().strip()
+    if rc_text != "0":
+        raise AssertionError(
+            f"{gid}: exit status {rc_text} is a NO_VERDICT timeout record -- "
+            f"no cell count, instance count or verdict may be claimed from it")
+    return json.loads((d / "report.json").read_text())["instance_count"]
+
 
 def check_netlist_arg(entry):
     """The freshness argv must re-hash the committed netlist (--netlist <path>).
@@ -166,6 +187,28 @@ class T1Item1(unittest.TestCase):
         del bad["check"]["argv"][i:i + 2]
         with self.assertRaises(AssertionError):
             check_netlist_arg(bad)
+
+    def test_negative_control_timeout_record_yields_no_cell_count(self):
+        """#695: a cell-count/verdict claim must fail on the five timeout records.
+
+        The five #580 records are exit_status 1 with no report.json -- exactly
+        the pre-change state a "cost reduced" claim would have to be made
+        from. This control demonstrably bites on those records: the claim
+        helper raises for every one of them, and the census files beside them
+        declare themselves probes so their cell counts cannot be mistaken for
+        synthesis verdicts.
+        """
+        for gid in CENSUS_GROUPS:
+            with self.assertRaises(AssertionError):
+                synthesis_instance_count(gid)
+            self.assertNotEqual((BASE / gid / "exit_status.txt").read_text().strip(), "0", gid)
+            self.assertFalse((BASE / gid / "report.json").is_file(), gid)
+            census = (BASE / gid / "census.md").read_text()
+            self.assertIn("NOT item-1 evidence", census, gid)
+            self.assertIn("Diagnostic probe", census, gid)
+        # Positive direction (the control is not trivially raising): a real
+        # exit-0 record still yields its instance count through the same helper.
+        self.assertIsInstance(synthesis_instance_count("reverb1_core"), int)
 
     def test_block_manifest_does_not_claim_item1_while_groups_blocked(self):
         blocked = [g["id"] for g in groups() if rc(g) != "0"]

@@ -92,9 +92,11 @@ MANIFEST = REPO / "decision-records" / "provenance.json"
 RECORD_DIR = REPO / "decision-records"
 
 sys.path.insert(0, str(REPO / "tools"))
+sys.path.insert(0, str(REPO / "tests"))
 
 import check_provenance as cp  # noqa: E402  (path set above)
 import check_provenance_controls as cpc  # noqa: E402  (path set above)
+from evidence_scan import scanned  # noqa: E402
 
 # `check_provenance` is the CLI facade and re-exports the audit; the layers
 # themselves live in sibling modules. A test that REBINDS a module-level
@@ -3276,14 +3278,9 @@ CI_WORKFLOW = REPO / ".github" / "workflows" / "ci.yml"
 REUSE_AUDIT_DOC = REPO / "docs" / "REUSE-AUDIT.md"
 
 
-def _ci_job_block(name):
-    """The lines of one ci.yml job, by indentation.
-
-    Deliberately not a YAML parse: the `tests` job installs numpy and pytest
-    only, so PyYAML is not importable in the one environment whose verdict
-    counts, and a test that skipped there would be NOT_RUN disguised as green.
-    """
-    lines = CI_WORKFLOW.read_text(encoding="utf-8").splitlines()
+def _job_block_from_text(text, name):
+    """The lines of one workflow job, by indentation, over arbitrary text."""
+    lines = text.splitlines()
     start = lines.index(f"  {name}:")
     block = []
     for line in lines[start + 1 :]:
@@ -3292,6 +3289,16 @@ def _ci_job_block(name):
         block.append(line)
     assert block, f"job {name} has no body"
     return "\n".join(block)
+
+
+def _ci_job_block(name):
+    """The lines of one ci.yml job, by indentation.
+
+    Deliberately not a YAML parse: the `tests` job installs numpy and pytest
+    only, so PyYAML is not importable in the one environment whose verdict
+    counts, and a test that skipped there would be NOT_RUN disguised as green.
+    """
+    return _job_block_from_text(CI_WORKFLOW.read_text(encoding="utf-8"), name)
 
 
 def test_ci_gates_pull_requests_on_per_commit_declaration():
@@ -3303,8 +3310,14 @@ def test_ci_gates_pull_requests_on_per_commit_declaration():
     assert "--commits" in block, block
     # This branch's own commits: excludes the base branch's history (so main's
     # 16 existing findings are never re-litigated here, #25) and GitHub's
-    # synthetic refs/pull/N/merge commit, and resolves on a fork PR.
-    assert "refs/remotes/origin/${BASE_REF}..${HEAD_SHA}" in block, block
+    # synthetic refs/pull/N/merge commit, and resolves on a fork PR. The merge
+    # queue's trial merge (#772) is audited by the same invocation over the
+    # event's own base/head shas.
+    assert "refs/remotes/origin/${BASE_REF}" in block, block
+    assert (
+        'python3 tools/check_provenance.py --commits "${BASE_REV}..${HEAD_REV}"'
+        in block
+    ), block
     # The gate is an addition, not a replacement: the tree audit and the
     # audit's own negative control must still run ahead of it.
     assert "--negative-control" in block, block
@@ -3316,6 +3329,89 @@ def test_ci_gates_pull_requests_on_per_commit_declaration():
     assert "continue-on-error" not in directives, directives
     # A non-pull_request event has no such range; it must say so, not pass.
     assert "NOT_RUN" in block, block
+
+
+def _merge_group_gate_findings(ci_text, source="ci.yml"):
+    """Findings: ways the per-commit gate silently drops a merge_group run.
+
+    Issue #772's failure control. A gate that reports NOT_RUN (exit 0) on a
+    queued trial merge, or passes on an empty or unusable event base, is a
+    silent drop, not a pass. Textual, like the block reader above: no PyYAML
+    in CI.
+    """
+    findings = []
+    block = _job_block_from_text(ci_text, "provenance-audit")
+    for sha in ("base_sha", "head_sha"):
+        if f"github.event.merge_group.{sha}" not in block:
+            findings.append(
+                f"{source}: provenance-audit never reads "
+                f"github.event.merge_group.{sha}"
+            )
+    lines = block.splitlines()
+    starts = [
+        i
+        for i, line in enumerate(lines)
+        if line.strip() == 'elif [ "$EVENT_NAME" = "merge_group" ]; then'
+    ]
+    if not starts:
+        findings.append(
+            f"{source}: provenance-audit has no explicit merge_group branch, so"
+            " the gate would report NOT_RUN (exit 0) on a queued trial merge"
+        )
+        return findings
+    end = next(
+        i for i in range(starts[0] + 1, len(lines)) if lines[i].strip() == "else"
+    )
+    branch = "\n".join(lines[starts[0] + 1 : end])
+    for var in ("MG_BASE_SHA", "MG_HEAD_SHA"):
+        if f'[ -z "${{{var}}}" ]' not in branch:
+            findings.append(
+                f"{source}: the merge_group branch never rejects an empty {var}"
+            )
+    if "exit 1" not in branch:
+        findings.append(
+            f"{source}: the merge_group branch never fails closed (no exit 1),"
+            " so an unusable event base would pass silently"
+        )
+    return findings
+
+
+def test_ci_merge_group_gate_audits_the_trial_merge():
+    """Issue #772: a queued trial merge is audited over its own commit range.
+
+    The event payload's shas are plumbed into the step, an explicit branch
+    selects them ahead of the NOT_RUN fall-through, and an empty base or head
+    fails the job instead of passing it.
+    """
+    findings = _merge_group_gate_findings(CI_WORKFLOW.read_text(encoding="utf-8"))
+    assert findings == [], findings
+
+
+def test_negative_control_merge_group_silent_not_run_is_found():
+    """Routing merge_group into the NOT_RUN fall-through (exit 0) is caught."""
+    text = CI_WORKFLOW.read_text(encoding="utf-8")
+    doctored = text.replace(
+        'elif [ "$EVENT_NAME" = "merge_group" ]; then',
+        'elif [ "$EVENT_NAME" = "merge_group_undetectable" ]; then',
+        1,
+    )
+    findings = _merge_group_gate_findings(doctored)
+    assert findings, "control is vacuous: the doctor changed nothing the scan reads"
+    assert any("no explicit merge_group branch" in f for f in findings), findings
+
+
+def test_negative_control_merge_group_empty_base_exit_zero_is_found():
+    """An unguarded exit 0 on a merge_group's empty base is caught."""
+    text = CI_WORKFLOW.read_text(encoding="utf-8")
+    marker = 'elif [ "$EVENT_NAME" = "merge_group" ]; then'
+    head, rest = text.split(marker, 1)
+    branch, tail = rest.split("\n          else", 1)
+    doctored = (
+        head + marker + branch.replace("exit 1", "exit 0", 1) + "\n          else" + tail
+    )
+    findings = _merge_group_gate_findings(doctored)
+    assert findings, "control is vacuous: the doctor changed nothing the scan reads"
+    assert any("never fails closed" in f for f in findings), findings
 
 
 def test_the_reuse_audit_doc_and_the_workflow_agree_about_enforcement():
@@ -3691,7 +3787,10 @@ def test_every_decision_record_declaring_quoted_data_is_accounted_for():
     for name in (cp.REGISTER_GPL_SECTION, cp.REGISTER_MIT_SECTION):
         accounted |= {cells[6] for _l, cells in sections[name]}
     accounted |= {cells[1] for _l, cells in sections[cp.REGISTER_EXCLUSION_SECTION]}
-    for path in sorted(RECORD_DIR.glob("[0-9][0-9][0-9][0-9]-*.md")):
+    for path in scanned(
+            sorted(RECORD_DIR.glob("[0-9][0-9][0-9][0-9]-*.md")),
+            what="decision records declaring quoted data",
+            where=str(RECORD_DIR), at_least=1):
         if cp.QUOTED_RECORD_RE.search(path.read_text(encoding="utf-8")):
             assert path.name[:4] in accounted, path.name
     # the records the operator ruling names as GPL-boundary records, plus 0007's

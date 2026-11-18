@@ -51,6 +51,9 @@ oc.reexec_under_pinned_python(REPO)
 import numpy as np  # noqa: E402
 from refusal import Refuse  # noqa: E402
 
+sys.path.insert(0, os.path.join(REPO, "fixtures"))
+import render_fixture as rf  # noqa: E402  (shared event dispatcher)
+
 SR = 48000
 PRESET_REL = "resources/data/patches_factory/Basses/Attacky.fxp"
 SLFO_INPUTS = os.path.join(REPO, "model", "voice", "attacky_slfo_inputs.json")
@@ -230,6 +233,11 @@ def main():
 
     surgepy = oc.import_surgepy()
     oc.apply_engine_env()
+    s_probe = surgepy.createSurge(float(SR))
+    try:
+        engine = rf.engine_identity(surgepy, s_probe)
+    finally:
+        del s_probe
     seq, seq_path = load_sequence(args.sequence)
 
     renders = []
@@ -283,8 +291,13 @@ def main():
         "wav": os.path.relpath(wav_path, REPO),
         "wav_sha256": sha256_file(wav_path),
         "tool": tool_version(),
-        "engine": {"commit": slfo_in["engine"]["commit"],
-                   "version_string": slfo_in["engine"]["version_string"]},
+        # engine = the live rendering engine; inputs_engine = the extractor
+        # inputs' engine, inherited and NOT evidence about the render
+        # (F-660-1, decision-records/0021)
+        "engine": engine,
+        "inputs_engine": {"commit": slfo_in["engine"]["commit"],
+                          "version_string":
+                          slfo_in["engine"]["version_string"]},
     }
     with open(os.path.join(args.out_dir,
                            f"reference-{seq['id']}-{args.tag}.json"),

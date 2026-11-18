@@ -4,7 +4,7 @@
   "evidence": {
     "9": {
       "file": "signoff/t1-item9-attestation.json",
-      "content_hash": "sha256:af50afbe20db43ab28fa91bc4a4428f317bf314518bc81e1e92b9e774b39000b"
+      "content_hash": "sha256:340cafb98d5beca664239dacb4c48ade4c1a558bd5644e13c79fcf7901d14470"
     },
     "10": {
       "file": "signoff/item-10.attestation.json",

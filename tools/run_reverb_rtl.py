@@ -343,7 +343,7 @@ def main():
                 "memory image implied by the write log (initial state zero)",
     })
 
-    base = tempfile.mkdtemp(prefix="sxt024-rtl-", dir="/var/folders/fb/l4j31ymn3bn0mc6v1qbvvl8c0000gn/T/opencode")
+    base = tempfile.mkdtemp(prefix="sxt024-rtl-")
     try:
         for case in cases:
             wd = os.path.join(base, case["name"])

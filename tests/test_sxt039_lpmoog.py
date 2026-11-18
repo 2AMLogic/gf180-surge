@@ -187,6 +187,40 @@ def test_runner_refuses_subtype_change_without_reset(monkeypatch):
         rfl.run_case("king-b1")
 
 
+def test_comparator_refuses_a_short_reference_coefficient_stream(tmp_path):
+    # The comparator's exit-2 boundary (#753): a refcoef-<case>.f32 whose
+    # length is not n_blocks*21 floats must be refused loudly (REFUSING on
+    # stderr, exit code 2) and before any budget record is written.  Driven
+    # as a subprocess: the boundary lives on the __main__ exit path, which
+    # an in-process pytest.raises cannot observe.
+    import subprocess
+    trace = rfl.run_case("king-b1")
+    run_dir = os.path.join(str(tmp_path), "run")
+    ref_dir = os.path.join(str(tmp_path), "ref")
+    out_dir = os.path.join(str(tmp_path), "out")
+    for d in (run_dir, ref_dir, out_dir):
+        os.makedirs(d)
+    with open(os.path.join(run_dir, "model_trace.json"), "w", encoding="utf-8") as f:
+        json.dump(trace, f)
+    # valid-length audio reference; its contents are never compared because
+    # the refusal fires first
+    n_ref = trace["n_blocks"] * 64
+    with open(os.path.join(ref_dir, "ref-king-b1.f32"), "wb") as f:
+        f.write(struct.pack(f"<{n_ref}f", *([0.0] * n_ref)))
+    # deliberately short coefficient stream: one float missing
+    n_coef = trace["n_blocks"] * 21 - 1
+    with open(os.path.join(ref_dir, "refcoef-king-b1.f32"), "wb") as f:
+        f.write(struct.pack(f"<{n_coef}f", *([0.0] * n_coef)))
+    r = subprocess.run(
+        [sys.executable,
+         os.path.join(REPO, "tools", "compare_lpmoog_model.py"),
+         "--run-dirs", run_dir, "--ref-dir", ref_dir, "--out-dir", out_dir],
+        capture_output=True, text=True)
+    assert r.returncode == 2, (r.returncode, r.stderr)
+    assert "REFUSING" in r.stderr, r.stderr
+    assert not os.path.exists(os.path.join(out_dir, "budget-king-b1.json"))
+
+
 # ------------------------------------------------------------- fixtures
 def test_fixture_carriers_are_lpmoog_instances_in_the_committed_graphs():
     for name in fx.CARRIERS:
