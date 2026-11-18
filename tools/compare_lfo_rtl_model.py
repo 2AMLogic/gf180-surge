@@ -38,7 +38,8 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _rtl_compile_common import LeafInputError, run_leaf_comparison  # noqa: E402
+from _rtl_compile_common import (CheckpointKeys,  # noqa: E402
+                                 run_leaf_comparison)
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TB = os.path.join(REPO, "rtl", "voice", "tb_lfo.sv")
@@ -57,10 +58,12 @@ L_FIELDS = ["b", "slot", "index", "phase", "env_state", "env_phase",
 def parse_tb(path):
     """Parse the RTL trace.  Every record key must be unique (issue #455):
     a repeated L or S key -- identical or contradictory, in either order --
-    is refused with LeafInputError rather than resolved last-row-wins."""
+    is refused with LeafInputError rather than resolved last-row-wins.  The
+    rule itself is `CheckpointKeys` (issue #639), shared with every other
+    leaf parser instead of re-stated here."""
     l = {}   # (block, slot, index) -> dict
     s = {}   # (block, slot) -> [cut_sum, reso_sum]
-    dups = []
+    keys = CheckpointKeys()
     with open(path) as f:
         for line in f:
             parts = line.split()
@@ -69,19 +72,11 @@ def parse_tb(path):
             if parts[0] == "L":
                 vals = [int(x) for x in parts[1:]]
                 d = dict(zip(L_FIELDS, vals))
-                k = (d["b"], d["slot"], d["index"])
-                if k in l:
-                    dups.append("L %r" % (k,))
-                l[k] = d
+                keys.put(l, "L", (d["b"], d["slot"], d["index"]), d)
             elif parts[0] == "S":
-                k = (int(parts[1]), int(parts[2]))
-                if k in s:
-                    dups.append("S %r" % (k,))
-                s[k] = [int(parts[3]), int(parts[4])]
-    if dups:
-        raise LeafInputError(
-            "rtl_trace", path, "duplicate checkpoint key(s), %d: %s"
-            % (len(dups), "; ".join(dups[:5])))
+                keys.put(s, "S", (int(parts[1]), int(parts[2])),
+                         [int(parts[3]), int(parts[4])])
+    keys.raise_if_duplicates(path)
     return l, s
 
 

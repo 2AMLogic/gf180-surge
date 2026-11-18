@@ -36,8 +36,8 @@ jobs:
       # Same pin and mechanism as the rtl-sim job in ci.yml; keep in sync.
       IVERILOG_APT_VERSION: "12.0-2build2"
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.12"
       - name: Install pinned Icarus Verilog
@@ -49,7 +49,11 @@ jobs:
           command -v vvp >/dev/null || { echo "FAIL: vvp not on PATH" >&2; exit 1; }
           iverilog -V | head -n 1
       - name: Install python dependencies
-        run: python3 -m pip install --quiet numpy pytest
+        # Same pinned manifest as both ci.yml install sites: this job runs the
+        # RTL-vs-model comparator reruns and mutation controls, so a floating
+        # numpy could change test numerics with no repo diff to bisect.
+        # Contract test: tests/test_ci_dependency_pins.py.
+        run: python3 -m pip install --quiet -r requirements-ci.txt
       - name: Run slow negative controls and gate on skips
         run: |
           set -uo pipefail
@@ -93,7 +97,7 @@ jobs:
           exit "${check_rc}"
       - name: Upload JUnit report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: slow-controls-junit
           path: |

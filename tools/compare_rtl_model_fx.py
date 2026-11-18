@@ -22,6 +22,9 @@ import os
 import subprocess
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _rtl_compile_common import CheckpointKeys  # noqa: E402
+
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ART = os.path.join(REPO, "reports", "sxt-023", "artifacts")
 SINC = os.path.join(REPO, "rtl", "effects", "sinc_q29.hex")
@@ -70,8 +73,15 @@ SKIP_FIELDS = {"lfophase", "lfoval", "lfo_dir", "name"}
 
 
 def parse_tb_trace(path):
+    """Parse the RTL trace.  Every O and T key must be unique (issues
+    #455/#666): a repeated output sample or checkpoint record --
+    identical or contradictory, in either order -- is refused with
+    LeafInputError rather than resolved last-row-wins.  The rule itself
+    is `CheckpointKeys`, shared with every other leaf parser instead of
+    re-stated here."""
     O = {}
     T = {}
+    keys = CheckpointKeys()
     with open(path) as f:
         for line in f:
             parts = line.split()
@@ -79,14 +89,15 @@ def parse_tb_trace(path):
                 continue
             if parts[0] == "O":
                 b = int(parts[1])
-                O[b] = [int(v) for v in parts[2:]]
+                keys.put(O, "O", b, [int(v) for v in parts[2:]])
             elif parts[0] == "T":
                 b = int(parts[1])
                 tag = parts[2]
                 d = {}
                 for j in range(3, len(parts), 2):
                     d[parts[j]] = int(parts[j + 1])
-                T[(b, tag)] = d
+                keys.put(T, "T", (b, tag), d)
+    keys.raise_if_duplicates(path)
     return O, T
 
 

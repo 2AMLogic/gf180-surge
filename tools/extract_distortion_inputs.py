@@ -40,8 +40,10 @@ import os
 import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, REPO)
 
+from _census_blob_common import graphs_entry  # noqa: E402
 from refusal import Refuse  # noqa: E402
 
 FX_TYPE_DISTORTION = 3
@@ -117,15 +119,6 @@ def census_sha(path):
         if e.get("path") == path:
             return e["git_blob_sha1"]
     raise Refuse(f"census: no manifest entry for {path}")
-
-
-def graphs_entry(path):
-    with open(GRAPHS) as f:
-        for line in f:
-            d = json.loads(line)
-            if d.get("p") == path:
-                return d
-    raise Refuse(f"graphs.jsonl: no entry for {path}")
 
 
 def extract_graphs(slug, path, expect_sha):

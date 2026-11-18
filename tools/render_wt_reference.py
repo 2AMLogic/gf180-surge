@@ -14,7 +14,9 @@ Policies inherited from the SXT-012 fixture harness (fixtures/
 render_fixture.py): fresh instance per render, controller reset, 0.25 s
 settle discarded, block-quantized event scheduling, tail = last event +
 tail_s, mono (L+R)/2 int16 PCM, no normalization / time warping / fades,
-clipped-sample counts recorded.
+clipped-sample counts recorded.  Events are dispatched by
+`render_fixture.dispatch` itself, so every event type that module forwards
+(including `cc`, `pitch_bend` and `channel_pressure`) is forwarded here.
 
 Outputs under --out-dir: <inputs-name>__<seq>-ref.wav + a sidecar JSON with
 engine identity, override readback, sha256, determinism repeats.
@@ -37,6 +39,9 @@ import oracle_common as oc  # noqa: E402
 import fixture_config as fc  # noqa: E402
 
 oc.reexec_under_pinned_python(REPO)
+
+sys.path.insert(0, os.path.join(REPO, "fixtures"))
+import render_fixture as rf  # noqa: E402  (shared event dispatcher)
 
 SR = 48000
 
@@ -72,13 +77,7 @@ def render_bus(surgepy, oc, seq, overrides, repeats=1, preset_rel=fc.PRESET_REL)
             i = 0
             b = 0
             while b < total_blocks:
-                while i < len(events) and quant(events[i]["t"]) <= b:
-                    e = events[i]
-                    if e["type"] == "note_on":
-                        s.playNote(e["channel"], e["note"], e.get("velocity", 100), 0)
-                    elif e["type"] == "note_off":
-                        s.releaseNote(e["channel"], e["note"], e.get("velocity", 0))
-                    i += 1
+                i = rf.dispatch(s, events[i:], b, quant) + i
                 nxt = i
                 seg = total_blocks if nxt >= len(events) \
                     else max(quant(events[nxt]["t"]), b + 1)

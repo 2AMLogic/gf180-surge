@@ -1,0 +1,489 @@
+# Excerpt of the Yosys log klt wrote beside the executed script
+# (<repo>/signoff/t1-item1/<group>/out/synth_<top>.run.log, removed with
+# the scratch directory). Produced by signoff/t1-item1/regen.py's
+# distil_log(): Yosys pass headers plus every line that quantifies the
+# design or names a structural obstacle; absolute paths substituted
+# (<repo>, <home>) so the artifact is commit-safe and machine-neutral.
+# Progress evidence for a non-zero exit -- NOT a verdict.
+
+[stdout]
+[... 10 line(s) omitted ...]
+1. Executing Liberty frontend: <home>/.ciel/ciel/gf180mcu/versions/f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7/gf180mcuD/libs.ref/gf180mcu_fd_sc_mcu9t5v0/lib/gf180mcu_fd_sc_mcu9t5v0__tt_025C_1v80.lib
+[... 2 line(s) omitted ...]
+2. Executing Verilog-2005 frontend: signoff/t1-item1/rf_global2_core/out/rf_global2_core_sv2v.v
+[... 8 line(s) omitted ...]
+3. Executing HIERARCHY pass (managing design hierarchy).
+[... 1 line(s) omitted ...]
+3.1. Analyzing design hierarchy..
+[... 2 line(s) omitted ...]
+3.2. Analyzing design hierarchy..
+[... 3 line(s) omitted ...]
+4. Executing SYNTH pass.
+[... 1 line(s) omitted ...]
+4.1. Executing HIERARCHY pass (managing design hierarchy).
+[... 1 line(s) omitted ...]
+4.1.1. Analyzing design hierarchy..
+[... 2 line(s) omitted ...]
+4.1.2. Analyzing design hierarchy..
+[... 3 line(s) omitted ...]
+4.2. Executing PROC pass (convert processes to netlists).
+[... 1 line(s) omitted ...]
+4.2.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+[... 3 line(s) omitted ...]
+4.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+[... 3 line(s) omitted ...]
+4.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+[... 3 line(s) omitted ...]
+4.2.4. Executing PROC_INIT pass (extract init attributes).
+[... 24 line(s) omitted ...]
+4.2.5. Executing PROC_ARST pass (detect async resets in processes).
+[... 1 line(s) omitted ...]
+4.2.6. Executing PROC_ROM pass (convert switches to ROMs).
+[... 1 line(s) omitted ...]
+<suppressed ~34 debug messages>
+[... 1 line(s) omitted ...]
+4.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+[... 533 line(s) omitted ...]
+4.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+[... 1 line(s) omitted ...]
+4.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
+[... 283 line(s) omitted ...]
+4.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+[... 1 line(s) omitted ...]
+4.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+[... 8 line(s) omitted ...]
+4.2.12. Executing OPT_EXPR pass (perform const folding).
+[... 1 line(s) omitted ...]
+<suppressed ~15 debug messages>
+[... 1 line(s) omitted ...]
+4.3. Executing OPT_EXPR pass (perform const folding).
+[... 1 line(s) omitted ...]
+<suppressed ~48 debug messages>
+[... 1 line(s) omitted ...]
+4.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 1170 unused cells and 2646 unused wires.
+<suppressed ~1263 debug messages>
+[... 1 line(s) omitted ...]
+4.5. Executing CHECK pass (checking for obvious problems).
+[... 3 line(s) omitted ...]
+4.6. Executing OPT pass (performing simple optimizations).
+[... 1 line(s) omitted ...]
+4.6.1. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.6.2. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 803 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 520 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 507 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 504 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 501 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 499 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+<suppressed ~912 debug messages>
+Removed a total of 304 cells.
+[... 1 line(s) omitted ...]
+4.6.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 197 line(s) omitted ...]
+<suppressed ~797 debug messages>
+[... 1 line(s) omitted ...]
+4.6.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 3 line(s) omitted ...]
+4.6.5. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 307 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.6.6. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.6.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 0 unused cells and 511 unused wires.
+<suppressed ~1 debug messages>
+[... 1 line(s) omitted ...]
+4.6.8. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.6.9. Rerunning OPT passes. (Maybe there is more to do..)
+[... 1 line(s) omitted ...]
+4.6.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 5 line(s) omitted ...]
+<suppressed ~349 debug messages>
+[... 1 line(s) omitted ...]
+4.6.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 3 line(s) omitted ...]
+4.6.12. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 307 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.6.13. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.6.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 2 line(s) omitted ...]
+4.6.15. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.6.16. Finished fast OPT passes. (There is nothing left to do.)
+[... 1 line(s) omitted ...]
+4.7. Executing FSM pass (extract and optimize FSM).
+[... 1 line(s) omitted ...]
+4.7.1. Executing FSM_DETECT pass (finding FSMs in design).
+[... 3 line(s) omitted ...]
+4.7.2. Executing FSM_EXTRACT pass (extracting FSM from design).
+[... 1 line(s) omitted ...]
+4.7.3. Executing FSM_OPT pass (simple optimizations of FSMs).
+[... 1 line(s) omitted ...]
+4.7.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 2 line(s) omitted ...]
+4.7.5. Executing FSM_OPT pass (simple optimizations of FSMs).
+[... 1 line(s) omitted ...]
+4.7.6. Executing FSM_RECODE pass (re-assigning FSM state encoding).
+[... 1 line(s) omitted ...]
+4.7.7. Executing FSM_INFO pass (dumping all available information on FSM cells).
+[... 1 line(s) omitted ...]
+4.7.8. Executing FSM_MAP pass (mapping FSMs to basic logic).
+[... 1 line(s) omitted ...]
+4.8. Executing OPT pass (performing simple optimizations).
+[... 1 line(s) omitted ...]
+4.8.1. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.8.2. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 307 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.8.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 5 line(s) omitted ...]
+<suppressed ~349 debug messages>
+[... 1 line(s) omitted ...]
+4.8.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 3 line(s) omitted ...]
+4.8.5. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 307 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.8.6. Executing OPT_DFF pass (perform DFF optimizations).
+[... 32 line(s) omitted ...]
+4.8.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 39 unused cells and 39 unused wires.
+<suppressed ~40 debug messages>
+[... 1 line(s) omitted ...]
+4.8.8. Executing OPT_EXPR pass (perform const folding).
+[... 1 line(s) omitted ...]
+<suppressed ~4 debug messages>
+[... 1 line(s) omitted ...]
+4.8.9. Rerunning OPT passes. (Maybe there is more to do..)
+[... 1 line(s) omitted ...]
+4.8.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 5 line(s) omitted ...]
+<suppressed ~369 debug messages>
+[... 1 line(s) omitted ...]
+4.8.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 3 line(s) omitted ...]
+4.8.12. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 304 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 290 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 287 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+<suppressed ~51 debug messages>
+Removed a total of 17 cells.
+[... 1 line(s) omitted ...]
+4.8.13. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.8.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 0 unused cells and 17 unused wires.
+<suppressed ~1 debug messages>
+[... 1 line(s) omitted ...]
+4.8.15. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.8.16. Rerunning OPT passes. (Maybe there is more to do..)
+[... 1 line(s) omitted ...]
+4.8.17. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 5 line(s) omitted ...]
+<suppressed ~369 debug messages>
+[... 1 line(s) omitted ...]
+4.8.18. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 3 line(s) omitted ...]
+4.8.19. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 287 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.8.20. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.8.21. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 2 line(s) omitted ...]
+4.8.22. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.8.23. Finished fast OPT passes. (There is nothing left to do.)
+[... 1 line(s) omitted ...]
+4.9. Executing WREDUCE pass (reducing word size of cells).
+[... 267 line(s) omitted ...]
+4.10. Executing PEEPOPT pass (run peephole optimizers).
+[... 1 line(s) omitted ...]
+4.11. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 0 unused cells and 26 unused wires.
+<suppressed ~1 debug messages>
+[... 1 line(s) omitted ...]
+4.12. Executing ALUMACC pass (create $alu and $macc cells).
+[... 169 line(s) omitted ...]
+4.13. Executing SHARE pass (SAT-based resource sharing).
+[... 67 line(s) omitted ...]
+4.14. Executing OPT pass (performing simple optimizations).
+[... 1 line(s) omitted ...]
+4.14.1. Executing OPT_EXPR pass (perform const folding).
+[... 1 line(s) omitted ...]
+<suppressed ~12 debug messages>
+[... 1 line(s) omitted ...]
+4.14.2. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 351 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.14.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 5 line(s) omitted ...]
+<suppressed ~369 debug messages>
+[... 1 line(s) omitted ...]
+4.14.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 3 line(s) omitted ...]
+4.14.5. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 351 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.14.6. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.14.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 12 unused cells and 53 unused wires.
+<suppressed ~13 debug messages>
+[... 1 line(s) omitted ...]
+4.14.8. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.14.9. Rerunning OPT passes. (Maybe there is more to do..)
+[... 1 line(s) omitted ...]
+4.14.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 5 line(s) omitted ...]
+<suppressed ~369 debug messages>
+[... 1 line(s) omitted ...]
+4.14.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 3 line(s) omitted ...]
+4.14.12. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 339 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.14.13. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.14.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 2 line(s) omitted ...]
+4.14.15. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.14.16. Finished fast OPT passes. (There is nothing left to do.)
+[... 1 line(s) omitted ...]
+4.15. Executing MEMORY pass.
+[... 1 line(s) omitted ...]
+4.15.1. Executing OPT_MEM pass (optimize memories).
+[... 2 line(s) omitted ...]
+4.15.2. Executing OPT_MEM_PRIORITY pass (removing unnecessary memory write priority relations).
+[... 2 line(s) omitted ...]
+4.15.3. Executing OPT_MEM_FEEDBACK pass (finding memory read-to-write feedback paths).
+[... 1 line(s) omitted ...]
+4.15.4. Executing MEMORY_BMUX2ROM pass (converting muxes to ROMs).
+[... 1 line(s) omitted ...]
+4.15.5. Executing MEMORY_DFF pass (merging $dff cells to $memrd).
+[... 1 line(s) omitted ...]
+4.15.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 2 line(s) omitted ...]
+4.15.7. Executing MEMORY_SHARE pass (consolidating $memrd/$memwr cells).
+[... 1 line(s) omitted ...]
+4.15.8. Executing OPT_MEM_WIDEN pass (optimize memories where all ports are wide).
+[... 2 line(s) omitted ...]
+4.15.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 2 line(s) omitted ...]
+4.15.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+[... 1 line(s) omitted ...]
+4.16. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 2 line(s) omitted ...]
+4.17. Executing OPT pass (performing simple optimizations).
+[... 1 line(s) omitted ...]
+4.17.1. Executing OPT_EXPR pass (perform const folding).
+[... 1 line(s) omitted ...]
+<suppressed ~137 debug messages>
+[... 1 line(s) omitted ...]
+4.17.2. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 1046 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.17.3. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.17.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 756 unused cells and 815 unused wires.
+<suppressed ~757 debug messages>
+[... 1 line(s) omitted ...]
+4.17.5. Finished fast OPT passes.
+[... 1 line(s) omitted ...]
+4.18. Executing MEMORY_MAP pass (converting memories to logic and flip-flops).
+[... 1 line(s) omitted ...]
+4.19. Executing OPT pass (performing simple optimizations).
+[... 1 line(s) omitted ...]
+4.19.1. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.19.2. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 290 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.19.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 5 line(s) omitted ...]
+<suppressed ~172 debug messages>
+[... 1 line(s) omitted ...]
+4.19.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 8 line(s) omitted ...]
+4.19.5. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 290 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.19.6. Executing OPT_SHARE pass.
+[... 1 line(s) omitted ...]
+4.19.7. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.19.8. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 2 line(s) omitted ...]
+4.19.9. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.19.10. Rerunning OPT passes. (Maybe there is more to do..)
+[... 1 line(s) omitted ...]
+4.19.11. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 5 line(s) omitted ...]
+<suppressed ~172 debug messages>
+[... 1 line(s) omitted ...]
+4.19.12. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+[... 3 line(s) omitted ...]
+4.19.13. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 290 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Removed a total of 0 cells.
+[... 1 line(s) omitted ...]
+4.19.14. Executing OPT_SHARE pass.
+[... 1 line(s) omitted ...]
+4.19.15. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.19.16. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 2 line(s) omitted ...]
+4.19.17. Executing OPT_EXPR pass (perform const folding).
+[... 2 line(s) omitted ...]
+4.19.18. Finished fast OPT passes. (There is nothing left to do.)
+[... 1 line(s) omitted ...]
+4.20. Executing TECHMAP pass (map to technology primitives).
+[... 1 line(s) omitted ...]
+4.20.1. Executing Verilog-2005 frontend: <home>/.cache/yosys-0.67/bin/../share/yosys/techmap.v
+[... 28 line(s) omitted ...]
+4.20.2. Continuing TECHMAP pass.
+[... 96 line(s) omitted ...]
+4.20.33. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+[... 16 line(s) omitted ...]
+<suppressed ~1475 debug messages>
+[... 1 line(s) omitted ...]
+4.20.34. Executing OPT_EXPR pass (perform const folding).
+[... 1 line(s) omitted ...]
+<suppressed ~23 debug messages>
+Removed 0 unused cells and 16 unused wires.
+[... 31 line(s) omitted ...]
+<suppressed ~25006 debug messages>
+[... 1 line(s) omitted ...]
+4.21. Executing OPT pass (performing simple optimizations).
+[... 1 line(s) omitted ...]
+4.21.1. Executing OPT_EXPR pass (perform const folding).
+[... 1 line(s) omitted ...]
+<suppressed ~388560 debug messages>
+[... 1 line(s) omitted ...]
+4.21.2. Executing OPT_MERGE pass (detect identical cells).
+[... 1 line(s) omitted ...]
+Computing hashes of 295465 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 294237 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 293939 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 293734 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 293522 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 293219 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 292680 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 291653 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 289634 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 288638 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 288634 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 288630 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 288626 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 288622 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 288618 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 288614 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 288610 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 288606 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 288602 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 288598 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 288594 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+Computing hashes of 288590 cells of `\rf_global2_core'.
+[... 1 line(s) omitted ...]
+<suppressed ~20625 debug messages>
+Removed a total of 6875 cells.
+[... 1 line(s) omitted ...]
+4.21.3. Executing OPT_DFF pass (perform DFF optimizations).
+[... 1 line(s) omitted ...]
+4.21.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+[... 1 line(s) omitted ...]
+Removed 39100 unused cells and 14258 unused wires.
+<suppressed ~39101 debug messages>
+[... 1 line(s) omitted ...]
+4.21.5. Finished fast OPT passes.
+[... 1 line(s) omitted ...]
+4.22. Executing ABC pass (technology mapping using ABC).
+[... 1 line(s) omitted ...]
+4.22.1. Extracting gate netlist of module `\rf_global2_core' to `<abc-temp-dir>/input.blif'..
+[... 1 line(s) omitted ...]
+[stderr]

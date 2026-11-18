@@ -51,7 +51,6 @@ Original to this repository (Apache-2.0); imports the GPL engine at runtime
 only, and only for the step-5 attempt.
 """
 
-import csv
 import json
 import os
 import sys
@@ -61,6 +60,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "oracle"))
 sys.path.insert(0, REPO)
 
+from _census_blob_common import census_row, graphs_entry, slot_entry  # noqa: E402
 import _census_graphs_common as cgc  # noqa: E402
 from refusal import Refuse  # noqa: E402
 
@@ -109,23 +109,6 @@ REFUSALS = os.path.join(REPO, "reports", "SXT-028i", "artifacts",
                         "extract-refusals.txt")
 
 
-def census_row(rel_path):
-    with open(CENSUS_CSV, newline="", encoding="utf-8") as f:
-        for row in csv.DictReader(f):
-            if row["path"] == rel_path:
-                return row
-    raise Refuse(f"preset not in census: {rel_path}")
-
-
-def graphs_entry(rel_path):
-    with open(GRAPHS, encoding="utf-8") as f:
-        for line in f:
-            g = json.loads(line)
-            if g.get("p") == rel_path:
-                return g
-    raise Refuse(f"preset not in graphs.jsonl: {rel_path}")
-
-
 def b4_candidate(rel_path):
     """This leaf's own declared B4-scope candidate list. A carrier absent from
     it is a REFUSAL: no preset may be pulled in from outside the leaf's
@@ -138,13 +121,6 @@ def b4_candidate(rel_path):
     raise Refuse(f"preset is not a declared B4-scope candidate of this leaf "
                  f"(reports/sxt-028/leaves/SXT-028i/newly-enabled.json): "
                  f"{rel_path}")
-
-
-def slot_entry(graph, slot_role):
-    for fx in graph["g"]["fx"]:
-        if fx.get("r") == slot_role:
-            return fx
-    raise Refuse(f"no {slot_role} entry in graphs.jsonl fx list")
 
 
 # The census-vs-graphs zero-drift comparison lives in ONE place for all the

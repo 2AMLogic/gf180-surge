@@ -1,9 +1,25 @@
 # CI Python dependency pins
 
 `requirements-ci.txt` holds the exact `numpy==` and `pytest==` versions that
-both CI install sites (`tests` and `rtl-sim` in `.github/workflows/ci.yml`)
-install with `python3 -m pip install --quiet -r requirements-ci.txt`.
-Contract test: `tests/test_ci_dependency_pins.py`.
+all three CI install sites install with
+`python3 -m pip install --quiet -r requirements-ci.txt`:
+
+| Workflow | Job | Note |
+|---|---|---|
+| `.github/workflows/ci.yml` | `tests` | required check |
+| `.github/workflows/ci.yml` | `rtl-sim` | required check |
+| `.github/workflows/slow-controls.yml` | `slow-controls` | weekly + `workflow_dispatch` (#621) |
+
+`.github/workflows/signoff.yml` installs a different manifest
+(`signoff/requirements.txt`, the klayout-tools pin) and is out of scope here;
+the contract test allow-lists it by name, per workflow.
+
+Contract test: `tests/test_ci_dependency_pins.py`. It discovers workflows from
+the tree rather than naming them one at a time, and asserts coverage (which
+install sites exist) separately from agreement (each one uses a pinned
+manifest), so a workflow added later cannot float unnoticed. The
+`slow-controls` site did exactly that between #415 and #621: the job landed
+before the pin, and the checker read `ci.yml` alone.
 
 **What this is and is not.** It makes the CI environment reproducible so a new
 PyPI release cannot change test numerics with no repo change. It establishes

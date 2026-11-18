@@ -1,0 +1,26 @@
+# Issue #737 live control re-run — reverb1_broken_mutant must still FAIL the exactness comparison
+# Date: 2026-11-17 · Worker: Ubuntu 24.04.4 LTS · Python: Python 3.12.3 (throwaway venv) · numpy 2.4.2 (requirements-ci.txt pin)
+# iverilog: default PATH resolution -> ~/.local/bin/iverilog 13.0 (v13_0); this host has no
+#   /usr/bin/iverilog, so the PATH-shadowing pin question does not arise here (see
+#   DIGEST-ENVIRONMENT.md; select the binary explicitly per ../issue-720/reproduce.sh when it does).
+# Single targeted run: python3 tools/run_reverb_rtl.py (no --keep) in the issue-737 worktree at
+#   commit cc62414 (branch feature/issue-737).
+# The runner rewrites reports/sxt-024/rtl-exactness.json; the committed record was restored
+#   byte-for-byte afterwards (sha256 re-verified). The regenerated copy is kept here as
+#   CONTROL-RERUN.json as run evidence only -- it is NOT the record of reference.
+#
+# Expected per ENV-REFUTATION.md cell 5 (HEAD tree x 13.0 x numpy 2.4.2): verdicts unchanged
+#   (exact=True / exact=True / mutant CONTROL-OK), digests prs fbbeeba6... click f617cc57...
+#   mutant 5a07312f.... Measured: MATCH, all three.
+# Stop/escalate check: met. A field-by-field diff of CONTROL-RERUN.json against the committed
+#   record moves ONLY txn_log_sha256 values (prs -> fbbeeba6..., click -> f617cc57...,
+#   mutant -> 5a07312f...); every exact/outputs_exact/checkpoints_exact/txn_log_exact/
+#   ext_mem_exact verdict, every rtl_measured_traffic and txn_lines_* value, the mutant
+#   verdict line and the iverilog version string are identical.
+#
+# --- runner stdout ---
+# exit status: 0 (all real cases exact AND mutant fails)
+prs-256b-reset48: exact=True (outputs=True ckpt=True txn=True mem=True)
+click-512b: exact=True (outputs=True ckpt=True txn=True mem=None)
+mutant: CONTROL-OK (mutant FAILS the exactness comparison)
+wrote reports/sxt-024/rtl-exactness.json  status=PASS
