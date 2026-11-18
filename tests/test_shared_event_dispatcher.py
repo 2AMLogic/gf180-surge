@@ -12,6 +12,10 @@ PINS, with a recording stub synthesizer and no engine:
      channel_pressure, hard-codes note_off velocity 0) FAILS check 1.
   3. The renderers folded onto the shared dispatcher call it and keep no
      private per-event dispatch of their own.
+  3b. A renderer folded INDIRECTLY (#663) keeps no render loop at all: it
+     imports a harness that is itself in FOLDED, calls that harness's
+     `render_bus`, and makes no `dispatch`, `createMultiBlock` or
+     `processMultiBlock` call of its own.  Strictly stronger than 3.
   4. The two files NOT folded are exactly the two with a recorded reason, and
      neither silently drops an event type it does not forward.
 
@@ -28,7 +32,9 @@ import pytest
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SHARED = os.path.join("fixtures", "render_fixture.py")
 
-# The nine private copies issue #640 names, and their disposition.
+# The nine private copies issue #640 names, and their disposition: six folded
+# directly (FOLDED), one folded transitively (FOLDED_VIA, #663), two exempt
+# with a recorded reason (EXEMPT).
 FOLDED = (
     "fixtures/render_lfo_fixture.py",
     "fixtures/render_mw_fixture.py",
@@ -36,8 +42,21 @@ FOLDED = (
     "tools/_render_reference_common.py",
     "tools/render_lp12_reference.py",
     "tools/render_pm_reference.py",
-    "tools/render_wt_reference.py",
 )
+# path -> the harness whose `render_bus` it delegates to.  Folded onto the
+# shared dispatcher INDIRECTLY (#663): the file keeps no render loop of its
+# own and routes every event through the named harness, which is itself in
+# FOLDED.  Same obligation as FOLDED: a file leaving this table must be
+# folded, and a file entering it needs its harness recorded here.  The pin is
+# strictly stronger than FOLDED's -- "has no render loop at all, and delegates
+# to a file that does" rather than "calls dispatch directly" -- which is why
+# test_folded_renderer_calls_the_shared_dispatcher does NOT cover it: after
+# #663 the file contains no dispatch call, and its only remaining mention of
+# `render_fixture` is in its docstring, so that test's second assertion would
+# pass vacuously.
+FOLDED_VIA = {
+    "tools/render_wt_reference.py": "tools/_render_reference_common.py",
+}
 # path -> why it still carries its own note dispatch.  Keep this table and the
 # reasons in step with docs/byte-frozen-sources.json; a file leaving the table
 # must be folded, and a file entering it needs a reason recorded here.
@@ -243,7 +262,7 @@ def test_folded_renderer_calls_the_shared_dispatcher(rel):
     )
 
 
-@pytest.mark.parametrize("rel", FOLDED)
+@pytest.mark.parametrize("rel", FOLDED + tuple(FOLDED_VIA))
 def test_folded_renderer_keeps_no_private_event_dispatch(rel):
     assert _event_api_calls(rel) == set(), (
         f"{rel} calls the per-event surgepy API directly again: "
@@ -252,11 +271,86 @@ def test_folded_renderer_keeps_no_private_event_dispatch(rel):
     )
 
 
+def _imported_modules(rel):
+    """Module names this file imports, by either import form."""
+    mods = set()
+    for node in ast.walk(ast.parse(_src(rel))):
+        if isinstance(node, ast.Import):
+            mods.update(a.name for a in node.names)
+        elif isinstance(node, ast.ImportFrom) and node.module:
+            mods.add(node.module)
+    return mods
+
+
+def _called_names(rel):
+    """Every called callee's bare name or trailing attribute in the file."""
+    out = set()
+    for node in ast.walk(ast.parse(_src(rel))):
+        if isinstance(node, ast.Call):
+            fn = node.func
+            if isinstance(fn, ast.Attribute):
+                out.add(fn.attr)
+            elif isinstance(fn, ast.Name):
+                out.add(fn.id)
+    return out
+
+
+# The surgepy buffer API a private render loop cannot avoid: allocating and
+# processing its own blocks.  A file that delegates its loop calls neither.
+RENDER_LOOP_API = ("createMultiBlock", "processMultiBlock")
+
+
+@pytest.mark.parametrize("rel", sorted(FOLDED_VIA))
+def test_transitively_folded_renderer_keeps_no_render_loop(rel):
+    """#663: a FOLDED_VIA file delegates its whole loop to a FOLDED harness.
+
+    Four assertions, which together are strictly stronger than FOLDED's "it
+    calls dispatch": the harness is itself pinned to the shared dispatcher,
+    this file reaches it by import, this file actually calls its `render_bus`,
+    and this file retains no loop of its own (no `dispatch`, no block
+    allocation, no block processing).  `playNote`/`releaseNote` absence stays
+    pinned by test_folded_renderer_keeps_no_private_event_dispatch, which
+    parametrizes over FOLDED_VIA too.
+    """
+    harness = FOLDED_VIA[rel]
+
+    # 1. the named harness is itself pinned to the shared dispatcher
+    assert harness in FOLDED, (
+        f"{rel} delegates to {harness}, which is not in FOLDED: the "
+        f"transitive pin would rest on an unpinned file"
+    )
+    # and it really does expose the loop this file delegates to
+    assert _func_source(harness, "render_bus")
+
+    # 2. reached by import, not by copy
+    harness_mod = os.path.splitext(os.path.basename(harness))[0]
+    assert harness_mod in _imported_modules(rel), (
+        f"{rel} does not import {harness_mod}; #663 folded its render loop "
+        f"onto {harness}"
+    )
+
+    # 3. the delegation is a real call, not just an import
+    assert "render_bus" in _called_names(rel), (
+        f"{rel} imports {harness_mod} but never calls render_bus"
+    )
+
+    # 4. no loop of its own: no dispatch, no block allocation, no processing
+    assert _dispatch_call_names(rel) == [], (
+        f"{rel} dispatches events itself again: #663 routes them through "
+        f"{harness}'s render_bus, which is where the {SHARED} call lives"
+    )
+    own_loop = sorted(set(RENDER_LOOP_API) & _called_names(rel))
+    assert own_loop == [], (
+        f"{rel} calls {own_loop} directly, so it has a private render loop "
+        f"again.  Delegate the whole loop to {harness}'s render_bus."
+    )
+
+
 def test_exempt_renderers_are_exactly_the_documented_set():
     """The only files still carrying a private note dispatch are the two with
     a recorded reason.  Folding one without updating EXEMPT fails here, and so
     does regressing a folded file back to a private copy."""
-    private = {rel for rel in tuple(EXEMPT) + FOLDED
+    private = {rel for rel in tuple(EXEMPT) + FOLDED + tuple(FOLDED_VIA)
                if "playNote" in _event_api_calls(rel)}
     assert private == set(EXEMPT), (
         f"private note dispatch found in {sorted(private)}, expected exactly "
