@@ -264,3 +264,44 @@ pip install -r signoff/requirements.txt   # klayout-tools==0.8.0, in a venv
 klt signoff --attest 9 --inventory signoff/t1-item9-inventory.json \
             --check signoff/t1-item9-attestation.json
 ```
+
+## Merged-tree re-derivation (2026-11-18)
+
+#636 landed as merge `245422f` (prior `origin/main` `3341b7a`, branch head
+`db11a28`). Everything above is a correct record of the `d5ac9f6`-base run it
+declares and is left byte-unchanged; three of its quoted numbers no longer
+describe the tree that change actually landed on, and one of them is a
+*completeness* claim about the envelope this record commits. Re-measured on
+the merged tree, not copied:
+
+| Record says (2026-11-13, base `d5ac9f6`) | Merged tree (`245422f`) gives | How measured |
+|---|---|---|
+| `16/16 committed mutants reproduce from their base (0 declared known-drift)`, exit code 0 | `21/21 committed mutants reproduce from their base (0 declared known-drift)`, exit code 0 | `python3 tools/make_rtl_mutants.py --check` |
+| Failure control: `15/16 committed mutants reproduce` | `20/21 committed mutants reproduce`, `STALE: rtl/voice/voice_broken_mutant.sv`, exit code 1 | scratch export of the merged tree (healthy scratch exits 0 first); one restored SXT-036 hunk — the gain-anchor branch — reverted in `rtl/voice/voice_broken_mutant.sv` |
+| "The envelope diff is exactly those two `content_hash` values and nothing else." | The committed envelope diff that #636's landing moved is **three** `content_hash` values — `rtl/voice/voice_broken_mutant.sv`, `rtl/voice/voice_uni_mutant.sv` **and** `tests/test_rtl_mutant_table.py` — plus a newly added trailing newline | `git diff 245422f^1 245422f -- signoff/t1-item9-attestation.json` |
+
+Nothing here is a verification defect, and no verdict moves:
+
+- The mutant count moved 16 → 21 because #623 added five mutant entries to
+  `tools/make_rtl_mutants.py` on `main` after this branch's base.
+- The third moved hash is `tests/test_rtl_mutant_table.py`: #632 added it to
+  `signoff/t1-item9-inventory.json` on `main` after this branch's base, and
+  this change edits that file, so an envelope re-derivation on the merged
+  tree necessarily re-hashes it. It is not an extra edit beyond the two
+  hashes the 2026-11-13 prose describes; all three hashes are correct for the
+  bytes they name.
+- The envelope is still fresh on the merged tree: with the pinned
+  `klayout-tools==0.8.0`, `klt signoff --attest 9 --inventory
+  signoff/t1-item9-inventory.json --check signoff/t1-item9-attestation.json`
+  exits 0 (`status: match`, `fresh_status: pass`).
+- `reports/voice-mutant-regeneration/` appears in neither
+  `signoff/t1-item9-inventory.json`, `signoff/hygiene-inventory.json`, nor
+  `docs/byte-frozen-sources.json`, so this addendum turns no pinned record
+  stale and needs no re-attestation of its own.
+
+These merged-tree numbers were also disclosed in PR #636's body ("Doctor
+update" section); this addendum carries the same disclosure into the committed
+record, where an auditor comparing the committed envelope against the
+committed record can find it. Evidence bookkeeping only: no
+model-vs-pinned-Surge fidelity claim, no preset-support or musical-quality
+claim, no FPGA/gf180mcu synthesis, timing, or hardware-playback claim.
