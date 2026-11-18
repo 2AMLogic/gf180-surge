@@ -29,7 +29,6 @@ Human-approved issues ready for implementation (`loom:issue`).
 
 - **#167**: Re-grade the 4 STALE SXT-034 spectral_corr artifacts on the oracle host under the #110 definition
 - **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus)
-- **#753**: compare_lpmoog_model.py's exit-2 refusal boundary is not pinned by any test, so it can regress to 1 silently
 
 ## In Progress
 
@@ -42,19 +41,12 @@ Issues currently being built (`loom:building`).
 - **#634**: Remove the five copy-pasted per-leaf RTL harness-reporting test files: fold onto one table-parametrized battery
 - **#663**: Remove the private render_bus copy in tools/render_wt_reference.py: it is the shared _render_reference_common.render_bus with a different constructor call
 - **#668**: SXT-028a: AW-49 canonical stimulus quantization is numpy-major-version sensitive (NEP 50) — disposition needed
-- **#671**: Reference sidecars inherit engine identity from the extractor inputs, so it does not identify the rendering engine (F-660-1)
-- **#747**: Annotate the open-pin probe's pnr corroboration with the measured tie-cell decomposition
-- **#750**: klt signoff --attest 9 cannot regenerate the item 9 envelope after a count-moving inventory edit (cold_start audits the stale envelope it is replacing)
-- **#751**: tools/coverage_negative_controls.py rmtree's a fixed /tmp scratch root, so two concurrent runs on one host fail each other
-- **#754**: .gitignore has no venv rule, so the envelope-re-derivation venv a worktree needs is stageable by a stray git add -A
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-- **#752**: docs(signoff): record surgical-edit path for count-moving item 9 re-attests
-- **#755**: fix(tools): per-process scratch root for coverage negative controls
-- **#756**: gitignore: ignore signoff re-derivation venvs
+_None._
 
 ## Approved (Awaiting Merge)
 
@@ -92,12 +84,6 @@ Issues carrying `loom:curated`.
 - **#622**: Regenerate the two drifted tb_voice.sv negative controls and re-derive the T1 item 9 attestation *(curated)*
 - **#663**: Remove the private render_bus copy in tools/render_wt_reference.py: it is the shared _render_reference_common.render_bus with a different constructor call *(curated)*
 - **#668**: SXT-028a: AW-49 canonical stimulus quantization is numpy-major-version sensitive (NEP 50) — disposition needed *(curated)*
-- **#671**: Reference sidecars inherit engine identity from the extractor inputs, so it does not identify the rendering engine (F-660-1) *(curated)*
-- **#747**: Annotate the open-pin probe's pnr corroboration with the measured tie-cell decomposition *(curated)*
-- **#750**: klt signoff --attest 9 cannot regenerate the item 9 envelope after a count-moving inventory edit (cold_start audits the stale envelope it is replacing) *(curated)*
-- **#751**: tools/coverage_negative_controls.py rmtree's a fixed /tmp scratch root, so two concurrent runs on one host fail each other *(curated)*
-- **#753**: compare_lpmoog_model.py's exit-2 refusal boundary is not pinned by any test, so it can regress to 1 silently *(curated)*
-- **#754**: .gitignore has no venv rule, so the envelope-re-derivation venv a worktree needs is stageable by a stray git add -A *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -117,11 +103,11 @@ Issues carrying `loom:curated`.
 | Operator merge-risk holds | 0 |
 | Very important | 1 |
 | Important | 3 |
-| Ready (`loom:issue`) | 3 |
-| In Progress (`loom:building`) | 12 |
-| PRs awaiting review | 3 |
+| Ready (`loom:issue`) | 2 |
+| In Progress (`loom:building`) | 7 |
+| PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
-| Curated | 32 |
+| Curated | 26 |
 | Architect / Hermit proposals | 1 |
 | Active epics | 4 |
 <!-- guide:plan-body:end -->
