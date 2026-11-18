@@ -17,6 +17,12 @@ on:
   pull_request:
   push:
     branches: [main]
+  # Merge queue (issue #772 / 2AMLogic/2am#7605): this workflow owns a required
+  # check (repo ruleset 27340314), so the queue's trial merges must re-run it.
+  # Every step below reads only the checked-out tree, so no event-context
+  # adaptation is needed; cancel-in-progress stays false here, as it already
+  # is for any non-pull_request event.
+  merge_group:
 
 permissions:
   contents: read

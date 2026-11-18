@@ -514,7 +514,7 @@
         "role": "testbench",
         "path": "tests/test_ci_workflow_policy.py",
         "passed": true,
-        "content_hash": "sha256:7c5139d0a92dafdfda9cfb66fe3583c83d499856a234dd12b260a32405b2fed5"
+        "content_hash": "sha256:fd43ae3f57de15334588ef4213a1bddd09f215cec7f7aa693ab549f96d29bf41"
       },
       {
         "check": "present",
@@ -878,7 +878,7 @@
         "role": "testbench",
         "path": "tests/test_sxt019_provenance.py",
         "passed": true,
-        "content_hash": "sha256:bd02e75dec5bde6940a9e10ce857ae651e7a2e36d15a3926366b04c5ed077d4e"
+        "content_hash": "sha256:964cd7ac2aedfe3562ad186826d2d1dade9488aa3bd4ea0d1ff4f929bd86ddea"
       },
       {
         "check": "present",
