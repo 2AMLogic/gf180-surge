@@ -2,6 +2,13 @@
 
 Recent merged pull requests and closed issues. Entries record forge events only; acceptance and claim limits remain in each committed evidence record. Initial history window: 2026-09-30 onward.
 
+### 2026-11-18
+
+- **PR #636**: fix(rtl): regenerate the two voice negative controls as single-line mutants
+- **Issue #622** (closed): Regenerate the two drifted tb_voice.sv negative controls and re-derive the T1 item 9 attestation
+- **PR #774**: ci: run required checks on merge_group and audit the queue's trial merges
+- **Issue #772** (closed): Merge queue: add the merge_group trigger and adapt the PR-metadata gates
+
 ### 2026-11-17
 
 - **PR #769**: docs(sxt-028): re-render NC-RNG-EXCLUSION gate-control transcript to post-#353 coverage counts

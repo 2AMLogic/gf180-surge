@@ -36,12 +36,11 @@ Issues currently being built (`loom:building`).
 
 - **#372**: Settle-boundary audit: input-only effect tap so Delay/EQ, Chorus and Reverb 2 get a verdict (split from #318)
 - **#475**: RTL: rf_ains34_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
-- **#622**: Regenerate the two drifted tb_voice.sv negative controls and re-derive the T1 item 9 attestation
 - **#631**: Remove the private build_and_run/main copies in compare_vel_rtl_model.py and compare_pm_rtl_model.py: last two leaf harnesses off the shared run_leaf_comparison path
 - **#634**: Remove the five copy-pasted per-leaf RTL harness-reporting test files: fold onto one table-parametrized battery
 - **#663**: Remove the private render_bus copy in tools/render_wt_reference.py: it is the shared _render_reference_common.render_bus with a different constructor call
 - **#668**: SXT-028a: AW-49 canonical stimulus quantization is numpy-major-version sensitive (NEP 50) — disposition needed
-- **#772**: Merge queue: add the merge_group trigger and adapt the PR-metadata gates
+- **#775**: Append a dated merged-tree addendum to reports/voice-mutant-regeneration/EVIDENCE.md
 
 ## PRs Awaiting Review
 
@@ -82,10 +81,9 @@ Issues carrying `loom:curated`.
 - **#554**: T1 items 2/3/4/11 Phase B: gf180mcu physical flow for the 8 groups blocked on #537 *(curated)* *(held)*
 - **#565**: Rebuild the DR-0006 tap-patched oracle builds (sxt028a-tap, sxt028c-tap) from source with a recorded identity *(curated)* *(held)*
 - **#580**: T1 item 1: logical4_core and rf_* cores expose only block_done, so synthesis removes the datapath *(curated)* *(held)*
-- **#622**: Regenerate the two drifted tb_voice.sv negative controls and re-derive the T1 item 9 attestation *(curated)*
 - **#663**: Remove the private render_bus copy in tools/render_wt_reference.py: it is the shared _render_reference_common.render_bus with a different constructor call *(curated)*
 - **#668**: SXT-028a: AW-49 canonical stimulus quantization is numpy-major-version sensitive (NEP 50) — disposition needed *(curated)*
-- **#772**: Merge queue: add the merge_group trigger and adapt the PR-metadata gates *(curated)*
+- **#775**: Append a dated merged-tree addendum to reports/voice-mutant-regeneration/EVIDENCE.md *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -106,10 +104,10 @@ Issues carrying `loom:curated`.
 | Very important | 1 |
 | Important | 3 |
 | Ready (`loom:issue`) | 2 |
-| In Progress (`loom:building`) | 8 |
+| In Progress (`loom:building`) | 7 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
-| Curated | 27 |
+| Curated | 26 |
 | Architect / Hermit proposals | 1 |
 | Active epics | 4 |
 <!-- guide:plan-body:end -->
