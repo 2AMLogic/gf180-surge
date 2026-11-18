@@ -3,7 +3,7 @@
 This is a forge workflow snapshot. Issue closure and labels establish no fidelity, preset-quality, or hardware qualification claim.
 
 <!-- guide:plan-body:start -->
-_Generated: 2026-11-18T19:53:09Z (snapshot; compare against live labels)_
+_Generated: 2026-11-18T21:45:42Z (snapshot; compare against live labels)_
 ## Operator Attention: Merge-Risk-Hold Pileup
 
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
@@ -45,7 +45,7 @@ Issues currently being built (`loom:building`).
 
 PRs waiting on Judge (`loom:review-requested`).
 
-_None._
+- **#689**: refactor(tools): delegate the wavetable renderer's render loop to the shared harness
 
 ## Approved (Awaiting Merge)
 
@@ -102,7 +102,7 @@ Issues carrying `loom:curated`.
 | Important | 3 |
 | Ready (`loom:issue`, net of holds/building/merge-pending) | 2 |
 | In Progress (`loom:building`) | 5 |
-| PRs awaiting review | 0 |
+| PRs awaiting review | 1 |
 | Approved PRs awaiting merge | 0 |
 | Curated | 24 |
 | Architect / Hermit proposals | 1 |
