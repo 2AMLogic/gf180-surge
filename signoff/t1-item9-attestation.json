@@ -745,7 +745,7 @@
         "role": "testbench",
         "path": "tests/test_rtl_mutant_table.py",
         "passed": true,
-        "content_hash": "sha256:1a7368702eab2c3dcbc26c923c8673c04dbd776b78124d70ad0f463c827a75b8"
+        "content_hash": "sha256:c98ed328578c39efb197bc7003cbca976bce8e45cc302e9b67e3c1296aa22ae9"
       },
       {
         "check": "present",
