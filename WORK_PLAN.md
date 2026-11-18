@@ -3,6 +3,7 @@
 This is a forge workflow snapshot. Issue closure and labels establish no fidelity, preset-quality, or hardware qualification claim.
 
 <!-- guide:plan-body:start -->
+_Generated: 2026-11-18T15:23:39Z (snapshot; compare against live labels)_
 ## Operator Attention: Merge-Risk-Hold Pileup
 
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
@@ -25,7 +26,7 @@ _None._
 
 ## Ready
 
-Human-approved issues ready for implementation (`loom:issue`).
+Human-approved issues (`loom:issue`) ready for implementation — excluding held (`loom:blocked`/`loom:operator`/`loom:frozen`), `loom:building`, and issues closed by an open `loom:pr` PR (listed under Approved).
 
 - **#167**: Re-grade the 4 STALE SXT-034 spectral_corr artifacts on the oracle host under the #110 definition
 - **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus)
@@ -40,7 +41,6 @@ Issues currently being built (`loom:building`).
 - **#634**: Remove the five copy-pasted per-leaf RTL harness-reporting test files: fold onto one table-parametrized battery
 - **#663**: Remove the private render_bus copy in tools/render_wt_reference.py: it is the shared _render_reference_common.render_bus with a different constructor call
 - **#668**: SXT-028a: AW-49 canonical stimulus quantization is numpy-major-version sensitive (NEP 50) — disposition needed
-- **#775**: Append a dated merged-tree addendum to reports/voice-mutant-regeneration/EVIDENCE.md
 
 ## PRs Awaiting Review
 
@@ -83,7 +83,6 @@ Issues carrying `loom:curated`.
 - **#580**: T1 item 1: logical4_core and rf_* cores expose only block_done, so synthesis removes the datapath *(curated)* *(held)*
 - **#663**: Remove the private render_bus copy in tools/render_wt_reference.py: it is the shared _render_reference_common.render_bus with a different constructor call *(curated)*
 - **#668**: SXT-028a: AW-49 canonical stimulus quantization is numpy-major-version sensitive (NEP 50) — disposition needed *(curated)*
-- **#775**: Append a dated merged-tree addendum to reports/voice-mutant-regeneration/EVIDENCE.md *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -103,11 +102,11 @@ Issues carrying `loom:curated`.
 | Operator merge-risk holds | 0 |
 | Very important | 1 |
 | Important | 3 |
-| Ready (`loom:issue`) | 2 |
-| In Progress (`loom:building`) | 7 |
+| Ready (`loom:issue`, net of holds/building/merge-pending) | 2 |
+| In Progress (`loom:building`) | 6 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
-| Curated | 26 |
+| Curated | 25 |
 | Architect / Hermit proposals | 1 |
 | Active epics | 4 |
 <!-- guide:plan-body:end -->
