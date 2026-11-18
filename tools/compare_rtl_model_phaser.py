@@ -59,6 +59,8 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, REPO)
 sys.path.insert(0, os.path.join(REPO, "model", "effects", "type-phaser"))
 sys.path.insert(0, os.path.join(REPO, "model", "effects"))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _rtl_compile_common import CheckpointKeys  # noqa: E402
 
 from phaser_model import (  # noqa: E402
     PhaserModel, PhaserParams, model_revision, BLOCK,
@@ -209,8 +211,15 @@ def _int_or_none(v):
 
 
 def parse_tb_trace(path):
+    """Parse the RTL trace.  Every O, X and T key must be unique (issues
+    #455/#666): a repeated output, side-chain or checkpoint record --
+    identical or contradictory, in either order -- is refused with
+    LeafInputError rather than resolved last-row-wins.  The rule itself
+    is `CheckpointKeys`, shared with every other leaf parser instead of
+    re-stated here."""
     rev = None
     o, x, t = {}, {}, {}
+    keys = CheckpointKeys()
     with open(path) as f:
         for line in f:
             parts = line.split()
@@ -219,16 +228,17 @@ def parse_tb_trace(path):
             if parts[0] == "R":
                 rev = parts[1]
             elif parts[0] == "O":
-                o[(int(parts[1]), int(parts[2]))] = \
-                    [_int_or_none(v) for v in parts[3:]]
+                keys.put(o, "O", (int(parts[1]), int(parts[2])),
+                         [_int_or_none(v) for v in parts[3:]])
             elif parts[0] == "X":
-                x[(int(parts[1]), int(parts[2]))] = \
-                    [_int_or_none(v) for v in parts[3:]]
+                keys.put(x, "X", (int(parts[1]), int(parts[2])),
+                         [_int_or_none(v) for v in parts[3:]])
             elif parts[0] == "T":
                 d = {}
                 for j in range(3, len(parts) - 1, 2):
                     d[parts[j]] = _int_or_none(parts[j + 1])
-                t[(int(parts[1]), int(parts[2]))] = d
+                keys.put(t, "T", (int(parts[1]), int(parts[2])), d)
+    keys.raise_if_duplicates(path)
     return rev, {"O": o, "X": x, "T": t}
 
 

@@ -1,44 +1,38 @@
 {
   "attested_inventories": [
     {
-      "also_listed_as_live_pins": 45,
       "checked_by": ".github/workflows/signoff.yml",
-      "content_hashed_checks": 218,
-      "content_hashed_classes": {
-        "model/integration/negative_controls.py": 1,
-        "rtl/*.sv": 59,
-        "tests/": 114,
-        "tools/*.py": 44
-      },
+      "content_hashed_classes": [
+        "model/integration/negative_controls.py",
+        "rtl/*.sv",
+        "tests/",
+        "tools/*.py"
+      ],
       "envelope": "signoff/t1-item9-attestation.json",
       "freshness_check": "klt signoff --attest 9 --inventory signoff/t1-item9-inventory.json --check signoff/t1-item9-attestation.json",
       "inventory": "signoff/t1-item9-inventory.json",
       "inventory_key": "testbenches",
       "obligation": "re-attest the envelope in the same change as the edit",
       "regeneration_runs_cold_start": true,
-      "t1_item": 9,
-      "total_checks": 221
+      "t1_item": 9
     },
     {
-      "also_listed_as_live_pins": 0,
       "checked_by": ".github/workflows/signoff.yml",
-      "content_hashed_checks": 5,
-      "content_hashed_classes": {
-        ".github/workflows/*.yml": 3,
-        "LICENSE": 1,
-        "README.md": 1
-      },
+      "content_hashed_classes": [
+        ".github/workflows/*.yml",
+        "LICENSE",
+        "README.md"
+      ],
       "envelope": "signoff/item-10.attestation.json",
       "freshness_check": "klt signoff --attest 10 --inventory signoff/hygiene-inventory.json --check signoff/item-10.attestation.json",
       "inventory": "signoff/hygiene-inventory.json",
       "inventory_key": "hygiene",
       "obligation": "re-attest the envelope in the same change as the edit",
       "regeneration_runs_cold_start": false,
-      "t1_item": 10,
-      "total_checks": 9
+      "t1_item": 10
     }
   ],
-  "attested_inventories_note": "These two klt signoff --attest envelopes content-hash EVERY file their inventory lists, so the inventories -- not this registry's live_pins table -- are the authoritative lists; no per-file live_pins entry is added for them. An inventory-only file (tests/, the rtl/ benches and mutants, README.md, LICENSE, the three workflows) carries a weaker obligation than a live pin: it is an ordinary editable source, but the affected envelope must be re-attested in the same change. The audit in tests/test_byte_frozen_sources.py does NOT fire for them -- discover_recorded_sources() walks *.py outside tests/ only, so .sv, .yml, README.md, LICENSE and everything under tests/ are excluded by construction. Their freshness check is klt signoff --check, run by signoff.yml on every pull request and on every push to main, which exits 3 on drift. The 45 item 9 rows in live_pins are the subset the audit can discover, and they keep the stronger do-not-edit rule. Regenerating an envelope from an unchanged inventory leaves signoff/block-manifest.signoff.json byte-identical; changing an inventory also requires re-rendering that report and updating the content_hash signoff/block-manifest.json declares. Measured against d5ac9f6 under the klayout-tools pin in signoff/requirements.txt; see the doc for the probe table.",
+  "attested_inventories_note": "These two klt signoff --attest envelopes content-hash EVERY file their inventory lists, so the inventories -- not this registry's live_pins table -- are the authoritative lists; no per-file live_pins entry is added for them. An inventory-only file (tests/, the rtl/ benches and mutants, README.md, LICENSE, the three workflows) carries a weaker obligation than a live pin: it is an ordinary editable source, but the affected envelope must be re-attested in the same change. The audit in tests/test_byte_frozen_sources.py does NOT fire for them -- discover_recorded_sources() walks *.py outside tests/ only, so .sv, .yml, README.md, LICENSE and everything under tests/ are excluded by construction. Their freshness check is klt signoff --check, run by signoff.yml on every pull request and on every push to main, which exits 3 on drift. The item 9 rows in live_pins are the subset the audit can discover, and they keep the stronger do-not-edit rule. Regenerating an envelope from an unchanged inventory leaves signoff/block-manifest.signoff.json byte-identical; changing an inventory also requires re-rendering that report and updating the content_hash signoff/block-manifest.json declares. Measured against d5ac9f6 under the klayout-tools pin in signoff/requirements.txt; see the doc for the probe table.",
   "audit": "tests/test_byte_frozen_sources.py",
   "claim": "Bookkeeping only: this registry says which source files have a sha256 of their bytes recorded in committed evidence, and which of those recordings are re-derived live. It establishes no RTL-exactness, model-vs-reference, or preset claim.",
   "doc": "docs/byte-frozen-sources.md",
@@ -63,8 +57,9 @@
       "stamped_field": "script_sha256"
     },
     {
-      "current_bytes_recorded": true,
-      "lint_finding_disposition": "cleanable, but the cost is no longer zero, on the #126 precedent set for fixtures/render_fixture.py: #269's 'resolvability is already spent' argument never applied to this entry. Its stamp resolves because SXT-041's records were rendered from this file as committed (the six reports/SXT-041/artifacts/reference-*.json sidecars), so editing it takes a RESOLVABLE provenance stamp and makes it unresolvable until the SXT-041 (#75) references are re-rendered under the pinned oracle. Still not a live pin -- no test asserts equality -- so a dead-code finding is cleanable under the normal rules, but clean it in a change that either re-renders the SXT-041 references or states the lost resolvability; until one of those lands, test_historical_provenance_carries_no_live_equality_claim fails, because current_bytes_recorded must be set false to describe the tree. (No lint finding as of SXT-041.)",
+      "current_bytes_recorded": false,
+      "current_bytes_recorded_note": "read true from SXT-041 (#75) until #671: SXT-041's reference records were rendered from this file as committed, so its stamp resolved from the start. #671 edited the file (live engine identity in the render sidecars, F-660-1) without re-rendering the six reports/SXT-041/artifacts/reference-*.json sidecars -- the lost resolvability was stated rather than re-rendered (decision-records/0021), so the stamp stopped resolving and the flag reads false.",
+      "lint_finding_disposition": "cleanable, ordinary code on the #269 terms; no lint finding as of SXT-041. The stamp stopped resolving when #671 edited the file: restoring a resolvable stamp requires re-rendering the SXT-041 (#75) references under the pinned oracle, declared and deliberately not done in decision-records/0021. Not a live pin -- no test asserts byte equality.",
       "path": "fixtures/render_slfo_fixture.py",
       "stamped_field": "script_sha256"
     },
@@ -106,7 +101,7 @@
       "stamped_field": "tool_sha256"
     }
   ],
-  "historical_provenance_note": "script_sha256 / tool_sha256 is stamped once, at render time, into the record the script produced. It is NOT re-derived by any test, and superseded values are legitimately committed: as of this registry eight of these ten scripts have drifted from the digests their records carry (current_bytes_recorded: false); two are exceptions. fixtures/render_fixture.py was flipped to true by #126 when the SXT-028f fixture bundles were re-rendered under the pinned oracle, and stamped a second time by #136's SXT-028e-sse re-render. fixtures/render_slfo_fixture.py, added by SXT-041 (#75), reads true from the start -- it is not one of the #269 eight, and where fixtures/render_fixture.py regained resolvability by being re-rendered, this entry's never lapsed: this leaf's records were rendered from the file as committed, so its stamp currently resolves. A live-equality assertion on these would still be wrong -- nothing re-derives a script_sha256 stamp, and no entry here carries a sha256 field. Editing one does not invalidate a record; it does mean the record's provenance digest no longer resolves to any file in the tree, so re-rendering is the only way to restore a resolvable stamp. Disposition of the lint findings in these scripts, decided explicitly in #269 (not inherited from #254's source table, one row of which does not hold): they are ordinary code, so a dead-code finding in one is cleanable with no registry ceremony and no leaf re-run -- the per-entry lint_finding_disposition field records that decision for each, including the ninth entry added by SXT-041 and the tenth added by #447. For the eight entries that still read false the cost is only that an edit moves the file further from the digests its records carry, and that cost is already spent: those flags were false before #269's cleanup and were re-derived false after it, in the same change. fixtures/render_fixture.py and fixtures/render_slfo_fixture.py no longer qualify for that -- each has a currently resolvable stamp (#126/#136 re-renders for the former, the as-committed SXT-041 render for the latter), so an edit to either does spend something; their per-entry dispositions record that, and neither is a live pin. This says nothing about live_pins, where a finding stays permanently kept.",
+  "historical_provenance_note": "script_sha256 / tool_sha256 is stamped once, at render time, into the record the script produced. It is NOT re-derived by any test, and superseded values are legitimately committed: as of this registry nine of these ten scripts have drifted from the digests their records carry (current_bytes_recorded: false); one is not. fixtures/render_fixture.py was flipped to true by #126 when the SXT-028f fixture bundles were re-rendered under the pinned oracle, and stamped a second time by #136's SXT-028e-sse re-render. fixtures/render_slfo_fixture.py, added by SXT-041 (#75), was the second exception, by the never-lapsed route: its leaf's records were rendered from the file as committed, so it read true from the start. #671 edited the file without re-rendering the SXT-041 references -- it recorded the lost resolvability instead (decision-records/0021) -- so this entry reads false since #671, and only a re-render of those references under the pinned oracle restores a resolvable stamp. A live-equality assertion on these would still be wrong -- nothing re-derives a script_sha256 stamp, and no entry here carries a sha256 field. Editing one does not invalidate a record; it does mean the record's provenance digest no longer resolves to any file in the tree, so re-rendering is the only way to restore a resolvable stamp. Disposition of the lint findings in these scripts, decided explicitly in #269 (not inherited from #254's source table, one row of which does not hold): they are ordinary code, so a dead-code finding in one is cleanable with no registry ceremony and no leaf re-run -- the per-entry lint_finding_disposition field records that decision for each, including the ninth entry added by SXT-041 and the tenth added by #447. For the nine entries that still read false the cost is only that an edit moves the file further from the digests its records carry, and that cost is already spent: those flags were false before #269's cleanup and were re-derived false after it, in the same change. fixtures/render_fixture.py no longer qualifies for that -- it has a currently resolvable stamp (the #126/#136 re-renders), so an edit to it does spend something; its per-entry disposition records that, and it is not a live pin. fixtures/render_slfo_fixture.py was in that position until #671, whose edit spent the SXT-041 stamp and recorded the loss instead of re-rendering. This says nothing about live_pins, where a finding stays permanently kept.",
   "issue": "#254",
   "live_pins": [
     {
@@ -151,8 +146,8 @@
         "reports/sxt-028a/negative-controls/negative-controls.json",
         "reports/sxt-028a/rtl-exactness.json"
       ],
-      "revision_word": 1453063955,
-      "sha256": "569bff13caa7dad88d88cd185bfb024974b2fc3ec7566d5b7840dd828ca5c0cd"
+      "revision_word": 2924061779,
+      "sha256": "ae49a4536d7079fdc4ff9148555a52e6cfca8b90b6f6c3892e59c86544cf63c0"
     },
     {
       "covers": [
@@ -374,6 +369,19 @@
     },
     {
       "covers": [
+        "tools/aw49_stimulus_invariance_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/aw49_stimulus_invariance_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "194c8a450d384d176c57dd192e9faf981de82c857a51f42afa211331a92ea0f3"
+    },
+    {
+      "covers": [
         "tools/aw4_negative_controls.py"
       ],
       "freshness_test": "tests/test_byte_frozen_sources.py",
@@ -396,7 +404,7 @@
       "recorded_in": [
         "signoff/t1-item9-attestation.json"
       ],
-      "sha256": "d01a8a1dd7dcebcbfac670bcfe1322da3ee9001ebdff45cbb706183c49f0429e"
+      "sha256": "cf4dfa83a8b4220f037bdd243a34dc48cf71a4a9a2c4379590fb6500c88433c1"
     },
     {
       "covers": [
@@ -435,7 +443,7 @@
       "recorded_in": [
         "signoff/t1-item9-attestation.json"
       ],
-      "sha256": "3b706f4d4da93279d59e55dc8ddec8cfce8a4fdaa3cbf0636143cdfd71b586c6"
+      "sha256": "34f0a173f573f4c0a455476aea2bf6347a6d7cbb621ea5df28fbb6d4cb88c470"
     },
     {
       "covers": [
@@ -448,7 +456,7 @@
       "recorded_in": [
         "signoff/t1-item9-attestation.json"
       ],
-      "sha256": "0077ca86804db297c761803cf5a5e15d80093012e784ddba54e192d80db671e8"
+      "sha256": "244bb5bfa7fe1c348a10c6a5786d6de6a727b89febede348e6fd3024f426cd9e"
     },
     {
       "covers": [
@@ -474,7 +482,7 @@
       "recorded_in": [
         "signoff/t1-item9-attestation.json"
       ],
-      "sha256": "aa5be82ec5e253910782cfb399bbaf6f99c291f8b679b42d5b83835a0ee49ec8"
+      "sha256": "3a2dbc6610236fc1b10ce8aa14bcf572f6fa8799c4f84be2036b5e3c5748077e"
     },
     {
       "covers": [
@@ -487,7 +495,7 @@
       "recorded_in": [
         "signoff/t1-item9-attestation.json"
       ],
-      "sha256": "cf58dced6db8f1f2ba4b9340fba1e8b3dfabeb91cf05c6ed7f467b6e536eef2a"
+      "sha256": "10f7e108f21ce223636c89a8129d7f41341dda05b80dcee12519d1eb7a90ce7f"
     },
     {
       "covers": [
@@ -500,7 +508,7 @@
       "recorded_in": [
         "signoff/t1-item9-attestation.json"
       ],
-      "sha256": "c16270c7115dbbd15a4600ff9770b744ac4b835ba8f603d2b845e5efd9e58e0d"
+      "sha256": "4ac6ff4e3cd832a5fa623e432031604004f27b050a052f04d3c6a6310e1fa145"
     },
     {
       "covers": [
@@ -552,7 +560,7 @@
       "recorded_in": [
         "signoff/t1-item9-attestation.json"
       ],
-      "sha256": "65a98354ccf035fa9eae0cb2638dcb1b5f69e5012581ebf33fe9afd3d7386ccb"
+      "sha256": "956248bf314a8a519deca66fbae4234fcd0c4e54d158728c540de59486233d5b"
     },
     {
       "covers": [
@@ -669,7 +677,7 @@
       "recorded_in": [
         "signoff/t1-item9-attestation.json"
       ],
-      "sha256": "f7d8de1a0686b78ea1a431da02fb9a79e5ee0979982824ca039cc9c9092a1832"
+      "sha256": "89d8405a0709a1c6160a7a78bff4883dba013185e90c9ab1b7ce38655cee9dd8"
     },
     {
       "covers": [
@@ -864,7 +872,7 @@
       "recorded_in": [
         "signoff/t1-item9-attestation.json"
       ],
-      "sha256": "4b835de9ef0f0cf1669b49e87a7165aaf4117c0a73c164b3017e2e27874439bf"
+      "sha256": "16929f82ba5c908d30392524dbf7bb327f9febc0da490e2438800f80dd5490a7"
     },
     {
       "covers": [
@@ -877,7 +885,7 @@
       "recorded_in": [
         "signoff/t1-item9-attestation.json"
       ],
-      "sha256": "a1ce63a0fe3f732b26de96db4974f6ae9e4d390dde1533ccfcbbc3d2f8b38567"
+      "sha256": "2c56570e4bc4c2a8f5178c10eac69e69d7fe342d24884fe2b96ce036ab9ca93e"
     },
     {
       "covers": [
@@ -903,7 +911,7 @@
       "recorded_in": [
         "signoff/t1-item9-attestation.json"
       ],
-      "sha256": "5b8633e512cf6859d71dccb00039219b45cef41afa98b12f0550e4f48c79d03f"
+      "sha256": "8e5fcea7a3a215082a05495e1e460144988a9bea6cdeb2f3499f5b7261d9eea0"
     },
     {
       "covers": [
@@ -916,7 +924,7 @@
       "recorded_in": [
         "signoff/t1-item9-attestation.json"
       ],
-      "sha256": "e77b4a1e6f9eab740bced8e83c4df76cf987b2396e5dc38b055df869d860efa7"
+      "sha256": "d34081b8439866ae5b98d00ee1b401753e249a086da5654351373b325f31beab"
     },
     {
       "covers": [

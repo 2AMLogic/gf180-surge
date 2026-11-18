@@ -309,7 +309,7 @@
   },
   "reports/coverage-v1/leaf-verification.json": {
    "role": "leaf/gate verification table",
-   "sha256": "03636ec823ae0891ca1385965c3872af7a57e2cce43026f81a99a9c4baae6444"
+   "sha256": "8f73d9d7efb9872225562780d167b898f0093c3f40c926208b3b3edfd47ed799"
   },
   "reports/sxt-013/candidates/slate-256-balanced.json": {
    "role": "structural input (pinned)",
@@ -345,7 +345,7 @@
   },
   "reports/sxt-024/EVIDENCE.md": {
    "role": "evidence record for leaf fx:Reverb1",
-   "sha256": "12ecd54f9a799caf3c4bf3dc791234ac225c93cd9d32e47def98d68017bcef8f"
+   "sha256": "33746240d467075b22954beb025571ec2cd08f918eec7885133338de3908ae9d"
   },
   "reports/sxt-025/EVIDENCE.md": {
    "role": "pinned by integration record sxt-025-hells-bells-drybus-adapted",
@@ -397,7 +397,7 @@
   },
   "reports/sxt-028a/EVIDENCE.md": {
    "role": "evidence record for leaf fx:AW-49-Galactic",
-   "sha256": "abee751c7e8bce123008b63599430d3e9246953afe141b9f7b4f4a2f6290cf4f"
+   "sha256": "d0fe24e77570cdf94312245f7a1d20fffe326c6c2de4f3f7d179e55a31185a40"
   },
   "reports/sxt-032/EVIDENCE.md": {
    "role": "evidence record for leaf mod:lfo",

@@ -14,11 +14,13 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(
     os.path.abspath(__file__))), "model", "effects", "reverb1"))
 
 import reverb1_fixed as rf  # noqa: E402
 import coefficient_plane as cp  # noqa: E402
+from evidence_scan import scanned  # noqa: E402
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SXT = os.path.join(REPO, "reports", "sxt-024")
@@ -212,7 +214,8 @@ def test_committed_records_carry_the_pinned_send_gain():
         seen.add(rec["send_gain"])
     # the four records that report send_gain today; a regression that stopped
     # writing the field would otherwise make this test vacuously pass
-    assert len(graded) >= 4, graded
+    graded = scanned(graded, what="committed sxt-024 records reporting "
+                                  "send_gain", at_least=4)
     assert seen == {PINNED_SEND_GAIN_F32}, seen
 
 
@@ -220,9 +223,10 @@ def test_committed_evidence_files_are_coherent():
     # comparison records: every committed case's checks all true (or the
     # case carries an explicit status/finding)
     comp = os.path.join(SXT, "comparison")
-    for fn in os.listdir(comp):
-        if not fn.endswith(".json"):
-            continue
+    for fn in scanned(
+            (name for name in sorted(os.listdir(comp))
+             if name.endswith(".json")),
+            what="sxt-024 comparison records", where=comp, at_least=1):
         d = json.load(open(os.path.join(comp, fn)))
         records = d if isinstance(d, list) else [d]
         for rec in records:
@@ -258,9 +262,13 @@ def test_committed_evidence_files_are_coherent():
     assert sorted(r["trace"] for r in sweep) == \
         sorted(cm.REQUIRED_SWEEP_CASES), "committed sweep-t60.json does not " \
         "cover the declared required case set"
-    # negative controls: all must be CONTROL-OK
-    for fn in os.listdir(os.path.join(SXT, "negative-controls")):
-        d = json.load(open(os.path.join(SXT, "negative-controls", fn)))
+    # negative controls: all must be CONTROL-OK (same #456 rule: an absent
+    # control set can no longer masquerade as coverage)
+    nc = os.path.join(SXT, "negative-controls")
+    for fn in scanned(sorted(os.listdir(nc)),
+                      what="sxt-024 negative-control records", where=nc,
+                      at_least=1):
+        d = json.load(open(os.path.join(nc, fn)))
         assert "CONTROL-OK" in d.get("verdict", ""), fn
     # RTL exactness record: status PASS and mutant failed
     rtl = json.load(open(os.path.join(SXT, "rtl-exactness.json")))

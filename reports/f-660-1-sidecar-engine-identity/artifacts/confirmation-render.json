@@ -1,0 +1,352 @@
+{
+  "schema_version": 1,
+  "issue": "671",
+  "finding": "F-660-1",
+  "claim_scope": "Reference-vs-reference repeatability only: whether each committed Pattern A sidecar WAV reproduces byte-identically under the stock pinned oracle, and what the fresh sidecars record under the fixed producers. Establishes nothing about whether the tap builds differ from stock in general.",
+  "environment": {
+    "oracle_engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+    "oracle_version_string": "1.4.HEAD.58914e59c",
+    "oracle_prebuilt_artifact_sha256_prefix": "d2cc702913c4b2d4",
+    "oracle_python": "3.11.16 (prebuilt venv), numpy 1.26.4",
+    "host": "linux-x86_64 dispatch worker",
+    "render_date": "2026-11-14",
+    "repeats_per_render": 3
+  },
+  "renderers_under_test": [
+    "fixtures/render_lfo_fixture.py",
+    "fixtures/render_mw_fixture.py",
+    "fixtures/render_slfo_fixture.py"
+  ],
+  "per_sidecar": [
+    {
+      "committed_sidecar": "reports/sxt-032/artifacts/reference-seq-modwheel-v1.json",
+      "producer": "render_lfo_fixture.py",
+      "committed_wav_sha256": "ee86e219c89bb4590d3d1ad80897f1fb52f1c6418e4e777665e1a0f7363e1302",
+      "fresh_wav_sha256": "ee86e219c89bb4590d3d1ad80897f1fb52f1c6418e4e777665e1a0f7363e1302",
+      "byte_identical": true,
+      "committed_engine": {
+        "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "version_string": "1.4.sxt037-tap.01b20d0b8"
+      },
+      "fresh_engine": {
+        "block_size_samples": 32,
+        "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "engine_version_string": "1.4.HEAD.58914e59c",
+        "sample_rate": 48000,
+        "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+        "tempo_bpm": 120
+      },
+      "fresh_inputs_engine": {
+        "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "version_string": "1.4.sxt037-tap.01b20d0b8"
+      },
+      "determinism_bit_identical": true,
+      "determinism_repeats": 3
+    },
+    {
+      "committed_sidecar": "reports/sxt-032/artifacts/reference-seq-notes-coverage-v1.json",
+      "producer": "render_lfo_fixture.py",
+      "committed_wav_sha256": "7f7b5b523d532cb6354927e6cdd6aa7dd453afdf2915e948b29b54a68401d856",
+      "fresh_wav_sha256": "7f7b5b523d532cb6354927e6cdd6aa7dd453afdf2915e948b29b54a68401d856",
+      "byte_identical": true,
+      "committed_engine": {
+        "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "version_string": "1.4.sxt037-tap.01b20d0b8"
+      },
+      "fresh_engine": {
+        "block_size_samples": 32,
+        "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "engine_version_string": "1.4.HEAD.58914e59c",
+        "sample_rate": 48000,
+        "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+        "tempo_bpm": 120
+      },
+      "fresh_inputs_engine": {
+        "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "version_string": "1.4.sxt037-tap.01b20d0b8"
+      },
+      "determinism_bit_identical": true,
+      "determinism_repeats": 3
+    },
+    {
+      "committed_sidecar": "reports/sxt-032/artifacts/reference-seq-notes-holds-v1.json",
+      "producer": "render_lfo_fixture.py",
+      "committed_wav_sha256": "0f72f0256607b9804a9f07c8433eaddec7bf6f2bbf71992910961cfbef1d4bd5",
+      "fresh_wav_sha256": "0f72f0256607b9804a9f07c8433eaddec7bf6f2bbf71992910961cfbef1d4bd5",
+      "byte_identical": true,
+      "committed_engine": {
+        "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "version_string": "1.4.sxt037-tap.01b20d0b8"
+      },
+      "fresh_engine": {
+        "block_size_samples": 32,
+        "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "engine_version_string": "1.4.HEAD.58914e59c",
+        "sample_rate": 48000,
+        "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+        "tempo_bpm": 120
+      },
+      "fresh_inputs_engine": {
+        "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "version_string": "1.4.sxt037-tap.01b20d0b8"
+      },
+      "determinism_bit_identical": true,
+      "determinism_repeats": 3
+    },
+    {
+      "committed_sidecar": "reports/sxt-032/artifacts/reference-seq-notes-repeated-v1.json",
+      "producer": "render_lfo_fixture.py",
+      "committed_wav_sha256": "d0d9cca78bbe8ffe7140ccaee58e0ca520cbdd16bf7d6997f2ee737ff35c5e12",
+      "fresh_wav_sha256": "d0d9cca78bbe8ffe7140ccaee58e0ca520cbdd16bf7d6997f2ee737ff35c5e12",
+      "byte_identical": true,
+      "committed_engine": {
+        "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "version_string": "1.4.sxt037-tap.01b20d0b8"
+      },
+      "fresh_engine": {
+        "block_size_samples": 32,
+        "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "engine_version_string": "1.4.HEAD.58914e59c",
+        "sample_rate": 48000,
+        "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+        "tempo_bpm": 120
+      },
+      "fresh_inputs_engine": {
+        "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "version_string": "1.4.sxt037-tap.01b20d0b8"
+      },
+      "determinism_bit_identical": true,
+      "determinism_repeats": 3
+    },
+    {
+      "committed_sidecar": "reports/sxt-035/artifacts/reference-seq-modwheel-v1.json",
+      "producer": "render_mw_fixture.py",
+      "committed_wav_sha256": "cdc6dd7b9915735b5cf05e74329cd19db0bd0f9a719f24f9b3d1e2e9693d2002",
+      "fresh_wav_sha256": "cdc6dd7b9915735b5cf05e74329cd19db0bd0f9a719f24f9b3d1e2e9693d2002",
+      "byte_identical": true,
+      "committed_engine": {
+        "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "version_string": "1.4.sxt037-tap.ff8b4dba4"
+      },
+      "fresh_engine": {
+        "block_size_samples": 32,
+        "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "engine_version_string": "1.4.HEAD.58914e59c",
+        "sample_rate": 48000,
+        "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+        "tempo_bpm": 120
+      },
+      "fresh_inputs_engine": {
+        "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "version_string": "1.4.sxt037-tap.ff8b4dba4"
+      },
+      "determinism_bit_identical": true,
+      "determinism_repeats": 3
+    },
+    {
+      "committed_sidecar": "reports/sxt-035/artifacts/reference-seq-notes-coverage-v1.json",
+      "producer": "render_mw_fixture.py",
+      "committed_wav_sha256": "8b532735244ae20a429846c85d6321f70ea063d6587ad19e7b571558527bb335",
+      "fresh_wav_sha256": "8b532735244ae20a429846c85d6321f70ea063d6587ad19e7b571558527bb335",
+      "byte_identical": true,
+      "committed_engine": {
+        "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "version_string": "1.4.sxt037-tap.ff8b4dba4"
+      },
+      "fresh_engine": {
+        "block_size_samples": 32,
+        "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "engine_version_string": "1.4.HEAD.58914e59c",
+        "sample_rate": 48000,
+        "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+        "tempo_bpm": 120
+      },
+      "fresh_inputs_engine": {
+        "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "version_string": "1.4.sxt037-tap.ff8b4dba4"
+      },
+      "determinism_bit_identical": true,
+      "determinism_repeats": 3
+    },
+    {
+      "committed_sidecar": "reports/sxt-035/artifacts/reference-seq-notes-repeated-v1.json",
+      "producer": "render_mw_fixture.py",
+      "committed_wav_sha256": "e86f79af0a2a1afb8a4b22b5db14437c6a25207f77a8c6d6a44be8e010296bd1",
+      "fresh_wav_sha256": "e86f79af0a2a1afb8a4b22b5db14437c6a25207f77a8c6d6a44be8e010296bd1",
+      "byte_identical": true,
+      "committed_engine": {
+        "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "version_string": "1.4.sxt037-tap.ff8b4dba4"
+      },
+      "fresh_engine": {
+        "block_size_samples": 32,
+        "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "engine_version_string": "1.4.HEAD.58914e59c",
+        "sample_rate": 48000,
+        "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+        "tempo_bpm": 120
+      },
+      "fresh_inputs_engine": {
+        "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "version_string": "1.4.sxt037-tap.ff8b4dba4"
+      },
+      "determinism_bit_identical": true,
+      "determinism_repeats": 3
+    },
+    {
+      "committed_sidecar": "reports/SXT-041/artifacts/reference-seq-modwheel-v1-slfo-fixture.json",
+      "producer": "render_slfo_fixture.py",
+      "committed_wav_sha256": "cdfd711c169e0b6aa64e2340aed4c985146b390519ae30183abdf9270b2bb238",
+      "fresh_wav_sha256": "cdfd711c169e0b6aa64e2340aed4c985146b390519ae30183abdf9270b2bb238",
+      "byte_identical": true,
+      "committed_engine": {
+        "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "version_string": "1.4.HEAD.58914e59c"
+      },
+      "fresh_engine": {
+        "block_size_samples": 32,
+        "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "engine_version_string": "1.4.HEAD.58914e59c",
+        "sample_rate": 48000,
+        "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+        "tempo_bpm": 120
+      },
+      "fresh_inputs_engine": {
+        "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "version_string": "1.4.HEAD.58914e59c"
+      },
+      "determinism_bit_identical": true,
+      "determinism_repeats": 3
+    },
+    {
+      "committed_sidecar": "reports/SXT-041/artifacts/reference-seq-notes-coverage-v1-slfo-fixture.json",
+      "producer": "render_slfo_fixture.py",
+      "committed_wav_sha256": "8a05868f4b985ab8845dbb90556fa03238ca08c217fab69f9d573525d13a6cab",
+      "fresh_wav_sha256": "8a05868f4b985ab8845dbb90556fa03238ca08c217fab69f9d573525d13a6cab",
+      "byte_identical": true,
+      "committed_engine": {
+        "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "version_string": "1.4.HEAD.58914e59c"
+      },
+      "fresh_engine": {
+        "block_size_samples": 32,
+        "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "engine_version_string": "1.4.HEAD.58914e59c",
+        "sample_rate": 48000,
+        "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+        "tempo_bpm": 120
+      },
+      "fresh_inputs_engine": {
+        "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "version_string": "1.4.HEAD.58914e59c"
+      },
+      "determinism_bit_identical": true,
+      "determinism_repeats": 3
+    },
+    {
+      "committed_sidecar": "reports/SXT-041/artifacts/reference-seq-notes-holds-v1-slfo-fixture.json",
+      "producer": "render_slfo_fixture.py",
+      "committed_wav_sha256": "28839ad2f2e4c37d1bb0369fa63f9d74522df5faebfbd1d6984b9b19a3fb6b05",
+      "fresh_wav_sha256": "28839ad2f2e4c37d1bb0369fa63f9d74522df5faebfbd1d6984b9b19a3fb6b05",
+      "byte_identical": true,
+      "committed_engine": {
+        "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "version_string": "1.4.HEAD.58914e59c"
+      },
+      "fresh_engine": {
+        "block_size_samples": 32,
+        "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "engine_version_string": "1.4.HEAD.58914e59c",
+        "sample_rate": 48000,
+        "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+        "tempo_bpm": 120
+      },
+      "fresh_inputs_engine": {
+        "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "version_string": "1.4.HEAD.58914e59c"
+      },
+      "determinism_bit_identical": true,
+      "determinism_repeats": 3
+    },
+    {
+      "committed_sidecar": "reports/SXT-041/artifacts/reference-seq-notes-repeated-v1-slfo-fixture.json",
+      "producer": "render_slfo_fixture.py",
+      "committed_wav_sha256": "78084c38086257a374e7e90252daa3cc145f562a6bd98f458038845817226906",
+      "fresh_wav_sha256": "78084c38086257a374e7e90252daa3cc145f562a6bd98f458038845817226906",
+      "byte_identical": true,
+      "committed_engine": {
+        "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "version_string": "1.4.HEAD.58914e59c"
+      },
+      "fresh_engine": {
+        "block_size_samples": 32,
+        "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "engine_version_string": "1.4.HEAD.58914e59c",
+        "sample_rate": 48000,
+        "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+        "tempo_bpm": 120
+      },
+      "fresh_inputs_engine": {
+        "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "version_string": "1.4.HEAD.58914e59c"
+      },
+      "determinism_bit_identical": true,
+      "determinism_repeats": 3
+    },
+    {
+      "committed_sidecar": "reports/SXT-041/artifacts/reference-sxt041-slfo-overlap-v1-slfo-fixture.json",
+      "producer": "render_slfo_fixture.py",
+      "committed_wav_sha256": "3c3a1a4fc910f8ed7fbf8658fd34f5434c4a137385298480cf5d26f5d3872e05",
+      "fresh_wav_sha256": "3c3a1a4fc910f8ed7fbf8658fd34f5434c4a137385298480cf5d26f5d3872e05",
+      "byte_identical": true,
+      "committed_engine": {
+        "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "version_string": "1.4.HEAD.58914e59c"
+      },
+      "fresh_engine": {
+        "block_size_samples": 32,
+        "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "engine_version_string": "1.4.HEAD.58914e59c",
+        "sample_rate": 48000,
+        "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+        "tempo_bpm": 120
+      },
+      "fresh_inputs_engine": {
+        "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "version_string": "1.4.HEAD.58914e59c"
+      },
+      "determinism_bit_identical": true,
+      "determinism_repeats": 3
+    },
+    {
+      "committed_sidecar": "reports/SXT-041/artifacts/reference-sxt041-slfo-overlap-v1-slfo-fast.json",
+      "producer": "render_slfo_fixture.py",
+      "committed_wav_sha256": "cd9b83c71531f5dad0cdd248e7e2f7d0892654ada79c347fdcdc9d381f56f6fb",
+      "fresh_wav_sha256": "cd9b83c71531f5dad0cdd248e7e2f7d0892654ada79c347fdcdc9d381f56f6fb",
+      "byte_identical": true,
+      "committed_engine": {
+        "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "version_string": "1.4.HEAD.58914e59c"
+      },
+      "fresh_engine": {
+        "block_size_samples": 32,
+        "engine_commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "engine_version_string": "1.4.HEAD.58914e59c",
+        "sample_rate": 48000,
+        "surgepy_module": "surgepy.cpython-311-x86_64-linux-gnu.so",
+        "tempo_bpm": 120
+      },
+      "fresh_inputs_engine": {
+        "commit": "58914e59c608ed4384ba6002e44c3465c58b2e71",
+        "version_string": "1.4.HEAD.58914e59c"
+      },
+      "determinism_bit_identical": true,
+      "determinism_repeats": 3
+    }
+  ],
+  "summary": {
+    "committed_sidecars_reproduced": 13,
+    "total": 13,
+    "all_determinism_gates_green": true
+  }
+}

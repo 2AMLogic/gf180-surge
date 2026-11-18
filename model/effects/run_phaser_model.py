@@ -203,7 +203,7 @@ def main():
 
         m.process_block = capturing
 
-    cps = checkpoint_set(n_total)
+    cps = checkpoint_set(n_total, settle=SETTLE_BLOCKS)
     trace_blocks = []
     blocks_in = []
     ctrl_lines = []

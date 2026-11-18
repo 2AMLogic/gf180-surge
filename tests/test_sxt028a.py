@@ -51,6 +51,35 @@ def test_f32_to_s32i_exact_for_loud_values():
     assert abs(gm.f32_to_s32i(0.001) - int(0.001 * (1 << 25) + 0.5)) <= 1
 
 
+def test_f32_to_s32i_is_numpy_version_invariant():
+    """#668: the input-boundary quantization must not depend on the numpy
+    major version. NEP 50 (numpy 2.x weak scalars) computes
+    np.float32 * python float in single precision where numpy 1.x
+    value-based casting promoted it to double, which moved 13 of the 32768
+    canonical stimulus words by 1 LSB -- and with them the whole
+    canonical-temple-512b txn log. The helper coerces its operand to a
+    python float, so quantizing the raw float32 scalar must equal
+    quantizing its exact double value everywhere, including the saturation
+    and negative-branch edges and the docstring's "exact for |x| >= 2^-1"
+    claim. tools/aw49_stimulus_invariance_controls.py re-measures the same
+    invariant under both pinned majors (1.26.4 / 2.4.2)."""
+    npz = np.load(os.path.join(SXT, "fixtures",
+                              "temple__seq-notes-coverage-v1-aw49-taps.npz"))
+    gal_in = npz["gal_in"]
+    assert gal_in.dtype == np.float32
+    for b in range(512):
+        for ch in (0, 1):
+            for x in gal_in[b, :, ch]:
+                assert gm.f32_to_s32i(x) == gm.f32_to_s32i(float(x)), \
+                    (b, ch, float(x))
+    assert gm.f32_to_s32i(np.float32(0.5)) == 1 << 24
+    assert gm.f32_to_s32i(np.float32(-0.5)) == -(1 << 24)
+    assert gm.f32_to_s32i(np.float32(100.0)) == gm.S32_MAX   # saturation
+    assert gm.f32_to_s32i(np.float32(-100.0)) == gm.S32_MIN
+    for v in np.float32([0.5, 0.734375, -0.9375, 1.0, 15.9375]):
+        assert gm.f32_to_s32i(v) == int(float(v) * (1 << 25))
+
+
 def test_quoted_delay_constants_and_layout():
     # the twelve designed integers, quoted per decision-records/0006
     assert [gm.DELAY_MULT[n][1] for n in

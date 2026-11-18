@@ -17,21 +17,21 @@
         "role": "hygiene",
         "path": ".github/workflows/ci.yml",
         "passed": true,
-        "content_hash": "sha256:c28b4404ec95969cddcfc3a53b745126831060dcacaea11684a96b4765746f08"
+        "content_hash": "sha256:c8d3e6254a0e36261d0107c11ba8cd7db395414712efc79d1c7d05eb397d8ea3"
       },
       {
         "check": "present",
         "role": "hygiene",
         "path": ".github/workflows/signoff.yml",
         "passed": true,
-        "content_hash": "sha256:a8ff95a01d3bf955cd0fc11460a6ac55c5b9c142ecb37e2f3cdfade6ce54e704"
+        "content_hash": "sha256:83c222f219bb85b9d0f36ac84ead67f8af8c45516ba468af364abff4ac366519"
       },
       {
         "check": "present",
         "role": "hygiene",
         "path": ".github/workflows/slow-controls.yml",
         "passed": true,
-        "content_hash": "sha256:073da2d61efbb0d4ba70554c024d16681b363e2678a300edcf09dbd3eee88827"
+        "content_hash": "sha256:52578a8815cabf288d89c1d3d7304b8d06d146644811de7d74c97f8ac045b53e"
       },
       {
         "check": "present",
@@ -45,7 +45,7 @@
         "role": "hygiene",
         "path": "README.md",
         "passed": true,
-        "content_hash": "sha256:df6b476f40abbc54ffc3e5a270c3d369170f1f8a57af1fa04ddbf7bbbfd44843"
+        "content_hash": "sha256:178682c9c48f024092b038a8265d25e6505e424ccda63d95b6070d7989a52daf"
       },
       {
         "check": "command",

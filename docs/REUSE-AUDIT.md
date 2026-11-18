@@ -205,7 +205,13 @@ Apache-2.0 repository by the license rule in `AGENTS.md`.
    in `reports/sxt-019/EVIDENCE.md` §20): the `provenance-audit` job checks out
    with `fetch-depth: 0` and runs the mode over `origin/<base ref>..<PR head
    sha>` — this branch's own commits, so a pull request is never judged on
-   history that was already on the base branch. Three consequences worth knowing
+   history that was already on the base branch. Since #772 the same gate also
+   runs for the merge queue's trial merges, over the merge_group event's own
+   `base_sha..head_sha`, failing closed on an absent or unfetchable base; the
+   event-plumbing method is adopted from sibling sky130-comparator#332 (pinned
+   at head `38b0058f66674085f1eacc02008d30d4c69cb80c`, merged as `8e33733d`,
+   Apache-2.0) and adapted from its standalone gate script to this
+   repository's inline workflow step — no sibling code is copied. Three consequences worth knowing
    before you push:
 
    * **Declaring late in the branch fails the gate**, which is the rule above

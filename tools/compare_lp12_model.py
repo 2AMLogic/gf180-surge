@@ -37,6 +37,11 @@ import json
 import os
 import sys
 
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, REPO)
+
+from refusal import Refuse  # noqa: E402
+
 PROPOSED = {
     "l1_C_max_lsb": 16,
     "l1_C_rms_lsb": 4,
@@ -69,21 +74,34 @@ def stability_legs(inst, case="?"):
     """
     name = f"{inst['key']['name']}.lane{inst['key']['lane']}"
     if "stability_verdict" not in inst:
-        raise SystemExit(
+        raise Refuse(
             f"{case}: instance {name} carries no 'stability_verdict': this "
             "trace predates the monitor-verdict field and its model stability "
             "leg cannot be graded; re-run "
-            "model/voice/filter_lp12/run_filter_leg.py on the bundle. Refusing")
+            "model/voice/filter_lp12/run_filter_leg.py on the bundle")
     model_verdict = inst["stability_verdict"]
-    if not inst["l2a"]["n"]:
+    l2a = inst.get("l2a") or {}
+    engine_tap_peak = l2a.get("engine_peak_lsb")
+    if not l2a.get("n") or engine_tap_peak is None or engine_tap_peak <= 1:
         # `engine_peak_lsb` is floored at 1 LSB by _audio_metrics (it doubles
-        # as an rms-dB divisor), so a silent or absent engine tap would grade
-        # BOUNDED on no engine samples at all.  Refuse instead.
-        raise SystemExit(
-            f"{case}: instance {name} has no engine tap samples (l2a.n == 0): "
-            "the engine stability leg has no engine measurement to bound. "
-            "Refusing")
-    engine_tap_peak = inst["l2a"]["engine_peak_lsb"]
+        # as an rms-dB divisor), so EVERY way of losing the engine
+        # measurement lands here: an ABSENT tap (l2a.n == 0, no samples at
+        # all), a PRESENT-BUT-SILENT tap (n > 0 all-zero samples, whose
+        # peak floors to 1), and traces predating the instrumentation
+        # entirely (no engine_peak_lsb key, no l2a block, or no l2a.n --
+        # the stability_verdict refusal above already treats
+        # predecessor-field traces as in scope).  Either way a
+        # BOUNDED grade would be bounded on no engine signal (issue #681).
+        # Refuse instead.
+        if engine_tap_peak is None:
+            peak_desc = "absent (trace predates the field)"
+        else:
+            peak_desc = f"== {engine_tap_peak} after the 1-LSB floor"
+        raise Refuse(
+            f"{case}: instance {name} has no engine tap samples to bound "
+            f"(l2a.n == {l2a.get('n')}, engine_peak_lsb {peak_desc}): "
+            "a silent, absent or field-less engine tap leaves the engine "
+            "stability leg without an engine measurement")
     return {
         "stability_model": model_verdict,
         "model_state_peak_lsb": max(inst["stability_peaks"] or [0]),
@@ -123,8 +141,8 @@ def main():
             trace = json.load(f)
         case = trace["meta"]["case"]
         if trace["meta"].get("neutrality_violated") is True:
-            raise SystemExit(f"{case}: tap neutrality violated on a deterministic "
-                             "case; refusing")
+            raise Refuse(f"{case}: tap neutrality violated on a deterministic "
+                         "case")
         case_fail = False
         results = {}
         for inst in trace["instances"]:
@@ -153,4 +171,8 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except Refuse as e:
+        print(f"REFUSING: {e}", file=sys.stderr)
+        sys.exit(2)
