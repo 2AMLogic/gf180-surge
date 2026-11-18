@@ -3,14 +3,14 @@
   "kind": "generic",
   "status": "pass",
   "t1_item": 9,
-  "summary": "T1 item 9 (Testbenches shipped): 234/234 attestation checks passed (klt signoff --attest)",
+  "summary": "T1 item 9 (Testbenches shipped): 235/235 attestation checks passed (klt signoff --attest)",
   "source": "signoff/t1-item9-inventory.json",
   "attestation": {
     "producer": "klt signoff --attest",
     "inventory_schema_version": 1,
     "hash_algorithm": "sha256-raw-bytes",
-    "check_count": 234,
-    "passed_count": 234,
+    "check_count": 235,
+    "passed_count": 235,
     "checks": [
       {
         "check": "present",
@@ -1004,7 +1004,7 @@
         "role": "testbench",
         "path": "tests/test_sxt028a.py",
         "passed": true,
-        "content_hash": "sha256:b0506b502dcf9cb0ccccfa61f38e7f06c4c3275e76a0e4e909c5569beedd0c5f"
+        "content_hash": "sha256:023149e5d91ab6d4008b88e6ee65e948ab8e082fdd9fb8fe8e0164a6089b984f"
       },
       {
         "check": "present",
@@ -1320,6 +1320,13 @@
         "path": "tools/aw49_negative_controls.py",
         "passed": true,
         "content_hash": "sha256:f7bc9b355da979a75d0c59b2f53ccec57f1d4703ba9845a59b68711fe38c1724"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "tools/aw49_stimulus_invariance_controls.py",
+        "passed": true,
+        "content_hash": "sha256:194c8a450d384d176c57dd192e9faf981de82c857a51f42afa211331a92ea0f3"
       },
       {
         "check": "present",
@@ -1678,7 +1685,7 @@
         "path": "signoff/t1-item9-inventory.json",
         "scope": "repo"
       },
-      "content_hash": "sha256:35f4772e09e6a087133635b4bca0476b746c2c0cf593aa3e7e163267b473ad41"
+      "content_hash": "sha256:340cafb98d5beca664239dacb4c48ade4c1a558bd5644e13c79fcf7901d14470"
     }
   }
 }

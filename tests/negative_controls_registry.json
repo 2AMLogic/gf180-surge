@@ -14,6 +14,16 @@
    "verdict": "exit0",
    "guard": []
   },
+  "aw49_stimulus_invariance_controls.py": {
+   "status": "LIVE",
+   "redirect": [],
+   "argv": [],
+   "slow": false,
+   "requires": [],
+   "reason": "#668: re-measures the stimulus-quantization invariance against the committed canonical fixture; exit 0 iff quantizing the raw float32 scalar equals quantizing its exact double value for all 32768 words (was 13 differing, max 1 LSB, pre-fix under numpy 2.x). Writes nothing.",
+   "verdict": "exit0",
+   "guard": []
+  },
   "aw4_negative_controls.py": {
    "status": "LIVE",
    "redirect": [],

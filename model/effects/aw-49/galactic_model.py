@@ -190,7 +190,13 @@ def to_c30(x):
 
 def f32_to_s32i(x):
     """float32 -> Q6.25 (round-half-up); exact for |x| >= 2^-1, <= 1 LSB
-    error below (declared input-boundary quantization)."""
+    error below (declared input-boundary quantization). The operand is
+    coerced to a python float first (#668): the Q6.25 scaling is always
+    computed in double, so it cannot move with the installed numpy major
+    version (NEP 50 made np.float32 * python float single-precision in
+    numpy 2.x; that moved 13 of the 32768 canonical stimulus words by
+    1 LSB and with them the whole canonical-temple-512b txn log)."""
+    x = float(x)
     v = x * float(1 << FRAC_S32I)
     return sat32(int(v + 0.5) if v >= 0 else -int(-v + 0.5))
 

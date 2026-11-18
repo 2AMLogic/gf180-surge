@@ -191,6 +191,7 @@
     "tests/test_tools_portable_paths.py",
     "tests/test_wt_decimation_stage.py",
     "tools/aw49_negative_controls.py",
+    "tools/aw49_stimulus_invariance_controls.py",
     "tools/aw4_negative_controls.py",
     "tools/check_provenance_controls.py",
     "tools/chorus_negative_controls.py",
