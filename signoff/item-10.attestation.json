@@ -17,14 +17,14 @@
         "role": "hygiene",
         "path": ".github/workflows/ci.yml",
         "passed": true,
-        "content_hash": "sha256:cc2a441759c1a413f1ad17fc3016c2cb77135f8f4e4765eca8a4a62c21a706c1"
+        "content_hash": "sha256:c8d3e6254a0e36261d0107c11ba8cd7db395414712efc79d1c7d05eb397d8ea3"
       },
       {
         "check": "present",
         "role": "hygiene",
         "path": ".github/workflows/signoff.yml",
         "passed": true,
-        "content_hash": "sha256:a8ff95a01d3bf955cd0fc11460a6ac55c5b9c142ecb37e2f3cdfade6ce54e704"
+        "content_hash": "sha256:83c222f219bb85b9d0f36ac84ead67f8af8c45516ba468af364abff4ac366519"
       },
       {
         "check": "present",
