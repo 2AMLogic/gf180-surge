@@ -608,7 +608,7 @@ def select_slate(pool, profile, stage):
     return selected, accounting
 
 
-def slate_records(selected, stage):
+def slate_records(selected):
     out = []
     for rank, s in enumerate(selected, 1):
         c = s["cand"]
@@ -721,7 +721,7 @@ def build_profile(pool, exclusions, anomalies, profile_name, graphs_path,
         "quota_accounting": slate_acc,
         "exclusions": {k: sorted(v) for k, v in sorted(exclusions.items())},
         "anomalies": anomalies,
-        "candidates": slate_records(slate_sel, "slate"),
+        "candidates": slate_records(slate_sel),
     }
     slate_bytes = json.dumps(slate_doc, indent=2, sort_keys=True) + "\n"
 
@@ -737,7 +737,7 @@ def build_profile(pool, exclusions, anomalies, profile_name, graphs_path,
                    "banks": bank_split(pilot_sel),
                    "categories": categories_split(pilot_sel)},
         "quota_accounting": pilot_acc,
-        "candidates": slate_records(pilot_sel, "pilot"),
+        "candidates": slate_records(pilot_sel),
     }
     pilot_bytes = json.dumps(pilot_doc, indent=2, sort_keys=True) + "\n"
     return slate_bytes, pilot_bytes

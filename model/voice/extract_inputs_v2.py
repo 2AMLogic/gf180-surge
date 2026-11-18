@@ -28,21 +28,13 @@ sys.path.insert(0, REPO)
 import oracle_common as oc  # noqa: E402
 from refusal import Refuse  # noqa: E402
 sys.path.insert(0, os.path.join(REPO, "tools"))
-from _census_blob_common import census_blob, git_blob_sha1  # noqa: E402
+from _census_blob_common import (census_blob, git_blob_sha1,  # noqa: E402
+                                 graphs_entry)
 
 oc.reexec_under_pinned_python(REPO)
 
 CENSUS_CSV = os.path.join(REPO, "corpus", "census-v0.1", "results", "per-preset.csv")
 GRAPHS = os.path.join(REPO, "corpus", "normalized", "graphs.jsonl")
-
-
-def graphs_entry(rel):
-    with open(GRAPHS, encoding="utf-8") as f:
-        for line in f:
-            g = json.loads(line)
-            if g.get("p") == rel:
-                return g
-    raise Refuse(f"preset not in graphs.jsonl: {rel}")
 
 
 def main():

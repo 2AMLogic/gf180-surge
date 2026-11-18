@@ -9,8 +9,22 @@
 # Timeouts: each job sets timeout-minutes so a hung step fails visibly instead
 # of running to GitHub's 360-minute default. Sized at ~2.5-3x the durations of
 # recent successful runs (2026-10-09: rtl-sim ~985-1010 s, tests ~610-780 s,
-# provenance 37-62 s, other jobs ~25 s). Raise a limit deliberately if a job
-# legitimately grows.
+# provenance 37-62 s, other jobs ~25 s; rtl-lint ~18-25 s on a Verilator
+# cache hit, 5m43s-9m27s across 17 cache-miss runs when the pinned Verilator
+# build executes: the first-ever rtl-lint run (2026-10-20 16:36 UTC) through
+# the first cache-saving success (2026-10-21 17:24 UTC), job-level
+# started_at->completed_at timings from the Actions API, re-derived in #736).
+# Raise a limit deliberately if a job legitimately grows.
+#
+# Checkout cap: the long-budget jobs (tests, rtl-sim) and the tight-budget
+# provenance-audit job carry a step-level timeout-minutes: 5 on their
+# actions/checkout step, so a stalled clone fails fast as a visibly-named
+# setup failure instead of consuming the job's budget and red-flagging a
+# passing suite or a clean tree (#728: one 28m33s checkout stall,
+# 2026-11-16; 30-run sample same day: median 8 s, p95 13 s, one 569 s
+# outlier; #763: an 896 s stall on 2026-11-17 consumed 99.6% of
+# provenance-audit's 15-minute budget -- the second occurrence, so that
+# job's checkout is capped too; its normal checkout is 10-12 s).
 #
 # Concurrency: superseded pull_request runs are cancelled; push runs on main
 # are never cancelled, so a cancelled main run cannot hide a failure.
@@ -48,6 +62,9 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        # Fails fast as a setup failure if the clone stalls, instead of
+        # burning this job's 15-minute budget (see header, #763).
+        timeout-minutes: 5
         with:
           # The per-commit gate below needs this branch's own commits AND the
           # base-branch tip as real objects. actions/checkout@v4 fetches depth
@@ -157,6 +174,9 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        # Fails fast as a setup failure if the clone stalls, instead of
+        # burning this job's 40-minute budget (see header, #728).
+        timeout-minutes: 5
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.12"
@@ -186,6 +206,10 @@ jobs:
       IVERILOG_APT_VERSION: "12.0-2build2"
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        # Fails fast as a setup failure if the clone stalls, instead of
+        # burning this job's 45-minute budget (see header, #728; this job
+        # also owns the 569 s checkout outlier in the 2026-11-16 sample).
+        timeout-minutes: 5
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.12"
@@ -245,6 +269,14 @@ jobs:
   rtl-lint:
     name: rtl-lint (pinned Verilator static lint gate, #434)
     runs-on: ubuntu-24.04
+    # Sized for the cache-miss case: the pinned Verilator build from source
+    # measured 5m43s-9m27s across 17 cache-miss runs: the first-ever
+    # rtl-lint run (2026-10-20 16:36 UTC) through the first cache-saving
+    # success (2026-10-21 17:24 UTC), job-level started_at->completed_at
+    # timings from the Actions API, re-derived in #736. 24 min is ~2.54x
+    # the slowest observed miss and ~3.03x the median (~7m56s). Cache-hit
+    # jobs finish in ~25 s.
+    timeout-minutes: 24
     env:
       # Pinned tool: upstream tag v5.050 (annotated tag object
       # 0a24d49771fa57c36ff667272bf7b5c6705e4df0) -> commit below, built from
@@ -256,13 +288,13 @@ jobs:
       VERILATOR_COMMIT: "848d926ebd4addacacd294dc84e35d9d4ae8078c"
       VERILATOR_ARCHIVE_SHA256: "ec6723f30c1798b1fbbbed97364f09c431fb4875577c314f37240e99b60a4a04"
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.12"
       - name: Restore pinned Verilator build
         id: vcache
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: ~/verilator-pinned
           key: verilator-${{ env.VERILATOR_COMMIT }}-${{ env.VERILATOR_ARCHIVE_SHA256 }}-ubuntu-24.04
@@ -311,7 +343,7 @@ jobs:
           --verilator "$HOME/verilator-pinned/bin/verilator"
       - name: Upload raw diagnostics and report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: rtl-lint
           path: |

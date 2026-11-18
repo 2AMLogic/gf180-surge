@@ -17,12 +17,20 @@ and compares -- with exact integer equality:
   6. the dual-instance schedule: two instances time-multiplexed through one
      core with disjoint memory regions keep independent histories,
   7. injected-defect MUTANTS must FAIL the comparison:
-       - wrong-coefficient (regen halved in the RTL), and
-       - shared-memory (mem_base dropped: both instances pool one region)
+       - wrong-coefficient (regen halved in the RTL),
+       - shared-memory (mem_base dropped: both instances pool one region),
+         and
+       - narrow-product (the core's exact 32x32 -> 64 signed product
+         truncated to 32 bits), which shows the comparison observes the
+         narrowed datapath itself and not only its coefficients (#641)
      a mutant that passes is a broken control (finding).
+     Mutant 4 (wrong-counter-map, #657): the stage-2 read-index capture
+     wired to the stage-1 counter, showing the comparison observes the
+     constant-indexed counts/adv_idx decode itself and not a convenient
+     generic mapping.
 
 NO_VERDICT when iverilog is absent. Exit 0 iff all real cases match exactly
-and both mutants fail.
+and every mutant fails.
 
 Usage: python3 tools/compare_rtl_model_aw49.py [--keep] [--smoke-only]
 Original to this repository (Apache-2.0).
@@ -272,8 +280,7 @@ def main():
                "model_frozen_revision": gm.frozen_revision(),
                "cases": [], "mutant_controls": []}
     ok = True
-    base = tempfile.mkdtemp(prefix="aw49-rtl-",
-                            dir="/var/folders/fb/l4j31ymn3bn0mc6v1qbvvl8c0000gn/T/opencode")
+    base = tempfile.mkdtemp(prefix="aw49-rtl-")
 
     def emit(case_name, ctrl, blocks, reset_before=(), want_mem=False,
              core_src="galactic_core.sv", note="", ctrl1=None):
@@ -395,9 +402,10 @@ def main():
         # ---- Mutant 1: wrong coefficient (regen halved in the RTL)
         mut = os.path.join(base, "galactic_regen_mutant.sv")
         src = open(os.path.join(RTL_DIR, "galactic_core.sv")).read()
-        needle = "128'(fb) * cfg_regen"
+        needle = "rndmul(fb, cfg_regen, 31)"
         assert needle in src
-        open(mut, "w").write(src.replace(needle, "128'(fb) * (cfg_regen >>> 1)"))
+        open(mut, "w").write(src.replace(needle,
+                                         "rndmul(fb, cfg_regen >>> 1, 31)"))
         il, ir = prs_blocks(256)   # long enough for the feedback loop to
         # populate (earliest 3-stage path ~4470 samples at size 1.87), so the
         # halved regen coefficient is actually exercised
@@ -468,6 +476,102 @@ def main():
         results["mutant_controls"].append(mres2)
         ok = ok and not mres2["exact"]
         print(f"mutant-shared-memory-dual: {mres2['verdict']}")
+
+        # ---- Mutant 3: too-narrow intermediate (#641). The narrowed
+        # datapath's exact 32x32 -> 64 signed product is truncated to 32
+        # bits; every product in the core (predelay, vibrato interpolation,
+        # both one-poles, the wet/dry mix and the stage-1 feedback term)
+        # then loses its high bits. A comparison that still PASSes is not
+        # observing the arithmetic widths this issue changed.
+        mut3 = os.path.join(base, "galactic_narrow_mutant.sv")
+        src = open(os.path.join(RTL_DIR, "galactic_core.sv")).read()
+        needle3 = "    smul = 64'(a) * 64'(b);\n"
+        assert needle3 in src
+        narrow = ("    logic signed [31:0] p_narrow;\n"
+                  "    p_narrow = 64'(a) * 64'(b);\n"
+                  "    smul = 64'(p_narrow);\n")
+        open(mut3, "w").write(src.replace(needle3, narrow))
+        wd = os.path.join(base, "mutant-narrow-product")
+        il3, ir3 = prs_blocks(64, seed=4141)
+        cases_models = {0: CaseModel(ctrl0, vib=gm.VibratoStream(ctrl0), mem_base=0),
+                        1: CaseModel(ctrl1, vib=gm.VibratoStream(ctrl1), mem_base=gm.EXT_WORDS)}
+        trace = []
+        words = [64]
+        for b in range(64):
+            sw, _ = cases_models[0].block(b, il3[b*32:(b+1)*32],
+                                          ir3[b*32:(b+1)*32])
+            trace.extend(cases_models[0].trace)
+            cases_models[0].trace = []
+            words.append(b)
+            words += sw
+        os.makedirs(os.path.join(wd, "rtl/effects/aw-49/sim"), exist_ok=True)
+        os.makedirs(os.path.join(wd, "out/aw-49/rtl"), exist_ok=True)
+        write_hex_words(os.path.join(wd, "rtl/effects/aw-49/sim/cfg.hex"),
+                        coefficient_words(ctrl0))
+        write_hex_words(os.path.join(wd, "rtl/effects/aw-49/sim/blocks.hex"), words)
+        run_iverilog(wd, mut3, os.path.join(RTL_DIR, "tb_galactic.sv"))
+        mres3 = compare_case("mutant-narrow-product", "".join(trace),
+                             cases_models[0].log.lines, None, wd, False)
+        mres3["injected_defect"] = ("smul() truncated to a 32-bit product: "
+                                    "the datapath's narrowed intermediates "
+                                    "are too narrow to be integer-exact")
+        mres3["verdict"] = ("CONTROL-OK (mutant FAILS the exactness "
+                            "comparison)" if not mres3["exact"]
+                            else "CONTROL-BROKEN (mutant PASSED -- finding!)")
+        results["mutant_controls"].append(mres3)
+        ok = ok and not mres3["exact"]
+        print(f"mutant-narrow-product: {mres3['verdict']}")
+
+        # ---- Mutant 4: wrong counter->read-index mapping (#657).
+        # counts/adv_idx are constant-indexed (no memory inference); the
+        # stage-2 advance captures the read index from the stage-2 counter.
+        # Wiring the capture to the stage-1 counter instead is a wrong
+        # memory mapping: every stage-2 external read address is wrong. A
+        # comparison that still PASSes is not observing the decode this
+        # change restructured (the #580 failure mode).
+        mut4 = os.path.join(base, "galactic_idxmap_mutant.sv")
+        src = open(os.path.join(RTL_DIR, "galactic_core.sv")).read()
+        needle4 = ("              counts[4] <= advance(counts[4], "
+                   "32'(cfg_delay[4]));\n"
+                   "              adv_idx[0] <= advance(counts[4], "
+                   "32'(cfg_delay[4]));")
+        assert needle4 in src
+        open(mut4, "w").write(src.replace(
+            needle4,
+            ("              counts[4] <= advance(counts[4], "
+             "32'(cfg_delay[4]));\n"
+             "              adv_idx[0] <= advance(counts[0], "
+             "32'(cfg_delay[0]));")))
+        wd = os.path.join(base, "mutant-idxmap")
+        il4, ir4 = prs_blocks(64, seed=6161)
+        cases_models = {0: CaseModel(ctrl0, vib=gm.VibratoStream(ctrl0), mem_base=0),
+                        1: CaseModel(ctrl1, vib=gm.VibratoStream(ctrl1), mem_base=gm.EXT_WORDS)}
+        trace = []
+        words = [64]
+        for b in range(64):
+            sw, _ = cases_models[0].block(b, il4[b*32:(b+1)*32],
+                                          ir4[b*32:(b+1)*32])
+            trace.extend(cases_models[0].trace)
+            cases_models[0].trace = []
+            words.append(b)
+            words += sw
+        os.makedirs(os.path.join(wd, "rtl/effects/aw-49/sim"), exist_ok=True)
+        os.makedirs(os.path.join(wd, "out/aw-49/rtl"), exist_ok=True)
+        write_hex_words(os.path.join(wd, "rtl/effects/aw-49/sim/cfg.hex"),
+                        coefficient_words(ctrl0))
+        write_hex_words(os.path.join(wd, "rtl/effects/aw-49/sim/blocks.hex"), words)
+        run_iverilog(wd, mut4, os.path.join(RTL_DIR, "tb_galactic.sv"))
+        mres4 = compare_case("mutant-wrong-counter-map", "".join(trace),
+                             cases_models[0].log.lines, None, wd, False)
+        mres4["injected_defect"] = ("stage-2 adv_idx[0] captured from the "
+                                    "stage-1 counter: the constant-indexed "
+                                    "counts/adv_idx decode is mis-wired")
+        mres4["verdict"] = ("CONTROL-OK (mutant FAILS the exactness "
+                            "comparison)" if not mres4["exact"]
+                            else "CONTROL-BROKEN (mutant PASSED -- finding!)")
+        results["mutant_controls"].append(mres4)
+        ok = ok and not mres4["exact"]
+        print(f"mutant-wrong-counter-map: {mres4['verdict']}")
 
         results["status"] = "PASS" if ok else "FAIL"
         results["iverilog"] = subprocess.run(["iverilog", "-V"],

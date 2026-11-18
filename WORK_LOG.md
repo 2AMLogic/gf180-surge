@@ -2,8 +2,126 @@
 
 Recent merged pull requests and closed issues. Entries record forge events only; acceptance and claim limits remain in each committed evidence record. Initial history window: 2026-09-30 onward.
 
+### 2026-11-17
+
+- **PR #769**: docs(sxt-028): re-render NC-RNG-EXCLUSION gate-control transcript to post-#353 coverage counts
+- **Issue #766** (closed): SXT-028-rng gate-control transcript counts drifted from a fresh render (coverage table evolved since #122)
+- **PR #767**: docs(tools): describe the per-process scratch root in the coverage negative-controls header
+- **Issue #760** (closed): Coverage negative-controls transcript header names a scratch root the runner no longer uses
+- **PR #765**: fix(tools): per-run scratch root for rf_* negative controls
+- **Issue #762** (closed): Four rf_* negative-control tools share a fixed host-global WORKDIR with deterministic artifact names: concurrent same-tool runs can tear each other's traces
+- **PR #764**: ci: cap provenance-audit checkout step at 5 minutes (second stall, #763)
+- **Issue #763** (closed): CI: a 15-minute actions/checkout stall burned the provenance-audit job's entire 15-minute budget (PR #752); second occurrence after #728
+- **PR #752**: docs(signoff): record surgical-edit path for count-moving item 9 re-attests
+- **Issue #750** (closed): klt signoff --attest 9 cannot regenerate the item 9 envelope after a count-moving inventory edit (cold_start audits the stale envelope it is replacing)
+- **PR #698**: fix(fixtures): record the live rendering engine in reference sidecars (F-660-1)
+- **Issue #671** (closed): Reference sidecars inherit engine identity from the extractor inputs, so it does not identify the rendering engine (F-660-1)
+- **PR #761**: test(lpmoog): pin the comparator exit-2 coefficient-length boundary
+- **Issue #753** (closed): compare_lpmoog_model.py's exit-2 refusal boundary is not pinned by any test, so it can regress to 1 silently
+- **PR #759**: evidence: annotate open-pin corroboration with the measured tie-cell subset
+- **Issue #747** (closed): Annotate the open-pin probe's pnr corroboration with the measured tie-cell decomposition
+- **PR #756**: gitignore: ignore signoff re-derivation venvs
+- **Issue #754** (closed): .gitignore has no venv rule, so the envelope-re-derivation venv a worktree needs is stageable by a stray git add -A
+- **PR #755**: fix(tools): per-process scratch root for coverage negative controls
+- **Issue #751** (closed): tools/coverage_negative_controls.py rmtree's a fixed /tmp scratch root, so two concurrent runs on one host fail each other
+- **PR #748**: test(signoff): assert each committed envelope names the klayout-tools pin
+- **Issue #743** (closed): item-10 envelope provenance records a local dev klt build, not the signoff pin, and no check notices
+- **PR #703**: fix: refuse silent engine taps and honor the exit-2 refusal contract
+- **Issue #681** (closed): compare_lp12_model.py: a present-but-silent engine tap still grades the engine stability leg BOUNDED (and refusals exit 1, not the documented 2)
+- **PR #746**: evidence(t1-physical): commit the open-pin extraction probe records and re-bind them in the flow test
+- **Issue #679** (closed): Commit a reproducible probe for the four open input pins behind the ext_mem_instr LVS mismatch
+- **PR #744**: docs(sxt-024): annotate rtl-exactness digest provenance; refresh DAG evidence hash
+- **PR #741**: chore(loom): resync installed Loom to v0.19.1306
+- **PR #740**: test(ci-policy): scan *.yaml workflows, accept subpath pins, exempt reusable-call jobs
+- **PR #739**: ci: correct the rtl-lint cache-miss figures in the timeout comments
+- **PR #738**: docs(sxt-024): measure the iverilog-pin vs 13.0 exactness question; land the environment refutation record (#720)
+- **Issue #737** (closed): SXT-024 rtl-exactness.json: annotate digest values with their generation environment; record pinned-env digests (follow-up to #720)
+- **Issue #736** (closed): Correct the rtl-lint cache-miss timing figures committed in ci.yml (re-derived during PR #733 review)
+- **Issue #735** (closed): Widen workflow policy glob to *.yaml (follow-up from PR #733 review)
+- **Issue #720** (closed): SXT-024 Reverb1 txn_log_sha256 digests may be environment-dependent (reported, not re-derived)
+- **PR #734**: test(byte-frozen): remove the stored attested_inventories counts; gate one prose statement per item
+- **PR #733**: ci: bound the rtl-lint job and SHA-pin every workflow action, with a live policy test
+- **PR #658**: test(byte-frozen): derive the attested_inventories counts from the inventories
+- **Issue #730** (closed): ci.yml: the rtl-lint job has no timeout-minutes and four unpinned actions/* uses:, both contradicting the file's own header policies
+- **Issue #688** (closed): Derive attested_inventories counts at check time so inventory-touching PRs stop re-counting by hand
+- **Issue #649** (closed): docs/byte-frozen-sources.json attested_inventories counts are stale and nothing re-derives them
+
+### 2026-11-16
+
+- **PR #716**: chore(loom): resync installed Loom to v0.19.1302
+- **PR #729**: ci: cap tests/rtl-sim checkout steps at 5 minutes so a stalled clone fails as setup
+- **PR #727**: test: self-test the shared non-vacuity guard's bounds and message
+- **PR #712**: trace galactic_core's ABC loop reports to the counts/adv_idx memory mapping and remove them
+- **Issue #728** (closed): CI: a 28-minute actions/checkout stall burned the pytest job's 40-minute budget and red-flagged a passing suite (PR #726)
+- **Issue #723** (closed): tests/evidence_scan.py is load-bearing for 11 non-vacuity guards but is attested by nothing: weakening it restores every vacuous PASS with no record going STALE
+- **Issue #657** (closed): galactic_core: trace the unsortable-cells / ABC combinational-loop obstacle that survived the arithmetic narrowing (still NO_VERDICT)
+- **PR #725**: fix: neutralize machine paths in t1-physical pnr.failure.txt payload
+- **Issue #718** (closed): signoff/t1-physical/regen.py writes pnr.failure.txt raw — same path churn #714 fixed for t1-item1
+- **PR #697**: test: fold committed-evidence scan guards onto one shared non-vacuity helper
+- **Issue #683** (closed): Eight committed-evidence scans in tests/ pass vacuously when the directory goes empty: fold the hand-rolled count guards onto one shared helper
+- **Issue #715** (closed): Operator decision: strict required-status-checks policy blocks merging any PR whose branch is behind main (blocks #708)
+- **PR #693**: fix(tools): run the Reverb1 and AW49 RTL runners in the platform temp dir
+- **Issue #677** (closed): Make run_reverb_rtl.py and compare_rtl_model_aw49.py portable: drop the hardcoded per-user macOS temp directory
+- **PR #717**: fix: substitute machine-local paths in t1-item1 failure.txt payloads
+- **Issue #714** (closed): regen.py commits a machine-local worktree path in failure.txt
+- **PR #713**: signoff(t1-item1): attribute the five #580 synthesis timeouts by a pre-ABC operator census
+- **Issue #695** (closed): Five T1 item-1 cores reach 0.25M-2.0M cells and die in Yosys ABC at 1800 s: establish the cost driver
+
+### 2026-11-15
+
+- **PR #710**: tools: drop dead extra_summary_fields/model_trace params from _publish_refusal
+- **Issue #691** (closed): Remove the 2 dead parameters on _publish_refusal: the RTL refusal path accepts extra_summary_fields and model_trace and reads neither
+- **PR #709**: fix(tools): count executed negative-control cases instead of re-calling registries
+- **Issue #687** (closed): run_negative_control's exit code and summary line do not detect a dropped control registration
+- **PR #705**: docs(evidence): disclose the item 9 envelope's producer klt, correct stale counts
+- **Issue #670** (closed): Follow-on: Work identified in PR #659
+- **PR #672**: evidence: measure F-640-1 under the pinned oracle — release velocity does not reach audio in either leaf
+- **Issue #660** (closed): Measure F-640-1 under the pinned oracle: two committed references cite a release velocity of 100 but were rendered with 0
+- **PR #706**: refactor(tools): route the five effect-family parse_tb_trace parsers through CheckpointKeys, re-deriving their byte-frozen records
+- **Issue #666** (closed): Extend the #455 duplicate-key refusal to the five live-pinned effect-family parse_tb_trace parsers
+- **PR #696**: evidence(t1-item1): re-measure the five #580 groups at 1800 s and record rf_ains34_core's netlist as input-less
+- **PR #661**: refactor(rtl): carry galactic_core's arithmetic at integer-exact widths, not 128 bits
+- **Issue #641** (closed): galactic_core: narrow the 128-bit arithmetic so klt synthesize reaches a verdict (NO_VERDICT survives a 1800 s Yosys budget)
+- **PR #685**: refactor(model): fold the duplicated FX-runner helpers onto run_fx_model and give checkpoint_set an explicit settle
+- **Issue #682** (closed): Remove duplicated amp_to_linear_fixed/checkpoint_set/qhex in the FX runners: three re-declare run_fx_model's, the fourth is dead
+- **PR #701**: tools: drop 15 dead function parameters in 4 publication/selection tools
+- **PR #692**: refactor(model): drop six unreferenced fragments from the FX runners and comparators
+- **Issue #684** (closed): Remove 6 provably unreferenced fragments outside the frozen/attested set: dead SEQUENCES dict, 3 never-called methods, 2 unused numpy imports
+- **PR #690**: docs(readme): state both cited envelopes and the real met count, pinned by a live audit
+- **Issue #678** (closed): README "T1 signoff evidence" says one item is met; the verdict of record says two (items 9 and 10)
+- **PR #676**: docs: roadmap as of 2026-11-13
+- **PR #700**: refactor(tools): consolidate census_row and slot_entry into _census_blob_common
+- **Issue #686** (closed): Remove the 10 private census_row / slot_entry copies from the five RF extractors: the siblings #493 and #633 left behind
+
+### 2026-11-14
+
+- **PR #673**: test(checkpoint keys): audit the CASES parser inventory live instead of asserting it
+- **Issue #667** (closed): Add a live completeness control so test_checkpoint_key_uniqueness.py's "all thirteen" claim cannot silently go stale
+- **PR #674**: refactor(tools): split the 5,391-line provenance audit into nine layer modules behind a re-export facade
+- **Issue #669** (closed): Split tools/check_provenance.py (5,391 lines) into nine sibling modules behind a re-export facade
+- **PR #664**: fix(ablation_delta): route the summary and the sidecar walk through --out/--ablations
+- **Issue #654** (closed): ablation_delta.py --out <elsewhere> still overwrites the committed reports/sxt-014/ablation-summary.json
+- **PR #675**: fix(tools): grade the LP12 stability legs from the engine tap peak and the model monitor verdict
+- **Issue #653** (closed): Remove or finish the fake engine stability leg in compare_lp12_model.py: engine_state_peak_lsb is the model peak under another name
+- **PR #665**: refactor(tools): route the three live-pinned lowpass trace parsers through CheckpointKeys, re-deriving their byte-frozen records
+- **Issue #648** (closed): Extend the #455 duplicate-key refusal to the three live-pinned lowpass harnesses, carrying the byte-frozen re-derivation
+- **PR #659**: refactor(oracle): route seven renderers through render_fixture.dispatch
+- **Issue #640** (closed): Remove the nine private copies of the oracle event dispatcher: they silently drop event types rf.dispatch forwards, and one rendered a committed SXT-041 reference
+- **PR #637**: feat(tools): fold the last three mutant generators onto the shared table
+- **Issue #623** (closed): Fold the three remaining mutant generators onto the shared make_rtl_mutants table (two are byte-attested)
+
 ### 2026-11-13
 
+- **PR #651**: refactor(tools): share one graphs_entry instead of 14 private copies
+- **Issue #633** (closed): Remove the 14 private graphs_entry copies from leaf extractors: one has already drifted from the other 13
+- **PR #650**: refactor(tools): share one unique-insert primitive across the leaf trace parsers so the #455 duplicate-key refusal reaches 10 of 13
+- **Issue #639** (closed): Fold the keyed-store step of the 13 private parse_tb trace parsers onto one unique-insert helper: the #455 duplicate-row refusal reached only 2 of them
+- **PR #646**: fix(ablation_delta): refuse an unread SXT-012 repeatability reference instead of citing it with a null
+- **Issue #628** (closed): ablation_delta: remove the blanket except in repeatability_bounds() that turns an unread reference into a cited null
+- **PR #643**: refactor(probes): drop the never-driven ext/state half of OpCounter and its two constant-zero ops keys
+- **Issue #630** (closed): Remove never-driven ext/state accounting from probes OpCounter: ops.ext_read_words is a constant 0 in all 76 SXT-016 records
+- **PR #642**: evidence(t1-item1): re-run galactic_core at a 1800 s Yosys budget; NO_VERDICT stands
+- **Issue #579** (closed): T1 item 1: galactic_core synthesis exceeds klt's 300 s Yosys limit (generic abc on ~272k cells)
 - **PR #632**: fix(signoff): list the four unlisted item 9 benches and gate inventory completeness mechanically
 - **Issue #624** (closed): signoff/t1-item9-inventory.json is missing three tests/test_*.py files it claims to list
 - **PR #629**: docs: record that the two signoff attestations pin their whole inventories

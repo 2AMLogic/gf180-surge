@@ -2,7 +2,9 @@
 """SXT-034: render unison-stack reference audio through the pinned engine.
 
 Mirrors the SXT-012 render policies (RESET / SCHEDULING / TAIL / AUDIO,
-`fixtures/render_fixture.py`) with the SXT-034 declared override applied
+`fixtures/render_fixture.py`, whose `dispatch` this module calls directly, so
+every event type it forwards is forwarded here) with the SXT-034 declared
+override applied
 after loadPatch: scene A osc1 unison-voices set via the official host
 parameter path (setParamVal), read back and verified; optionally retrigger
 forced off for the mechanism fixture (quantified-variation class -- no
@@ -34,6 +36,8 @@ import numpy as np  # noqa: E402
 from refusal import Refuse  # noqa: E402
 sys.path.insert(0, os.path.join(REPO, "tools"))
 from _census_blob_common import census_blob  # noqa: E402
+sys.path.insert(0, os.path.join(REPO, "fixtures"))
+import render_fixture as rf  # noqa: E402  (shared event dispatcher)
 
 SR = 48000
 PRESET_REL = "resources/data/patches_factory/Basses/Attacky.fxp"
@@ -93,17 +97,7 @@ def render_bus(surgepy, preset_abs, seq, unison, nodraw):
         dispatched = 0
         b = 0
         while b < total_blocks:
-            i = 0
-            while i < len(events[dispatched:]) and quant(events[dispatched + i]["t"]) <= b:
-                e = events[dispatched + i]
-                if e["type"] == "note_on":
-                    s.playNote(e["channel"], e["note"], e["velocity"], 0)
-                elif e["type"] == "note_off":
-                    s.releaseNote(e["channel"], e["note"], e.get("velocity", 0))
-                elif e["type"] == "cc":
-                    s.channelController(e["channel"], e["controller"], e["value"])
-                i += 1
-            nxt = dispatched + i
+            nxt = rf.dispatch(s, events[dispatched:], b, quant) + dispatched
             if nxt < len(events) and quant(events[nxt]["t"]) <= b:
                 raise Refuse("scheduler failed to advance")
             seg = total_blocks if nxt >= len(events) else max(quant(events[nxt]["t"]), b + 1)

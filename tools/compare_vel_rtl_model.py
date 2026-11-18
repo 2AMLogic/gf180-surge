@@ -54,7 +54,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _rtl_compile_common import run_leaf_comparison  # noqa: E402
+from _rtl_compile_common import CheckpointKeys, run_leaf_comparison  # noqa: E402
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TB = os.path.join(REPO, "rtl", "voice", "tb_vel.sv")
@@ -76,17 +76,25 @@ def _int(x):
 
 
 def parse_tb(path):
+    """Parse the RTL trace.  Every S and V key must be unique (issues
+    #455/#639): a repeated checkpoint -- identical or contradictory, in
+    either order -- is refused with LeafInputError rather than resolved
+    last-row-wins."""
     s = {}   # (block, slot) -> [cut, reso, emod, vca]
     v = {}   # (block, slot) -> [vel_q, relvel_q]
+    keys = CheckpointKeys()
     with open(path) as f:
         for line in f:
             p = line.split()
             if not p:
                 continue
             if p[0] == "S":
-                s[(int(p[1]), int(p[2]))] = [_int(x) for x in p[3:7]]
+                keys.put(s, "S", (int(p[1]), int(p[2])),
+                         [_int(x) for x in p[3:7]])
             elif p[0] == "V":
-                v[(int(p[1]), int(p[2]))] = [_int(x) for x in p[3:5]]
+                keys.put(v, "V", (int(p[1]), int(p[2])),
+                         [_int(x) for x in p[3:5]])
+    keys.raise_if_duplicates(path)
     return s, v
 
 

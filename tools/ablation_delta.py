@@ -12,7 +12,9 @@ Compares every ablation variant against its preset+sequence ORIGINAL render
   - tail RMS delta (last 2.0 s) -- where delay/reverb differences concentrate.
 
 Outputs per-pair JSON under reports/sxt-014/deltas/, an aggregate
-reports/sxt-014/ablation-summary.json, and a printed summary table.
+reports/sxt-014/ablation-summary.json, and a printed summary table. Both
+output locations follow --out: a run pointed at a scratch directory writes
+its summary there too, and never touches the committed record (issue #654).
 
  CAVEAT (normative, issue #9): these numeric deltas are DIAGNOSTIC. They do
  NOT establish essential/optional/unresolved effect labels, preset support,
@@ -292,9 +294,14 @@ def compare(anchor_path, variant_path, anchor_sc, variant_sc, use_numpy):
     }
 
 
-def load_sidecars():
+def load_sidecars(ablations):
+    """Group the ablation sidecars under `ablations` by (preset, sequence).
+
+    The directory is a parameter, not the `ABLATIONS` module constant, so
+    that `--ablations <dir>` actually governs what is read (issue #654).
+    """
     groups = {}
-    for dirpath, _dirs, files in os.walk(ABLATIONS):
+    for dirpath, _dirs, files in os.walk(ablations):
         for fn in sorted(files):
             if not fn.endswith(".json") or fn.startswith("run-"):
                 continue
@@ -309,12 +316,50 @@ def load_sidecars():
 
 
 def repeatability_bounds():
+    """Index reports/sxt-012/repeatability.json by fixture_id (fail-closed).
+
+    There is deliberately no empty-dict fallback (issue #628): a reference
+    that was never successfully read must not resolve to
+    `wet_repeat_relative_max_diff: null`, which is byte-for-byte what a
+    legitimately bit-identical fixture produces. Any unusable reference
+    refuses, naming the file, instead of emitting a plausible-looking value.
+    """
+    rel = os.path.relpath(REPEATABILITY, REPO)
     try:
         with open(REPEATABILITY, encoding="utf-8") as f:
             rep = json.load(f)
-        return {fx["fixture_id"]: fx for fx in rep["fixtures"]}
-    except Exception:
-        return {}
+    except OSError as e:
+        raise Refuse(f"repeatability reference missing/unreadable ({rel}): {e}")
+    except ValueError as e:
+        raise Refuse(f"repeatability reference unparseable ({rel}): {e}")
+    fixtures = rep.get("fixtures") if isinstance(rep, dict) else None
+    if not isinstance(fixtures, list) or not fixtures:
+        raise Refuse(f"repeatability reference {rel}: no non-empty 'fixtures' list to index")
+    bounds = {}
+    for fx in fixtures:
+        if not isinstance(fx, dict) or "fixture_id" not in fx:
+            raise Refuse(f"repeatability reference {rel}: fixture entry without a 'fixture_id'")
+        bounds[fx["fixture_id"]] = fx
+    return bounds
+
+
+def require_repeatability_fixtures(bounds, fixture_ids):
+    """Refuse for any offslot-ctrl pair the reference does not cover.
+
+    "absent from the reference" and "bit-identical repeat, no relative diff
+    recorded" must not share one output (issue #628): the second is a null on
+    purpose, the first is a broken input. Checked before the pair loop, so a
+    broken reference writes no pair record at all.
+    """
+    rel = os.path.relpath(REPEATABILITY, REPO)
+    for fid in fixture_ids:
+        fx = bounds.get(fid)
+        if fx is None:
+            raise Refuse(f"repeatability reference {rel} has no fixture '{fid}': an "
+                         f"offslot-ctrl pair cannot cite a reference it is not in")
+        if not isinstance(fx.get("wet"), dict):
+            raise Refuse(f"repeatability reference {rel}, fixture '{fid}': no 'wet' object "
+                         f"to read relative_max_diff from")
 
 
 def main():
@@ -324,7 +369,24 @@ def main():
     args = ap.parse_args()
     use_numpy = backend() == "numpy+stdlib"
 
-    groups = load_sidecars()
+    # The aggregate summary follows --out (issue #654). A run told to write
+    # its per-pair records elsewhere must not rewrite the committed
+    # reports/sxt-014/ablation-summary.json in place -- least of all with
+    # scratch paths in its `delta_json` fields. Only a run that targets the
+    # committed deltas directory writes the committed summary. SUMMARY and
+    # DELTAS are read here, at call time, so a test that monkeypatches them
+    # (rather than argparse's import-time default) is honored.
+    summary_path = (SUMMARY if os.path.abspath(args.out) == os.path.abspath(DELTAS)
+                    else os.path.join(args.out, "ablation-summary.json"))
+
+    groups = load_sidecars(args.ablations)
+    # Load and validate the SXT-012 reference once, before any comparison, so
+    # that an unusable reference costs no pair record (issue #628).
+    offslot_fixture_ids = sorted(
+        f"{slug}__{sid}" for (slug, sid), entries in groups.items()
+        if any(sc["kind"] == "offslot-ctrl" for _path, sc in entries))
+    bounds = repeatability_bounds() if offslot_fixture_ids else {}
+    require_repeatability_fixtures(bounds, offslot_fixture_ids)
     os.makedirs(args.out, exist_ok=True)
     summary_rows = []
     per_pair_written = 0
@@ -362,12 +424,12 @@ def main():
             }
             repeatability_note = None
             if sc["kind"] == "offslot-ctrl":
-                fx = repeatability_bounds().get(f"{slug}__{sid}")
+                fx = bounds[f"{slug}__{sid}"]
                 repeatability_note = {
                     "class": sc.get("repeatability_class"),
                     "expect_bit_identity": sc.get("repeatability_class") == "bit-identical",
                     "reference": "reports/sxt-012/repeatability.json",
-                    "wet_repeat_relative_max_diff": (fx or {}).get("wet", {}).get("relative_max_diff"),
+                    "wet_repeat_relative_max_diff": fx["wet"].get("relative_max_diff"),
                 }
                 pair["repeatability_note"] = repeatability_note
             out_dir = os.path.join(args.out, slug)
@@ -425,7 +487,7 @@ def main():
                    "measurable": sum(1 for r in summary_rows
                                      if not r["bit_identical"] and not r["near_zero_delta_candidate"])},
     }
-    with open(SUMMARY, "w", encoding="utf-8") as f:
+    with open(summary_path, "w", encoding="utf-8") as f:
         json.dump(aggregate, f, indent=2, sort_keys=True)
         f.write("\n")
     print()

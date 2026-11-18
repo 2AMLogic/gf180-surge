@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "issue": "671",
+  "finding": "F-660-1",
+  "method": "every committed reports/**/*.json read; an engine object whose keys all fall inside the extractor-inputs vocabulary {commit, version_string, block_size, sample_rate} is classified inherited-only (no field a live engine reading is known to produce). Detector: tests/test_sidecar_engine_provenance.py inherited_only_sidecars().",
+  "measured_date": "2026-11-14",
+  "groups": [
+    {
+      "name": "pattern_a_render_sidecars",
+      "count": 13,
+      "producer_defect": "sidecar engine block copied verbatim from the extractor inputs file; no live field (F-660-1). Producers fixed in #671; these committed records are deliberately NOT re-rendered (decision-records/0021).",
+      "paths": [
+        "reports/sxt-032/artifacts/reference-seq-modwheel-v1.json",
+        "reports/sxt-032/artifacts/reference-seq-notes-coverage-v1.json",
+        "reports/sxt-032/artifacts/reference-seq-notes-holds-v1.json",
+        "reports/sxt-032/artifacts/reference-seq-notes-repeated-v1.json",
+        "reports/sxt-035/artifacts/reference-seq-modwheel-v1.json",
+        "reports/sxt-035/artifacts/reference-seq-notes-coverage-v1.json",
+        "reports/sxt-035/artifacts/reference-seq-notes-repeated-v1.json",
+        "reports/SXT-041/artifacts/reference-seq-modwheel-v1-slfo-fixture.json",
+        "reports/SXT-041/artifacts/reference-seq-notes-coverage-v1-slfo-fixture.json",
+        "reports/SXT-041/artifacts/reference-seq-notes-holds-v1-slfo-fixture.json",
+        "reports/SXT-041/artifacts/reference-seq-notes-repeated-v1-slfo-fixture.json",
+        "reports/SXT-041/artifacts/reference-sxt041-slfo-overlap-v1-slfo-fast.json",
+        "reports/SXT-041/artifacts/reference-sxt041-slfo-overlap-v1-slfo-fixture.json"
+      ]
+    },
+    {
+      "name": "uni_reference_live_getversion_at_write",
+      "count": 5,
+      "producer_defect": "NOT a Pattern A defect: model/voice/render_uni_reference.py reads version_string live via getVersion() at render time and writes the commit literal beside it, so a live field existed at write time even though the committed shape cannot prove it. Annotated only; out of scope.",
+      "paths": [
+        "reports/SXT-034/artifacts/reference-seq-notes-coverage-v1-uni2.json",
+        "reports/SXT-034/artifacts/reference-seq-notes-repeated-v1-uni1.json",
+        "reports/SXT-034/artifacts/reference-seq-notes-repeated-v1-uni4.json",
+        "reports/SXT-034/artifacts/reference-seq-poly-8-v1-uni2.json",
+        "reports/SXT-034/artifacts/reference-sxt034-smoke-v1-uni16.json"
+      ]
+    },
+    {
+      "name": "sxt037_tap_extraction_bundle_metas",
+      "count": 9,
+      "producer_defect": "NOT render sidecars: written by the DR-0005 tap extraction bundle about its own extraction run; the engine block describes the run that produced the bundle. Annotated only; out of scope.",
+      "paths": [
+        "reports/sxt-037/artifacts/bundle-attacky-neutrality/meta.json",
+        "reports/sxt-037/artifacts/bundle-badnews-cut-hi/meta.json",
+        "reports/sxt-037/artifacts/bundle-badnews-cut-lo/meta.json",
+        "reports/sxt-037/artifacts/bundle-badnews-reso1/meta.json",
+        "reports/sxt-037/artifacts/bundle-badnews-toggle/meta.json",
+        "reports/sxt-037/artifacts/bundle-badnews/meta.json",
+        "reports/sxt-037/artifacts/bundle-rainy/meta.json",
+        "reports/sxt-037/artifacts/bundle-t9-substd/meta.json",
+        "reports/sxt-037/artifacts/bundle-t9/meta.json"
+      ]
+    }
+  ]
+}

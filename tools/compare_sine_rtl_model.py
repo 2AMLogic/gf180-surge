@@ -36,7 +36,8 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _rtl_compile_common import compile_and_run  # noqa: E402
+from _rtl_compile_common import (CheckpointKeys,  # noqa: E402
+                                 compile_and_run)
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TB = os.path.join(REPO, "rtl", "oscillators", "sine", "tb_sine.sv")
@@ -54,9 +55,16 @@ MODERN_U_FIELDS = ["phase", "lv0", "lv1", "om_prior"]
 
 
 def parse_tb(path):
+    """Parse the RTL trace.  Every T, S, G and O key must be unique (issues
+    #455/#639): a repeated checkpoint -- identical or contradictory, in
+    either order -- is refused with LeafInputError rather than resolved
+    last-row-wins.  T, S and G rows merge into one (block, slot) record on
+    purpose, so uniqueness here is per tag+key, not per record; `M` rows are
+    a per-block sample *sequence* and keep their append."""
     t = {}      # (block, slot) -> dict
     o = {}      # (block, slot) -> [64]
     m = {}      # block -> [32]
+    keys = CheckpointKeys()
     with open(path) as f:
         for line in f:
             parts = line.split()
@@ -77,10 +85,11 @@ def parse_tb(path):
                         d[f"u{u}_{fld}"] = rest[u * nf + fi]
                 if not legacy:
                     d["prior_valid"] = rest[MAXUNI * 4]
-                t[(b, s)] = d
+                keys.put(t, "T", (b, s), d)
             elif tag == "S":
                 vals = [int(x) for x in parts[1:]]
                 b, s = vals[0], vals[1]
+                keys.claim("S", (b, s))
                 d = t.get((b, s))
                 if d is None:
                     d = t.setdefault((b, s), {})
@@ -91,13 +100,16 @@ def parse_tb(path):
                           "char_px": vals[10]})
             elif tag == "G":
                 b, s, gain = int(parts[1]), int(parts[2]), int(parts[3])
+                keys.claim("G", (b, s))
                 d = t.setdefault((b, s), {})
                 d["gain_end"] = gain
             elif tag == "O":
-                o[(int(parts[1]), int(parts[2]))] = [int(x) for x in parts[3:]]
+                keys.put(o, "O", (int(parts[1]), int(parts[2])),
+                         [int(x) for x in parts[3:]])
             elif tag == "M":
                 b = int(parts[1])
                 m.setdefault(b, []).append(int(parts[2]))
+    keys.raise_if_duplicates(path)
     return t, o, m
 
 
