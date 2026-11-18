@@ -4,6 +4,8 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-11-18
 
+- **PR #708**: fix(model): coerce AW-49 input-boundary quantizer to double, restoring numpy-version-invariant stimulus
+- **Issue #668** (closed): SXT-028a: AW-49 canonical stimulus quantization is numpy-major-version sensitive (NEP 50) — disposition needed
 - **PR #777**: docs: append merged-tree re-derivation addendum to voice mutant evidence record
 - **Issue #775** (closed): Append a dated merged-tree addendum to reports/voice-mutant-regeneration/EVIDENCE.md
 - **PR #636**: fix(rtl): regenerate the two voice negative controls as single-line mutants
