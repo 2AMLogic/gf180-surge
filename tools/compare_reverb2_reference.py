@@ -42,10 +42,7 @@ sys.path.insert(0, REPO)
 sys.path.insert(0, os.path.join(REPO, "tools"))
 
 import compare_audio_reference as car  # noqa: E402
-from compare_chorus_reference import (  # noqa: E402
-    PROPOSED, PROPOSED_TAIL, channel_metrics, grade_and_report,
-    read_wav_stereo_f32,
-)
+from compare_chorus_reference import grade_and_report, read_wav_stereo_f32  # noqa: E402
 
 LSB = 2.0 ** -21
 
