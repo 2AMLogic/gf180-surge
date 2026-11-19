@@ -271,6 +271,32 @@ def test_compile_failure_is_reported_not_raised(tmp_path):
     assert not os.path.exists(os.path.join(run_dir, "tb.vvp"))
 
 
+def test_compile_failure_fallback_text_tracks_quiet_compile(tmp_path):
+    # Issue #785: the mechanism-4a fallback names where the compiler
+    # diagnostics actually went. Under quiet_compile=True they were
+    # DEVNULL'd, so the text must not send a reader to the harness's own
+    # stdout/stderr (guaranteed empty); under quiet_compile=False the
+    # inherited-stream wording is unchanged. Failure control: this test
+    # fails if the branch is removed and both settings emit the same text.
+    run_dir = str(tmp_path)
+    tb = os.path.join(run_dir, "broken.sv")
+    _write(tb, "this is not valid verilog {{{\n")
+    quiet = rcc.compile_and_run(tb, run_dir, out_name="tb.vvp",
+                                quiet_compile=True, report_sim_fails=True)
+    assert len(quiet.sim_fails) == 1, quiet.sim_fails
+    assert "iverilog compile failed" in quiet.sim_fails[0]
+    assert "/dev/null" in quiet.sim_fails[0]
+    assert "quiet_compile=True" in quiet.sim_fails[0]
+    assert "harness's own" not in quiet.sim_fails[0]
+    loud = rcc.compile_and_run(tb, run_dir, out_name="tb.vvp",
+                               quiet_compile=False, report_sim_fails=True)
+    assert len(loud.sim_fails) == 1, loud.sim_fails
+    assert loud.sim_fails[0].endswith(
+        ": (compiler diagnostics went to this harness's own "
+        "stdout/stderr; the compile step is not captured)")
+    assert quiet.sim_fails[0] != loud.sim_fails[0]
+
+
 def test_vvp_timeout_is_reported_not_raised(tmp_path):
     run_dir = str(tmp_path)
     tb_src = ("module tb_spin_test;\n"

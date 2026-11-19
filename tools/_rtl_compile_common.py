@@ -305,10 +305,18 @@ def _compile_and_run_reporting(sv_file, workdir, vvp, *, extra_sources,
         # The compile's streams are inherited by default (visible live)
         # unless quiet_compile sent them to DEVNULL; either way exc.stderr is
         # None here (never captured), so say so rather than printing an
-        # empty field that reads like "no reason given".
-        detail = (_as_text(exc.stderr)[-500:]
-                  or "(compiler diagnostics went to this harness's own "
-                     "stdout/stderr; the compile step is not captured)")
+        # empty field that reads like "no reason given". The fallback text
+        # must name where the diagnostic actually went (issue #785): under
+        # quiet_compile the inherited-stream pointer would send a reader to
+        # streams that are guaranteed empty.
+        if quiet_compile:
+            fallback = ("(the compile step's stdout and stderr were sent to "
+                        "/dev/null by quiet_compile=True, so no diagnostic "
+                        "was retained)")
+        else:
+            fallback = ("(compiler diagnostics went to this harness's own "
+                        "stdout/stderr; the compile step is not captured)")
+        detail = _as_text(exc.stderr)[-500:] or fallback
         sim_fails.append("iverilog compile failed rc=%s: %s"
                          % (exc.returncode, detail))
         return SimResult(None, None, "", sim_fails, "")
