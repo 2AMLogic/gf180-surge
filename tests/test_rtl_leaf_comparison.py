@@ -5,7 +5,8 @@ leaves had copied verbatim (`compare_rtl_model.py`,
 `compare_classic_rtl_model.py`, `compare_kt_rtl_model.py`,
 `compare_lfo_rtl_model.py`, `compare_mw_rtl_model.py`) into one shared
 helper.  The stated risk of that extraction is that a bug in the shared
-skeleton moves five leaves' PASS/FAIL reporting at once instead of one, so
+skeleton moves every adopted leaf's PASS/FAIL reporting at once instead of
+one -- six of them since issue #631 moved the velocity leaf across -- so
 this file pins the skeleton's own contract:
 
   * the published summary key set, key order, exit code and `--out` bytes;
@@ -50,14 +51,22 @@ import _rtl_compile_common as rcc  # noqa: E402
 MODEL_TRACE = {"sequence": "test-seq", "control_mode": "normal",
                "blocks": [{"b": 0, "voices": []}, {"b": 1, "voices": []}]}
 
-# The five leaves #303 deduplicated, and the three it deliberately did not
-# (verified divergent in the issue body: a `--trace` reuse branch, no shared
-# import at all, and a 187-line `main()` with its own flag set).
+# The five leaves #303 deduplicated, plus `compare_vel_rtl_model` -- which
+# #303 excluded for lack of its own analysis and issue #631 supplied that
+# analysis for and moved across (measured failure-mode gap, pin status,
+# report-shape plan; its `sequence`/`control_mode`/`rtl_done_line` now ride
+# `extra_summary_fields` + `summary_key_order`).
 DEDUPED_LEAVES = ("compare_rtl_model", "compare_classic_rtl_model",
                   "compare_kt_rtl_model", "compare_lfo_rtl_model",
-                  "compare_mw_rtl_model")
-EXCLUDED_LEAVES = ("compare_sine_rtl_model", "compare_vel_rtl_model",
-                   "compare_wt_rtl_model")
+                  "compare_mw_rtl_model", "compare_vel_rtl_model")
+# Still deliberately apart, each for a reason recorded in #303 (a `--trace`
+# reuse branch; a 187-line `main()` with its own flag set) or #631
+# (`compare_pm_rtl_model`: its model trace carries `blocks[].slots`, not the
+# `blocks[].voices` that `_load_model_trace` requires as the shared minimum,
+# so adopting it would mean widening that check for every leaf that routes
+# through it -- #631's stop condition, reported rather than taken).
+EXCLUDED_LEAVES = ("compare_sine_rtl_model", "compare_wt_rtl_model",
+                   "compare_pm_rtl_model")
 
 
 def _write_trace(tmp_path):
@@ -432,9 +441,11 @@ def test_deduped_leaf_uses_the_shared_skeleton(name):
 
 @pytest.mark.parametrize("name", EXCLUDED_LEAVES)
 def test_excluded_leaf_was_left_alone(name):
-    """#303's scope decision, kept visible: these three were verified
-    divergent and must not be quietly folded into the shared skeleton
-    without their own analysis."""
+    """#303's and #631's scope decisions, kept visible: these three were
+    verified divergent and must not be quietly folded into the shared
+    skeleton without their own analysis.  #631 is what moving one entry out
+    of this list costs -- it supplied that analysis for the velocity leaf
+    and left `compare_pm_rtl_model` here with the blocker named above."""
     mod = __import__(name)
     assert getattr(mod, "run_leaf_comparison", None) is None
 
