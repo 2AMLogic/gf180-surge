@@ -261,7 +261,6 @@ def leg1(lines, scratch, baseline_rev):
     cases, skipped = discover_dry_cases()
     emit(lines, "  discovered %d committed dry cases (mono int16, both renders "
                 "committed)" % len(cases))
-    ok = True
     rows = []
     for leaf, ref, model in cases:
         rel_ref = os.path.relpath(ref, REPO)
@@ -278,7 +277,6 @@ def leg1(lines, scratch, baseline_rev):
             cb = f.read()
         same_json = bb == cb
         parity = same_stdout and same_json and same_rc
-        ok &= parity
         cj = committed_json_for(ref)
         cj_status, cj_classes = "NONE", []
         if cj:
@@ -308,32 +306,44 @@ def leg1(lines, scratch, baseline_rev):
     unexplained = [r for r in rows
                    if any(c.startswith("UNEXPLAINED")
                           for c in r["committed_json_diff_classes"])]
-    emit(lines, "  leg 1: %s (%d/%d dry cases byte-identical vs the pre-change "
-                "tool)"
-         % ("PASS" if ok else "FAIL",
-            sum(1 for r in rows if r["baseline_vs_current"] == "BYTE-IDENTICAL"),
-            len(rows)))
-    emit(lines, "  committed-JSON comparison (supplementary, NOT this change's "
-                "gate): %d match, %d differ"
-         % (sum(1 for r in rows
-                if r["committed_json_status"] == "MATCHES-COMMITTED"),
-            sum(1 for r in rows
-                if r["committed_json_status"].startswith("DIFFERS"))))
-    emit(lines, "    all differences are ULP float ordering and/or the "
-                "pre-2026-09-24 rms-flag lineage (#95);")
-    emit(lines, "    unexplained committed differences: %d%s"
-         % (len(unexplained),
-            "" if not unexplained else " <== INVESTIGATE: "
-            + ", ".join(r["ref"] for r in unexplained)))
+    identical = sum(1 for r in rows
+                    if r["baseline_vs_current"] == "BYTE-IDENTICAL")
+    if rows:
+        status = "PASS" if identical == len(rows) else "FAIL"
+        emit(lines, "  leg 1: %s (%d/%d dry cases byte-identical vs the "
+                    "pre-change tool)" % (status, identical, len(rows)))
+    else:
+        status = "NOT_RUN"
+        emit(lines, "  NOT_RUN: discovery supplied no committed dry case pair "
+                    "(%d render(s) skipped above) -- there is nothing to "
+                    "re-run, so this leg cannot pass." % len(skipped))
+        emit(lines, "  A leg that did not run is NOT a pass.")
+        emit(lines, "  leg 1: NOT_RUN (0 dry cases executed)")
+    if rows:
+        emit(lines, "  committed-JSON comparison (supplementary, NOT this change's "
+                    "gate): %d match, %d differ"
+             % (sum(1 for r in rows
+                    if r["committed_json_status"] == "MATCHES-COMMITTED"),
+                sum(1 for r in rows
+                    if r["committed_json_status"].startswith("DIFFERS"))))
+        emit(lines, "    all differences are ULP float ordering and/or the "
+                    "pre-2026-09-24 rms-flag lineage (#95);")
+        emit(lines, "    unexplained committed differences: %d%s"
+             % (len(unexplained),
+                "" if not unexplained else " <== INVESTIGATE: "
+                + ", ".join(r["ref"] for r in unexplained)))
     emit(lines, "    no committed artifact of another leaf is rewritten by this "
                 "change.")
     emit(lines)
-    return ok, {"status": "PASS" if ok else "FAIL",
-                "baseline_rev": baseline_rev,
-                "unexplained_committed_diffs": [r["ref"] for r in unexplained],
-                "cases": rows,
-                "not_run": [{"leaf": leaf, "render": os.path.relpath(p, REPO),
-                             "reason": why} for leaf, p, why in skipped]}
+    report = {"status": status,
+              "baseline_rev": baseline_rev,
+              "unexplained_committed_diffs": [r["ref"] for r in unexplained],
+              "cases": rows,
+              "not_run": [{"leaf": leaf, "render": os.path.relpath(p, REPO),
+                           "reason": why} for leaf, p, why in skipped]}
+    if status == "NOT_RUN":
+        report["reason"] = "no committed dry case pairs discovered"
+    return status == "PASS", report
 
 
 # --------------------------------------------------------------------------

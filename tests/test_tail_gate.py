@@ -23,6 +23,7 @@ a model-vs-reference, RTL, preset-support, or sound claim.
 
 import json
 import os
+import shutil
 import subprocess
 import sys
 import wave
@@ -384,5 +385,109 @@ def test_committed_tail_gate_controls_record_the_required_outcomes():
     dry = s["legs"]["dry_rerun_parity"]
     assert dry["status"] == "PASS"
     assert dry["unexplained_committed_diffs"] == []
+    assert dry["cases"], ("empty dry cases array would make the "
+                          "byte-identical check below vacuous (#793)")
     assert all(c["baseline_vs_current"] == "BYTE-IDENTICAL"
                for c in dry["cases"])
+
+
+# ------------------------------------------- dry-parity runner inputs (#793) --
+
+def _sandbox_runner(tmp_path, reports):
+    """A throwaway git repo holding the runner and the comparator committed at
+    HEAD, plus the given {leaf: {filename: samples}} renders under
+    reports/<leaf>/artifacts. discover_dry_cases() and the HEAD baseline
+    lookup then see exactly the inputs this test provides (the #793
+    reproducer's pattern: the tools are the only repo content)."""
+    repo = tmp_path / "runner-repo"
+    (repo / "tools").mkdir(parents=True)
+    (repo / "oracle").mkdir(parents=True)
+    for name in ("tail_gate_checks.py", "compare_audio_reference.py"):
+        shutil.copy(os.path.join(REPO, "tools", name), repo / "tools" / name)
+    # the comparator imports oracle_common from <repo>/oracle; the dry path
+    # needs no native engine beyond that module.
+    shutil.copy(os.path.join(REPO, "oracle", "oracle_common.py"),
+                repo / "oracle" / "oracle_common.py")
+    for leaf, wavs in reports.items():
+        d = repo / "reports" / leaf / "artifacts"
+        d.mkdir(parents=True, exist_ok=True)
+        for fname, data in wavs.items():
+            write_wav(d / fname, data)
+    git = ["git", "-c", "user.email=sandbox@example.invalid",
+           "-c", "user.name=sandbox"]
+    subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
+    subprocess.run(git + ["add", "-A"], cwd=repo, check=True)
+    subprocess.run(git + ["commit", "-q", "-m", "sandbox runner inputs"],
+                   cwd=repo, check=True)
+    return repo
+
+
+def _run_dry_leg(repo, scratch):
+    """Run leg 1 only, with HEAD as its own baseline (both tool copies are the
+    same bytes); returns (proc, checks-summary JSON). PYTHONPATH exposes the
+    sandbox's oracle/ to both copies -- the materialized baseline resolves
+    REPO from its own scratch location, so leg 1 needs oracle_common importable
+    from PYTHONPATH in this defined environment."""
+    env = dict(os.environ, PYTHONPATH=str(repo / "oracle"))
+    r = subprocess.run(
+        [sys.executable, "tools/tail_gate_checks.py", "--legs", "1",
+         "--baseline-rev", "HEAD", "--scratch-root", str(scratch)],
+        capture_output=True, text=True, cwd=repo, env=env)
+    summary_p = (repo / "reports" / "shared-comparator-tail-gate" /
+                 "artifacts" / "checks-summary.json")
+    assert summary_p.exists(), r.stdout + r.stderr
+    return r, json.loads(summary_p.read_text())
+
+
+def test_dry_parity_empty_selection_is_not_run_and_fails_closed(tmp_path):
+    """Empty-input failure control (#793): discovery supplying zero pairs must
+    report dry-leg status NOT_RUN with a nonzero exit -- never the 0/0 PASS
+    the success flag initialized to True used to report -- and must keep the
+    skipped-render diagnostics."""
+    repo = _sandbox_runner(tmp_path, {
+        "empty-leaf": {"lonely-ref.wav": np.arange(480)}})
+    r, s = _run_dry_leg(repo, tmp_path / "scratch")
+    dry = s["legs"]["dry_rerun_parity"]
+    assert r.returncode != 0, r.stdout
+    assert dry["status"] == "NOT_RUN"
+    assert dry["reason"] == "no committed dry case pairs discovered"
+    assert dry["cases"] == []
+    assert s["overall"] == "FAIL"
+    assert ([n["reason"] for n in dry["not_run"]]
+            == ["no committed model render"])
+    assert "NOT_RUN" in r.stdout
+    assert "no committed dry case pair" in r.stdout
+
+
+def test_dry_parity_verdict_derives_from_executed_pairs(tmp_path):
+    """One executed pair decides the leg (#793): byte-identical comparator
+    output -> PASS with exit 0; differing output -> FAIL with a nonzero exit.
+    The emitted summary and the exit result come from the same verdict."""
+    t = np.arange(480)
+    identical = _sandbox_runner(tmp_path / "identical", {
+        "pass-leaf": {"pair-ref.wav": t, "model-pair.wav": t}})
+    r1, s1 = _run_dry_leg(identical, tmp_path / "identical" / "scratch")
+    dry1 = s1["legs"]["dry_rerun_parity"]
+    assert r1.returncode == 0, r1.stdout
+    assert dry1["status"] == "PASS"
+    assert len(dry1["cases"]) == 1
+    assert dry1["cases"][0]["baseline_vs_current"] == "BYTE-IDENTICAL"
+    assert s1["overall"] == "PASS"
+
+    differing = _sandbox_runner(tmp_path / "differing", {
+        "fail-leaf": {"pair-ref.wav": t, "model-pair.wav": t}})
+    # Perturb the UNCOMMITTED working-tree comparator: leg 1 grades parity
+    # between the HEAD baseline copy and the working-tree tool, so "differing
+    # comparator output" means the two tool copies disagree on the same inputs.
+    comp = differing / "tools" / "compare_audio_reference.py"
+    text = comp.read_text()
+    assert '"rms_diff_dbfs": -46.0' in text
+    comp.write_text(text.replace('"rms_diff_dbfs": -46.0',
+                                 '"rms_diff_dbfs": -99.0'))
+    r2, s2 = _run_dry_leg(differing, tmp_path / "differing" / "scratch")
+    dry2 = s2["legs"]["dry_rerun_parity"]
+    assert r2.returncode != 0, r2.stdout
+    assert dry2["status"] == "FAIL"
+    assert len(dry2["cases"]) == 1
+    assert dry2["cases"][0]["baseline_vs_current"] == "DIFFERS"
+    assert s2["overall"] == "FAIL"
