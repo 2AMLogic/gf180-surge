@@ -525,9 +525,12 @@ def test_rtl_done_line_is_the_full_string_not_a_count(tmp_path, monkeypatch):
 def test_missing_stimulus_is_not_run_not_a_disagreement(tmp_path,
                                                         monkeypatch):
     """#188's blind-spot row, measured live before #645 (module docstring):
-    removing `rtl/ev.hex` published a numeric FAIL with 42 mismatches on a
-    run where nothing was compared.  The migrated harness must refuse the
-    input before the simulator is even invoked."""
+    removing `rtl/ev.hex` still yielded a trace of 74,400 `T` rows from the
+    stimulus-less run; the old harness graded that output as a real render
+    -- 24 checkpoints, 384 fields and 42 mismatches counted before the
+    comparator stopped -- and published a numeric FAIL.  Zero coverage is
+    what the migrated harness's refusal reports: it must reject the input
+    before the simulator is even invoked."""
     run_dir = _write_run_dir(tmp_path)
     os.remove(os.path.join(run_dir, "rtl/ev.hex"))
     calls = []

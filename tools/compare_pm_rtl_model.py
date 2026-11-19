@@ -28,13 +28,16 @@ Measured before that move, on Icarus 13.0 against a run dir built by
 model/voice/playmode/inputs/bass2.json --sequence seq-notes-holds-v1`:
 
   * `rtl/ev.hex` removed -> Icarus reports the open failure on stdout and
-    still exits 0, so `check=True` saw nothing; the (near-empty) trace was
-    parsed and the harness published a NUMERIC disagreement verdict --
-    `"FAIL", "mismatches": 42` with `rtl_done_line: "DONE pm-qmuls=0
-    voice-blocks=0"` -- on a run where nothing was compared (#188's blind
-    spot). The shared path asserts the declared stimulus before the
-    simulator is invoked and publishes `comparison: NOT_RUN` naming the
-    file instead.
+    still exits 0, so `check=True` saw nothing; the stimulus-less run still
+    wrote a trace of 74,400 `T` rows, the old harness graded that output as
+    if it were a real render, and the report counted 24 checkpoints, 384
+    fields and 42 mismatches before the comparator stopped -- a NUMERIC
+    disagreement verdict, `"FAIL", "mismatches": 42` with `rtl_done_line:
+    "DONE pm-qmuls=0 voice-blocks=0"`, on output produced without the
+    event stimulus (#188's blind spot; zero coverage describes the
+    migrated harness's refusal, not this run). The shared path asserts the
+    declared stimulus before the simulator is invoked and publishes
+    `comparison: NOT_RUN` naming the file instead.
   * an uncompilable `--tb` with a `{"verdict": "PASS", "mismatches": 0}`
     already at `--out` -> CalledProcessError traceback, exit 1, and that
     stale PASS left in place byte-for-byte, with the compiler's own

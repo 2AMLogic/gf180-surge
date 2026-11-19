@@ -52,6 +52,7 @@ sys.path.insert(0, REPO)
 sys.path.insert(0, os.path.join(REPO, "tools"))
 
 import _rtl_compile_common as rcc  # noqa: E402
+import compare_pm_rtl_model  # noqa: E402
 
 MODEL_TRACE = {"sequence": "test-seq", "control_mode": "normal",
                "blocks": [{"b": 0, "voices": []}, {"b": 1, "voices": []}]}
@@ -59,8 +60,13 @@ MODEL_TRACE = {"sequence": "test-seq", "control_mode": "normal",
 # The play-mode trace's shape (`model/voice/playmode/run_model.py`): each
 # block carries a `slots` list of per-slot field lists and no `voices` at
 # all -- what kept this leaf off the shared skeleton until #645's opt-in.
+# A slot record is one word per declared checkpoint field; both fixture
+# builders take the width from the leaf's own FIELD_NAMES so a
+# shape-refusal control can only fail on the shape, never on a wrong
+# record width.
+PM_SLOT_WIDTH = len(compare_pm_rtl_model.FIELD_NAMES)
 SLOTS_MODEL_TRACE = {"carrier": "test", "pool": 8,
-                     "blocks": [{"b": 0, "slots": [[0] * 17] * 8}]}
+                     "blocks": [{"b": 0, "slots": [[0] * PM_SLOT_WIDTH] * 8}]}
 
 # The six leaves #303 deduplicated, plus `compare_vel_rtl_model` -- which
 # #303 excluded for lack of its own analysis and issue #631 supplied that
@@ -618,7 +624,7 @@ def test_leaf_cli_refuses_the_other_model_shape(name, mutation, tmp_path,
     other = "slots" if shape == "voices" else "voices"
     run_dir = str(tmp_path)
     if mutation == "substituted":
-        block = {"b": 0, other: ([[0] * 17] if other == "slots"
+        block = {"b": 0, other: ([[0] * PM_SLOT_WIDTH] if other == "slots"
                                  else [{"slot": 0}])}
     else:
         block = {"b": 0}
