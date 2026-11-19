@@ -146,8 +146,8 @@
         "reports/sxt-028a/negative-controls/negative-controls.json",
         "reports/sxt-028a/rtl-exactness.json"
       ],
-      "revision_word": 1453063955,
-      "sha256": "569bff13caa7dad88d88cd185bfb024974b2fc3ec7566d5b7840dd828ca5c0cd"
+      "revision_word": 2924061779,
+      "sha256": "ae49a4536d7079fdc4ff9148555a52e6cfca8b90b6f6c3892e59c86544cf63c0"
     },
     {
       "covers": [
@@ -366,6 +366,19 @@
         "signoff/t1-item9-attestation.json"
       ],
       "sha256": "f7bc9b355da979a75d0c59b2f53ccec57f1d4703ba9845a59b68711fe38c1724"
+    },
+    {
+      "covers": [
+        "tools/aw49_stimulus_invariance_controls.py"
+      ],
+      "freshness_test": "tests/test_byte_frozen_sources.py",
+      "leaf": "T1 item 9 testbench attestation (#538)",
+      "mechanism": "manifest_entry",
+      "pin": "signoff/t1-item9-attestation.json::attestation.checks[tools/aw49_stimulus_invariance_controls.py]",
+      "recorded_in": [
+        "signoff/t1-item9-attestation.json"
+      ],
+      "sha256": "194c8a450d384d176c57dd192e9faf981de82c857a51f42afa211331a92ea0f3"
     },
     {
       "covers": [

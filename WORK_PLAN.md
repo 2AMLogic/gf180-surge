@@ -3,6 +3,7 @@
 This is a forge workflow snapshot. Issue closure and labels establish no fidelity, preset-quality, or hardware qualification claim.
 
 <!-- guide:plan-body:start -->
+_Generated: 2026-11-18T21:45:42Z (snapshot; compare against live labels)_
 ## Operator Attention: Merge-Risk-Hold Pileup
 
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
@@ -25,7 +26,7 @@ _None._
 
 ## Ready
 
-Human-approved issues ready for implementation (`loom:issue`).
+Human-approved issues (`loom:issue`) ready for implementation — excluding held (`loom:blocked`/`loom:operator`/`loom:frozen`), `loom:building`, and issues closed by an open `loom:pr` PR (listed under Approved).
 
 - **#167**: Re-grade the 4 STALE SXT-034 spectral_corr artifacts on the oracle host under the #110 definition
 - **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus)
@@ -36,17 +37,15 @@ Issues currently being built (`loom:building`).
 
 - **#372**: Settle-boundary audit: input-only effect tap so Delay/EQ, Chorus and Reverb 2 get a verdict (split from #318)
 - **#475**: RTL: rf_ains34_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
-- **#622**: Regenerate the two drifted tb_voice.sv negative controls and re-derive the T1 item 9 attestation
 - **#631**: Remove the private build_and_run/main copies in compare_vel_rtl_model.py and compare_pm_rtl_model.py: last two leaf harnesses off the shared run_leaf_comparison path
 - **#634**: Remove the five copy-pasted per-leaf RTL harness-reporting test files: fold onto one table-parametrized battery
 - **#663**: Remove the private render_bus copy in tools/render_wt_reference.py: it is the shared _render_reference_common.render_bus with a different constructor call
-- **#668**: SXT-028a: AW-49 canonical stimulus quantization is numpy-major-version sensitive (NEP 50) — disposition needed
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-_None._
+- **#689**: refactor(tools): delegate the wavetable renderer's render loop to the shared harness
 
 ## Approved (Awaiting Merge)
 
@@ -81,9 +80,7 @@ Issues carrying `loom:curated`.
 - **#554**: T1 items 2/3/4/11 Phase B: gf180mcu physical flow for the 8 groups blocked on #537 *(curated)* *(held)*
 - **#565**: Rebuild the DR-0006 tap-patched oracle builds (sxt028a-tap, sxt028c-tap) from source with a recorded identity *(curated)* *(held)*
 - **#580**: T1 item 1: logical4_core and rf_* cores expose only block_done, so synthesis removes the datapath *(curated)* *(held)*
-- **#622**: Regenerate the two drifted tb_voice.sv negative controls and re-derive the T1 item 9 attestation *(curated)*
 - **#663**: Remove the private render_bus copy in tools/render_wt_reference.py: it is the shared _render_reference_common.render_bus with a different constructor call *(curated)*
-- **#668**: SXT-028a: AW-49 canonical stimulus quantization is numpy-major-version sensitive (NEP 50) — disposition needed *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -103,11 +100,11 @@ Issues carrying `loom:curated`.
 | Operator merge-risk holds | 0 |
 | Very important | 1 |
 | Important | 3 |
-| Ready (`loom:issue`) | 2 |
-| In Progress (`loom:building`) | 7 |
-| PRs awaiting review | 0 |
+| Ready (`loom:issue`, net of holds/building/merge-pending) | 2 |
+| In Progress (`loom:building`) | 5 |
+| PRs awaiting review | 1 |
 | Approved PRs awaiting merge | 0 |
-| Curated | 26 |
+| Curated | 24 |
 | Architect / Hermit proposals | 1 |
 | Active epics | 4 |
 <!-- guide:plan-body:end -->

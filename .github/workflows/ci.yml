@@ -27,7 +27,9 @@
 # job's checkout is capped too; its normal checkout is 10-12 s).
 #
 # Concurrency: superseded pull_request runs are cancelled; push runs on main
-# are never cancelled, so a cancelled main run cannot hide a failure.
+# are never cancelled, so a cancelled main run cannot hide a failure. Merge
+# queue runs are never cancelled either (cancel-in-progress is false for any
+# non-pull_request event, merge_group included).
 
 name: ci
 
@@ -35,6 +37,11 @@ on:
   pull_request:
   push:
     branches: [main]
+  # Merge queue (issue #772 / 2AMLogic/2am#7605): this workflow owns required
+  # checks (repo ruleset 27340314), so its jobs must also run for the queue's
+  # trial merges. Deliberately no `paths:` filter: the queue tool refuses a
+  # required-check workflow with path filters.
+  merge_group:
 
 permissions:
   contents: read
@@ -103,33 +110,53 @@ jobs:
       # branch's history is still rewritable, which is exactly why the gate sits
       # before the merge and not after it.
       #
-      # RANGE: origin/<base ref>..<PR head sha> -- this branch's own commits.
-      # Taken from the event payload rather than from HEAD because (1) it
-      # resolves identically on a fork PR and a same-repo branch, (2) it skips
-      # GitHub's synthetic refs/pull/N/merge commit, which no clone carries,
-      # and (3) it excludes everything already on the base branch, so this gate
-      # never re-litigates main's existing history (that question stays with
-      # #25, and auditing all of published history stays a manual
-      # `--commits HEAD` run).
+      # RANGE: this branch's own commits -- origin/<base ref>..<PR head sha>
+      # on a pull_request, the merge_group event's own base_sha..head_sha on a
+      # queued trial merge (#772). Taken from the event payload rather than
+      # from HEAD because (1) it resolves identically on a fork PR and a
+      # same-repo branch, (2) it skips GitHub's synthetic refs/pull/N/merge
+      # commit, which no clone carries, and (3) it excludes everything already
+      # on the base branch, so this gate never re-litigates main's existing
+      # history (that question stays with #25, and auditing all of published
+      # history stays a manual `--commits HEAD` run). A merge group has no
+      # base ref name, so its base/head arrive as raw shas and are verified
+      # the same way as the PR-side refs.
       - name: Audit this branch's own commits for per-commit declaration
         env:
           EVENT_NAME: ${{ github.event_name }}
           BASE_REF: ${{ github.event.pull_request.base.ref }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          # Merge queue (issue #772): the trial merge's base/head, plumbed from
+          # the event payload the same way as the PR side (sibling method:
+          # sky130-comparator#332).
+          MG_BASE_SHA: ${{ github.event.merge_group.base_sha }}
+          MG_HEAD_SHA: ${{ github.event.merge_group.head_sha }}
         run: |
           set -eu
-          if [ "$EVENT_NAME" != "pull_request" ]; then
-            echo "NOT_RUN: this gate audits a pull request's own commits; on a"
-            echo "  '$EVENT_NAME' event there is no such range (on main,"
-            echo "  origin/main..HEAD resolves to no commits, which the tool"
-            echo "  refuses as NOT_RUN/exit 2 rather than calling an empty range"
-            echo "  a pass). Every commit that reaches main passed this gate on"
-            echo "  its own pull request. Auditing ALL of published history is"
-            echo "  'python3 tools/check_provenance.py --commits HEAD' and is NOT"
-            echo "  run here (coverage: none -- this is not a pass)."
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            BASE_REV="refs/remotes/origin/${BASE_REF}"
+            HEAD_REV="${HEAD_SHA}"
+          elif [ "$EVENT_NAME" = "merge_group" ]; then
+            if [ -z "${MG_BASE_SHA}" ] || [ -z "${MG_HEAD_SHA}" ]; then
+              echo "FAIL: the merge_group event carried an empty base_sha or" >&2
+              echo "  head_sha, so this range cannot be audited at all. Failing" >&2
+              echo "  closed: an audit that cannot run is never a pass." >&2
+              exit 1
+            fi
+            BASE_REV="${MG_BASE_SHA}"
+            HEAD_REV="${MG_HEAD_SHA}"
+          else
+            echo "NOT_RUN: this gate audits a pull request's or merge group's"
+            echo "  own commits; on a '$EVENT_NAME' event there is no such range"
+            echo "  (on main, origin/main..HEAD resolves to no commits, which the"
+            echo "  tool refuses as NOT_RUN/exit 2 rather than calling an empty"
+            echo "  range a pass). Every commit that reaches main passed this"
+            echo "  gate on its own pull request. Auditing ALL of published"
+            echo "  history is 'python3 tools/check_provenance.py --commits HEAD'"
+            echo "  and is NOT run here (coverage: none -- this is not a pass)."
             exit 0
           fi
-          for rev in "refs/remotes/origin/${BASE_REF}" "${HEAD_SHA}"; do
+          for rev in "$BASE_REV" "$HEAD_REV"; do
             if ! git rev-parse --verify --quiet "${rev}^{commit}" >/dev/null; then
               echo "FAIL: ${rev} is not present in this checkout, so this" >&2
               echo "  branch's commit range cannot be audited at all. This job" >&2
@@ -137,8 +164,7 @@ jobs:
               exit 1
             fi
           done
-          python3 tools/check_provenance.py \
-            --commits "refs/remotes/origin/${BASE_REF}..${HEAD_SHA}"
+          python3 tools/check_provenance.py --commits "${BASE_REV}..${HEAD_REV}"
 
   artifact-manifests:
     name: evidence manifests (#532)

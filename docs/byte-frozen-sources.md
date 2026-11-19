@@ -75,6 +75,7 @@ human-readable index.
 | `reports/SXT-043/EVIDENCE.md` provenance table | `model/voice/playmode/fixture_config.py` (revision 2; plain sha256 of its bytes, no self-hash function) | SXT-043 | `tests/test_sxt043_fixture_rev2.py` |
 | `signoff/t1-item9-attestation.json` check for `model/integration/negative_controls.py` | `model/integration/negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
 | `signoff/t1-item9-attestation.json` check for `tools/aw49_negative_controls.py` | `tools/aw49_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
+| `signoff/t1-item9-attestation.json` check for `tools/aw49_stimulus_invariance_controls.py` | `tools/aw49_stimulus_invariance_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
 | `signoff/t1-item9-attestation.json` check for `tools/aw4_negative_controls.py` | `tools/aw4_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
 | `signoff/t1-item9-attestation.json` check for `tools/check_provenance_controls.py` | `tools/check_provenance_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
 | `signoff/t1-item9-attestation.json` check for `tools/chorus_negative_controls.py` | `tools/chorus_negative_controls.py` (plain sha256 of its bytes; no self-hash function) | T1 item 9 (#538) | `tests/test_byte_frozen_sources.py` |
@@ -134,7 +135,7 @@ regeneration has to re-commit.
 
 Two of the self-hash pins are also recorded in their RTL traces as a **revision
 word** — the low 32 bits, `int(revision[:8], 16)`: SXT-028a's
-`cases[].revision_pin.expected == 1453063955` and SXT-028k's equivalent. The
+`cases[].revision_pin.expected == 2924061779` and SXT-028k's equivalent. The
 registry lists those records under `recorded_word_in`, and the audit checks that
 form too.
 
@@ -153,7 +154,7 @@ file in an inventory, and `.github/workflows/signoff.yml` re-checks both on ever
 
 | Envelope | Inventory — the authoritative list | Content-hashed files | Rest of the envelope |
 |---|---|---|---|
-| `signoff/t1-item9-attestation.json` | `signoff/t1-item9-inventory.json`, key `testbenches` | 231 of 234 checks: 126 under `tests/`, 59 `rtl/*.sv` benches and mutant controls, 45 `tools/*.py`, and `model/integration/negative_controls.py` | one `cold_start` command check, two `pin` checks |
+| `signoff/t1-item9-attestation.json` | `signoff/t1-item9-inventory.json`, key `testbenches` | 233 of 236 checks: 127 under `tests/`, 59 `rtl/*.sv` benches and mutant controls, 46 `tools/*.py`, and `model/integration/negative_controls.py` | one `cold_start` command check, two `pin` checks |
 | `signoff/item-10.attestation.json` | `signoff/hygiene-inventory.json`, key `hygiene` | 5 of 9 checks: `README.md`, `LICENSE`, `.github/workflows/ci.yml`, `.github/workflows/signoff.yml`, `.github/workflows/slow-controls.yml` | four `command` audit checks |
 
 **Read the inventories; this registry does not transcribe them.** The

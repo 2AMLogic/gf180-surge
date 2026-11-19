@@ -12,7 +12,11 @@ What this pins, and what it does NOT:
     workflow's own jobs carry the bound), and
     each `uses:` value is `owner/repo[/subpath]@<40 lowercase hex>` followed
     by ` # v<N>`-style tag comment. Local `./`-relative `uses:` are exempt
-    (none exist today).
+    (none exist today). And for the two workflows behind this repo's
+    required checks (ci.yml, signoff.yml; forge ruleset 27340314, #772):
+    a `merge_group:` trigger is declared and no `paths:` filter exists, so
+    the merge queue can require them (the queue tool refuses a required-check
+    workflow that lacks the trigger or carries path filters).
   * DOES NOT: run any workflow, verify a SHA against the upstream tag (the
     comment is not cross-checked), or bound what the jobs do. This is the
     documented-policy failure control only: it makes the next unpinned or
@@ -259,3 +263,72 @@ def test_reusable_workflow_call_job_needs_no_timeout():
     assert findings == [
         "<text>: job 'plain' has no job-level timeout-minutes"
     ], findings
+
+
+# ------------------------------------------------- merge queue readiness (#772)
+# The forge's required-checks ruleset (id 27340314) requires job names from
+# ci.yml and signoff.yml only; slow-controls.yml contributes none (#415) and
+# keeps its pull_request path filters. The queue tool refuses a required-check
+# workflow that does not declare merge_group and refuses one with path
+# filters, so both facts are pinned: a workflow that drops the trigger or
+# grows a paths: filter goes red here instead of silently refusing the queue
+# (issue #772 / 2AMLogic/2am#7605).
+REQUIRED_CHECK_WORKFLOWS = ("ci.yml", "signoff.yml")
+
+
+def _on_block(text):
+    """The lines of a workflow's top-level `on:` block, by indentation."""
+    lines = text.splitlines()
+    start = lines.index("on:")
+    block = []
+    for line in lines[start + 1 :]:
+        if line.strip() and not line.startswith(" "):
+            break
+        block.append(line)
+    assert block, "`on:` block has no body"
+    return block
+
+
+def scan_merge_queue_readiness(text, source):
+    """Findings: a required-check workflow not ready for the merge queue."""
+    findings = []
+    block = _on_block(text)
+    if not any(line.strip() == "merge_group:" for line in block):
+        findings.append(f"{source}: declares no merge_group trigger")
+    if any(line.strip().startswith("paths:") for line in block):
+        findings.append(
+            f"{source}: carries a paths: filter (the queue tool refuses this)"
+        )
+    return findings
+
+
+def test_required_check_workflows_are_merge_queue_ready():
+    findings = []
+    for name in REQUIRED_CHECK_WORKFLOWS:
+        text = (WORKFLOW_DIR / name).read_text(encoding="utf-8")
+        findings.extend(scan_merge_queue_readiness(text, name))
+    assert not findings, "\n".join(findings)
+
+
+def test_negative_control_missing_merge_group_is_found():
+    """A required-check workflow whose merge_group trigger is removed fails."""
+    text = (WORKFLOW_DIR / "ci.yml").read_text(encoding="utf-8")
+    doctored = "\n".join(
+        line for line in text.splitlines() if line.strip() != "merge_group:"
+    )
+    findings = scan_merge_queue_readiness(doctored, "ci.yml")
+    assert findings, "control is vacuous: the doctor changed nothing the scan reads"
+    assert "merge_group" in findings[0], findings
+
+
+def test_negative_control_path_filter_is_found():
+    """A paths: filter added under merge_group is caught."""
+    text = (WORKFLOW_DIR / "ci.yml").read_text(encoding="utf-8")
+    doctored = text.replace(
+        "  merge_group:\n",
+        "  merge_group:\n    paths:\n      - '.github/**'\n",
+        1,
+    )
+    findings = scan_merge_queue_readiness(doctored, "ci.yml")
+    assert findings, "control is vacuous: the doctor changed nothing the scan reads"
+    assert "paths:" in findings[0], findings
