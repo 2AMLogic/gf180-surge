@@ -37,6 +37,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _rtl_compile_common import (CheckpointKeys,  # noqa: E402
+                                 LeafInputError, _publish_refusal,
                                  compile_and_run)
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -210,7 +211,15 @@ def main():
         # Reusing an existing trace never invokes the simulator, so there is
         # nothing for `report_sim_fails` to observe -- comparison proceeds
         # directly (issue #208).
-        rtl_trace = parse_tb(args.trace)
+        try:
+            rtl_trace = parse_tb(args.trace)
+        except LeafInputError as exc:
+            # Refuse before grading: ambiguous records are not evidence
+            # (issues #455/#639), and the refusal replaces any prior verdict
+            # at --out instead of leaving a stale PASS standing (issue
+            # #647).  No simulator object exists on this path.
+            return _publish_refusal(exc, os.path.relpath(args.tb, REPO),
+                                    checked, args.out, None, None)
         checked, fails = compare(model_trace, rtl_trace)
         comparison = "FAIL" if fails else "PASS"
     else:
@@ -222,7 +231,12 @@ def main():
         sim_stdout_tail = sim.stdout_tail
         fails = list(sim_fails)
         if not sim_fails:
-            rtl_trace = parse_tb(sim.trace)
+            try:
+                rtl_trace = parse_tb(sim.trace)
+            except LeafInputError as exc:
+                return _publish_refusal(exc, os.path.relpath(args.tb, REPO),
+                                        checked, args.out, None, None,
+                                        sim=sim)
             checked, cmp_fails = compare(model_trace, rtl_trace)
             fails += cmp_fails
             comparison = "FAIL" if cmp_fails else "PASS"
