@@ -4,6 +4,8 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-11-19
 
+- **Issue #647** (closed): Publish duplicate-checkpoint input refusals in the velocity, play-mode, sine and control harnesses
+- **PR #800**: fix(tools): publish duplicate-checkpoint input refusals in the sine and control harnesses
 - **PR #797**: ci: retry the pinned Icarus install after apt failures
 - **Issue #796** (closed): CI flake: pinned iverilog apt install fails on a mirror connection error, failing the simulator leg before any test runs
 - **PR #795**: fix: derive dry tail-gate parity verdict from executed pairs
