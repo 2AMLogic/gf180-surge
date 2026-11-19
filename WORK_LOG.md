@@ -4,6 +4,10 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-11-19
 
+- **PR #797**: ci: retry the pinned Icarus install after apt failures
+- **Issue #796** (closed): CI flake: pinned iverilog apt install fails on a mirror connection error, failing the simulator leg before any test runs
+- **PR #795**: fix: derive dry tail-gate parity verdict from executed pairs
+- **Issue #793** (closed): Derive dry parity from executed pairs in the tail-gate runner
 - **Issue #167** (closed): Re-grade the 4 STALE SXT-034 spectral_corr artifacts on the oracle host under the #110 definition
 - **Issue #645** (closed): Decide and land compare_pm_rtl_model.py on run_leaf_comparison: its model trace carries blocks[].slots, not the blocks[].voices the shared minimum requires
 - **PR #789**: refactor(sxt-043): route the play-mode exactness harness through run_leaf_comparison
