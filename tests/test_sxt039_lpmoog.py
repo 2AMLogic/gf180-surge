@@ -30,6 +30,7 @@ import voice_model as vm  # noqa: E402
 import filter_lpmoog_model as fp  # noqa: E402
 import fixtures as fx  # noqa: E402
 import run_filter_leg as rfl  # noqa: E402
+import lpmoog_negative_controls as lnc  # noqa: E402
 
 ARTIFACTS = os.path.join(REPO, "reports", "SXT-039", "artifacts")
 ONE = vm.ONE
@@ -185,6 +186,92 @@ def test_runner_refuses_subtype_change_without_reset(monkeypatch):
     monkeypatch.setattr(fx, "build", lambda case: spec)
     with pytest.raises(fp.Refuse):
         rfl.run_case("king-b1")
+
+
+def _malformed_king_b1():
+    spec = fx.build("king-b1")
+    spec["blocks"][1]["subtype"] = 1
+    spec["blocks"][1]["reset"] = False
+    return spec
+
+
+def _runner_with_missing_reset_refusal_disabled():
+    """The committed runner with ONLY the missing-reset refusal disabled:
+    the raise site is textually muted, everything else is byte-identical."""
+    import importlib.util
+    with open(rfl.__file__, encoding="utf-8") as f:
+        src = f.read()
+    anchor = ('raise fp.Refuse(f"block {b}: subtype change without the engine "\n'
+              '                                "reset path (memset + CM.Reset)")')
+    assert src.count(anchor) == 1, "mutation anchor not unique"
+    spec = importlib.util.spec_from_file_location("run_filter_leg_mutant_784",
+                                                  rfl.__file__)
+    mod = importlib.util.module_from_spec(spec)
+    muted = src.replace(anchor, "pass  # mutant under test: guard disabled")
+    exec(compile(muted, rfl.__file__, "exec"), mod.__dict__)
+    return mod
+
+
+def test_nc_c_records_the_real_runner_refusal(tmp_path):
+    # clean runner: the NC-C transcript must show the REFUSAL coming from
+    # run_filter_leg (the tool no longer keeps its own copy of the guard),
+    # with the other controls preserved
+    nc_dir = os.path.join(str(tmp_path), "nc")
+    rc = lnc.run_controls(nc_dir, ARTIFACTS, require_rtl=False,
+                          run_root=str(tmp_path))
+    assert rc == 0
+    with open(os.path.join(nc_dir, "negative-control.json"),
+              encoding="utf-8") as f:
+        nc = json.load(f)
+    assert sorted(nc) == [
+        "NC-A-wrong-subtype-chords-as-0",
+        "NC-A-wrong-subtype-disturb-as-3",
+        "NC-A-wrong-subtype-king-b1-as-1",
+        "NC-B-wrong-algorithm-lp12-driven-disturb",
+        "NC-B-wrong-algorithm-lp12-driven-king-b1",
+        "NC-C-out-of-scope-refused",
+        "NC-D-rtl-mutant",
+    ]
+    nc_c = nc["NC-C-out-of-scope-refused"]
+    assert nc_c["refusals"]["subtype change w/o reset"] == "REFUSED"
+    assert all(v == "REFUSED" for v in nc_c["refusals"].values())
+    assert nc_c["outcome"].startswith("CONTROL-OK")
+    assert all(v["outcome"].startswith(("CONTROL-OK", "NOT_RUN"))
+               for v in nc.values())
+
+
+def test_nc_c_detects_a_runner_that_accepts_subtype_change_without_reset(
+        monkeypatch, tmp_path):
+    # with ONLY the runner's missing-reset refusal disabled, the malformed
+    # fixture is accepted (all 256 trace blocks, no exception), and the
+    # NC-C transcript must turn CONTROL-BROKEN and exit nonzero
+    mut = _runner_with_missing_reset_refusal_disabled()
+    spec = _malformed_king_b1()
+    real_build = fx.build
+    fx.build = lambda _case: spec
+    try:
+        trace = mut.run_case("king-b1")   # an unrelated exception fails here
+    finally:
+        fx.build = real_build
+    assert trace["n_blocks"] == 256
+    assert len(trace["trace_blocks"]) == 256
+
+    monkeypatch.setattr(rfl, "run_case", mut.run_case)
+    nc_dir = os.path.join(str(tmp_path), "nc")
+    rc = lnc.run_controls(nc_dir, ARTIFACTS, require_rtl=False,
+                          run_root=str(tmp_path))
+    assert rc != 0
+    with open(os.path.join(nc_dir, "negative-control.json"),
+              encoding="utf-8") as f:
+        nc = json.load(f)
+    nc_c = nc["NC-C-out-of-scope-refused"]
+    assert nc_c["refusals"]["subtype change w/o reset"] == \
+        "ACCEPTED (CONTROL-BROKEN)"
+    assert nc_c["outcome"] == "CONTROL-BROKEN"
+    assert all(v == "REFUSED" for k, v in nc_c["refusals"].items()
+               if k != "subtype change w/o reset")
+    assert all(nc[k]["outcome"].startswith("CONTROL-OK")
+               for k in nc if k.startswith(("NC-A", "NC-B")))
 
 
 def test_comparator_refuses_a_short_reference_coefficient_stream(tmp_path):

@@ -1193,7 +1193,7 @@
         "role": "testbench",
         "path": "tests/test_sxt039_lpmoog.py",
         "passed": true,
-        "content_hash": "sha256:80eed2183d0b41ab9b744375010962e01c3fbbe74f3d9eedaf7c62c90e50491e"
+        "content_hash": "sha256:caa4e7d46c6908eeba9420b03217967835cc08fa92600d31ea6e90e90893c975"
       },
       {
         "check": "present",
@@ -1550,7 +1550,7 @@
         "role": "testbench",
         "path": "tools/lpmoog_negative_controls.py",
         "passed": true,
-        "content_hash": "sha256:adfd2f645d95ecf3b99089b340211e69a67d620ab3ee5dbb4c5a51ad618fcfa4"
+        "content_hash": "sha256:3f9e29fa91fb357335c27bf4e746c87053a6a9ace2ae387b01e8cfc9fd5a4763"
       },
       {
         "check": "present",

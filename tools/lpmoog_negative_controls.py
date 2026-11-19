@@ -211,21 +211,20 @@ def run_controls(artifact_dir, ref_dir, require_rtl=True, run_root="/tmp"):
         lambda: fp.LPMoogCoeffMaker(3).make_coeffs(vm.qint(260.0), vm.qint(0.5)))))
 
     def subtype_change_without_reset():
+        # the malformed fixture goes through the REAL runner: run_filter_leg
+        # refuses a subtype change without the engine reset path (memset +
+        # CM.Reset), so this control fails exactly when that guard fails.
+        # The fixture override is scoped to this one call, as in
+        # tests/test_sxt039_lpmoog.py::test_runner_refuses_subtype_change_without_reset
         spec = fx.build("king-b1")
-        unit = fp.LPMoogUnit(3)
-        cm = fp.LPMoogCoeffMaker(3)
-        # simulate the runner's guard: a subtype change must carry the engine
-        # reset path (memset + CM.Reset); the runner refuses otherwise
-        blocks = [dict(spec["blocks"][0]), dict(spec["blocks"][1])]
-        blocks[1]["subtype"] = 1
-        blocks[1]["reset"] = False
-        prev = None
-        for blk in blocks:
-            sub = blk["subtype"]
-            if prev is not None and sub != prev and not blk["reset"]:
-                raise fp.Refuse("subtype change without the engine reset path")
-            prev = sub
-        del unit, cm
+        spec["blocks"][1]["subtype"] = 1
+        spec["blocks"][1]["reset"] = False
+        real_build = fx.build
+        fx.build = lambda _case: spec
+        try:
+            rfl.run_case("king-b1")
+        finally:
+            fx.build = real_build
 
     refusals.append(("subtype change w/o reset", refused(subtype_change_without_reset)))
     c_ok = all(r is True for _, r in refusals)
