@@ -43,8 +43,18 @@ jobs:
       - name: Install pinned Icarus Verilog
         run: |
           set -euo pipefail
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends "iverilog=${IVERILOG_APT_VERSION}"
+          for attempt in 1 2 3; do
+            if sudo apt-get update -qq &&
+               sudo apt-get install -y --no-install-recommends "iverilog=${IVERILOG_APT_VERSION}"; then
+              break
+            fi
+            if [ "$attempt" -eq 3 ]; then
+              echo "::error::Failed to install iverilog=${IVERILOG_APT_VERSION} after 3 attempts" >&2
+              exit 1
+            fi
+            echo "Icarus install attempt $attempt failed. Retrying in 10 seconds." >&2
+            sleep 10
+          done
           command -v iverilog >/dev/null || { echo "FAIL: iverilog not on PATH" >&2; exit 1; }
           command -v vvp >/dev/null || { echo "FAIL: vvp not on PATH" >&2; exit 1; }
           iverilog -V | head -n 1
