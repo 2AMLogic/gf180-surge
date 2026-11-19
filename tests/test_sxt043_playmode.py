@@ -12,23 +12,45 @@ These are claim-(1)-side tests (RTL-vs-frozen-model exactness machinery).
 They establish nothing about model-vs-pinned-engine agreement (claim 2) or
 sound quality (claim 3); those are reported, with measured numbers, in
 reports/SXT-043/EVIDENCE.md from a host with the pinned oracle.
+
+The harness-reporting section at the end (issue #645) pins the migrated
+harness's reporting boundary with a STUBBED simulator (rcc.subprocess is
+replaced; no iverilog, no vvp): a simulator-level failure must be published
+as `comparison: NOT_RUN` with a named reason, never as an RTL-vs-model
+disagreement, and never as a surviving stale verdict.  The real-toolchain
+measurements behind those stubs, taken on Icarus 13.0 against a bass2
+`seq-notes-holds-v1` run dir: with `rtl/ev.hex` removed the UNMIGRATED
+harness published a numeric `"FAIL", "mismatches": 42` (Icarus reports the
+open failure on stdout and still exits 0, so `check=True` saw nothing --
+`DONE pm-qmuls=0 voice-blocks=0`); an uncompilable `--tb` over an `--out`
+holding the committed PASS left that stale PASS in place after a
+CalledProcessError traceback.  A healthy run prints only the two
+"Not enough words" WARNINGs, `DONE pm-qmuls=5148 voice-blocks=4392` and
+`$finish` -- never the `$readmem` + `Unable to open` conjunction (#193's
+per-harness false-positive baseline).
 """
 import hashlib
+import importlib
 import json
 import os
 import subprocess
 import sys
+import types
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, REPO)
 sys.path.insert(0, os.path.join(REPO, "model", "voice"))
 sys.path.insert(0, os.path.join(REPO, "model", "oscillators", "sine"))
 sys.path.insert(0, os.path.join(REPO, "model", "voice", "playmode"))
+sys.path.insert(0, os.path.join(REPO, "tools"))
 
 import voice_model as vm                                      # noqa: E402
 import sine_model as sm                                       # noqa: E402
 import pm_mono_st_fp as pm                                     # noqa: E402
+import _rtl_compile_common as rcc                             # noqa: E402
 from refusal import Refuse                                    # noqa: E402
+import tools.compare_pm_rtl_model as pm_harness               # noqa: E402
+importlib.reload(pm_harness)   # clean module object per test session
 from tools.compare_pm_rtl_model import compare, parse_tb, FIELD_NAMES  # noqa: E402
 
 RUNNER = os.path.join(REPO, "model", "voice", "playmode", "run_model.py")
@@ -370,3 +392,221 @@ def test_comparator_flags_a_missing_rtl_line():
                         [active_slot] + [inactive_slot] * (pm.MonoStFpScene.POOL - 1)}]}
     _, fails, _ = compare(trace, {})
     assert any("missing T line" in f for f in fails)
+
+
+# ------------------------------------------- harness reporting boundary (#645)
+#
+# The simulator is STUBBED (rcc.subprocess replaced) -- what is under test is
+# the report assembly the leaf now shares, not the compile/run step (owned by
+# tests/test_rtl_compile_common.py) and not the RTL.  The real-toolchain
+# measurements behind these controls are in the module docstring.
+
+REPORT_KEY_ORDER = ["tb", "carrier", "sequence", "pool", "verdict",
+                    "comparison", "checked", "mismatches", "first_failures",
+                    "rtl_done_line", "sim_fails", "sim_stdout_tail"]
+COMMITTED_KEY_ORDER = [k for k in REPORT_KEY_ORDER
+                       if k not in ("comparison", "sim_fails",
+                                    "sim_stdout_tail")]
+
+HEALTHY_STDOUT = (
+    "WARNING: %s/rtl/voice/tb_pm_mono_st_fp.sv:249: $readmemh(rtl/init.hex):"
+    " Not enough words in the file for the requested range [0:31].\n"
+    "WARNING: %s/rtl/voice/tb_pm_mono_st_fp.sv:250: $readmemh(rtl/ev.hex):"
+    " Not enough words in the file for the requested range [0:32767].\n"
+    "DONE pm-qmuls=5148 voice-blocks=4392\n"
+    "%s/rtl/voice/tb_pm_mono_st_fp.sv:290: $finish called at 0 (1ps)\n"
+    % (REPO, REPO, REPO))
+
+FIXTURE_TRACE = {"carrier": "fixture", "sequence": "fixture-seq", "pool": 1,
+                 "blocks": [{"b": 0, "slots": [[0] * len(FIELD_NAMES)]}]}
+MATCHING_TRACE = "T 0 0 " + " ".join(["0"] * len(FIELD_NAMES)) + "\n"
+MISMATCHING_TRACE = "T 0 0 " + " ".join(["1"] + ["0"] * (len(FIELD_NAMES) - 1)) + "\n"
+
+
+def _write_run_dir(tmp_path):
+    run_dir = str(tmp_path)
+    with open(os.path.join(run_dir, "model_trace.json"), "w") as f:
+        json.dump(FIXTURE_TRACE, f)
+    os.makedirs(os.path.join(run_dir, "rtl"), exist_ok=True)
+    for rel in pm_harness.STIMULUS_RELPATHS:
+        open(os.path.join(run_dir, rel), "w").close()
+    return run_dir
+
+
+def _stub_simulator(monkeypatch, run_dir, sim_rc, trace_text, sim_stdout="",
+                    calls=None):
+    def fake_run(cmd, **kwargs):
+        if calls is not None:
+            calls.append(cmd[0])
+        if cmd[0] == "iverilog":
+            return types.SimpleNamespace(returncode=0, stdout="", stderr="")
+        if trace_text is not None:
+            with open(os.path.join(run_dir, "tb_pm_trace.txt"), "w") as f:
+                f.write(trace_text)
+        rc, err = sim_rc, ("vvp: simulated failure" if sim_rc else "")
+        return types.SimpleNamespace(returncode=rc, stdout=sim_stdout,
+                                     stderr=err)
+
+    monkeypatch.setattr(rcc, "subprocess",
+                        types.SimpleNamespace(
+                            run=fake_run, DEVNULL=subprocess.DEVNULL,
+                            CalledProcessError=subprocess.CalledProcessError,
+                            TimeoutExpired=subprocess.TimeoutExpired))
+
+
+def _delegating_simulator(monkeypatch, substitutions, calls):
+    def real_run(cmd, **kwargs):
+        calls.append(cmd[0])
+        return subprocess.run(substitutions.get(cmd[0], cmd), **kwargs)
+
+    monkeypatch.setattr(rcc, "subprocess",
+                        types.SimpleNamespace(
+                            run=real_run, DEVNULL=subprocess.DEVNULL,
+                            CalledProcessError=subprocess.CalledProcessError,
+                            TimeoutExpired=subprocess.TimeoutExpired))
+
+
+def _run_harness(monkeypatch, run_dir, out=None, extra=()):
+    out = out or os.path.join(run_dir, "verdict.json")
+    monkeypatch.setattr(sys, "argv",
+                        ["compare_pm_rtl_model.py", "--run-dir", run_dir,
+                         "--out", out] + list(extra))
+    rc = pm_harness.main()
+    with open(out) as f:
+        return rc, json.load(f)
+
+
+def test_committed_report_keys_keep_their_order_with_additive_keys(
+        tmp_path, monkeypatch):
+    """`reports/SXT-043/artifacts/exactness-*.json` reports `carrier` /
+    `sequence` / `pool` after `tb` and `rtl_done_line` after
+    `first_failures`.  The shared skeleton must not re-order or drop any of
+    them, and the three keys it adds must be additive."""
+    run_dir = _write_run_dir(tmp_path)
+    _stub_simulator(monkeypatch, run_dir, 0, MATCHING_TRACE,
+                    sim_stdout=HEALTHY_STDOUT)
+    out = os.path.join(run_dir, "verdict.json")
+
+    rc, d = _run_harness(monkeypatch, run_dir, out=out)
+
+    assert rc == 0
+    with open(out) as f:
+        order = [k for k, _ in json.loads(
+            f.read(), object_pairs_hook=lambda ps: ps)]
+    assert order == REPORT_KEY_ORDER
+    assert [k for k in order if k in COMMITTED_KEY_ORDER] \
+        == COMMITTED_KEY_ORDER
+    assert d["tb"] == "rtl/voice/tb_pm_mono_st_fp.sv"
+    assert d["carrier"] == "fixture"
+    assert d["sequence"] == "fixture-seq"
+    assert d["pool"] == 1
+    assert d["verdict"] == "PASS", d
+    assert d["comparison"] == "PASS"
+    assert d["sim_fails"] == []
+    assert d["mismatches"] == 0
+    assert d["checked"] == {"block_slot_checkpoints": 1,
+                            "fields": len(FIELD_NAMES)}
+
+
+def test_rtl_done_line_is_the_full_string_not_a_count(tmp_path, monkeypatch):
+    """`rtl_done_line` is the whole `DONE ...` line in committed evidence
+    ("DONE pm-qmuls=5148 voice-blocks=4392").  Routing it through
+    `compile_and_run`'s `done_prefix` would publish `int(...)` instead and
+    silently change the field's type."""
+    run_dir = _write_run_dir(tmp_path)
+    _stub_simulator(monkeypatch, run_dir, 0, MATCHING_TRACE,
+                    sim_stdout=HEALTHY_STDOUT)
+
+    _, d = _run_harness(monkeypatch, run_dir)
+
+    assert d["rtl_done_line"] == "DONE pm-qmuls=5148 voice-blocks=4392"
+
+
+def test_missing_stimulus_is_not_run_not_a_disagreement(tmp_path,
+                                                        monkeypatch):
+    """#188's blind-spot row, measured live before #645 (module docstring):
+    removing `rtl/ev.hex` published a numeric FAIL with 42 mismatches on a
+    run where nothing was compared.  The migrated harness must refuse the
+    input before the simulator is even invoked."""
+    run_dir = _write_run_dir(tmp_path)
+    os.remove(os.path.join(run_dir, "rtl/ev.hex"))
+    calls = []
+    _stub_simulator(monkeypatch, run_dir, 0, MATCHING_TRACE, calls=calls)
+
+    rc, d = _run_harness(monkeypatch, run_dir)
+
+    assert rc != 0
+    assert d["verdict"] == "FAIL", d
+    assert d["comparison"] == "NOT_RUN", d
+    assert len(d["sim_fails"]) == 1, d["sim_fails"]
+    assert "rtl/ev.hex" in d["sim_fails"][0]
+    assert d["checked"] == {"block_slot_checkpoints": 0, "fields": 0}
+    assert calls == [], calls
+    assert d["rtl_done_line"] == ""
+
+
+def test_compile_failure_replaces_a_stale_pass(tmp_path, monkeypatch):
+    """The second live-measured row: before #645 an uncompilable `--tb`
+    over an `--out` holding a PASS left that stale PASS in place after a
+    traceback.  The stale verdict must be invalidated and a current NOT_RUN
+    refusal published in its place."""
+    run_dir = _write_run_dir(tmp_path)
+    out = os.path.join(run_dir, "verdict.json")
+    with open(out, "w") as f:
+        json.dump({"verdict": "PASS", "mismatches": 0}, f)
+    calls = []
+    _delegating_simulator(
+        monkeypatch,
+        {"iverilog": ["sh", "-c", "echo 'syntax error' >&2; exit 2"]}, calls)
+
+    rc, d = _run_harness(monkeypatch, run_dir, out=out)
+
+    assert calls == ["iverilog"], calls
+    assert rc != 0
+    assert d["verdict"] == "FAIL", d
+    assert d["comparison"] == "NOT_RUN", d
+    assert len(d["sim_fails"]) == 1, d["sim_fails"]
+    assert "iverilog compile failed rc=2" in d["sim_fails"][0]
+    with open(out) as f:
+        assert json.load(f) == d          # stale PASS is gone
+
+
+def test_healthy_stdout_diagnostics_do_not_flip_a_pass(tmp_path, monkeypatch):
+    """FALSE-POSITIVE control (issue #188's guardrail), measured for THIS
+    testbench's own diagnostics -- see the module docstring.  A matcher that
+    turns a genuinely passing exactness run into a FAIL is worse than the
+    lost reason it recovers."""
+    run_dir = _write_run_dir(tmp_path)
+    _stub_simulator(monkeypatch, run_dir, 0, MATCHING_TRACE,
+                    sim_stdout=HEALTHY_STDOUT)
+
+    rc, d = _run_harness(monkeypatch, run_dir)
+
+    assert rc == 0
+    assert d["verdict"] == "PASS", d
+    assert d["comparison"] == "PASS"
+    assert d["sim_fails"] == []
+    assert d["sim_stdout_tail"] == ""
+
+
+def test_slots_shape_refusal_before_the_simulator(tmp_path, monkeypatch):
+    """A `voices`-shaped model trace must be refused by THIS leaf (the
+    reciprocal of the six `voices` leaves refusing `slots`), before the
+    simulator is launched."""
+    run_dir = _write_run_dir(tmp_path)
+    with open(os.path.join(run_dir, "model_trace.json"), "w") as f:
+        json.dump({"blocks": [{"b": 0, "voices": [{"slot": 0}]}]}, f)
+    calls = []
+    _stub_simulator(monkeypatch, run_dir, 0, MATCHING_TRACE, calls=calls)
+
+    rc, d = _run_harness(monkeypatch, run_dir)
+
+    assert rc != 0
+    assert calls == [], calls
+    assert d["comparison"] == "NOT_RUN"
+    assert d["input_error"] == {
+        "input": "model",
+        "path": os.path.join(run_dir, "model_trace.json"),
+        "reason": "blocks[0].slots is not a list of per-slot field lists",
+    }
+    assert d["carrier"] is None and d["rtl_done_line"] is None, d

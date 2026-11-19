@@ -731,7 +731,7 @@
         "role": "testbench",
         "path": "tests/test_rtl_leaf_comparison.py",
         "passed": true,
-        "content_hash": "sha256:d899e7db57a85593ab6352cb40b8058e6bf0934893b49707b42ccef068c95975"
+        "content_hash": "sha256:3d87ba93d8e5b63ac17fbf66f3c56eb28773c8e76eb02dba2cb5512d4a686825"
       },
       {
         "check": "present",
@@ -1235,7 +1235,7 @@
         "role": "testbench",
         "path": "tests/test_sxt043_playmode.py",
         "passed": true,
-        "content_hash": "sha256:495c1b0d10ca84610b399a5a9b286ff95764d5e5024075968c5fa92cf3f999d9"
+        "content_hash": "sha256:31f6be2d6f6ada8bfd38bed993fd60811d12fa73ef85826a9852bbb5ed0b9789"
       },
       {
         "check": "present",

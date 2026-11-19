@@ -6,17 +6,22 @@ leaves had copied verbatim (`compare_rtl_model.py`,
 `compare_lfo_rtl_model.py`, `compare_mw_rtl_model.py`) into one shared
 helper.  The stated risk of that extraction is that a bug in the shared
 skeleton moves every adopted leaf's PASS/FAIL reporting at once instead of
-one -- six of them since issue #631 moved the velocity leaf across -- so
-this file pins the skeleton's own contract:
+one -- six of them since issue #631 moved the velocity leaf across, seven
+since issue #645 adopted the play-mode leaf through the per-leaf
+`model_block_shape` opt-in -- so this file pins the skeleton's own contract:
 
   * the published summary key set, key order, exit code and `--out` bytes;
   * the `comparison: NOT_RUN` branch -- a simulator-level failure must not
     run the leaf's `compare` at all (issues #188/#193), and must report the
     leaf's own zeroed `checked` dict verbatim rather than a normalized one;
   * the per-leaf divergences the helper must NOT flatten: the `tb` label
-    (basename for the SXT-022 voice leaf, repo-relative for the other four),
-    the `checked` shape, and the keytrack leaf's four extra summary fields
-    reported INTERLEAVED among the shared ones;
+    (basename for the SXT-022 voice leaf, repo-relative for the other
+    leaves), the `checked` shape, and the keytrack leaf's four extra
+    summary fields reported INTERLEAVED among the shared ones;
+  * the `model_block_shape` opt-in (#645): an explicit per-leaf choice
+    between the `voices` and `slots` per-block model-trace shapes, where
+    each shape's refusal survives the other's adoption -- exercised both at
+    the helper and through every adopted leaf's CLI entry point;
   * two drift guards, each exercised by a control that must raise: a
     `summary_key_order` that does not name exactly the merged key set (which
     would silently drop or re-order a reported field), and a caller trying
@@ -51,22 +56,34 @@ import _rtl_compile_common as rcc  # noqa: E402
 MODEL_TRACE = {"sequence": "test-seq", "control_mode": "normal",
                "blocks": [{"b": 0, "voices": []}, {"b": 1, "voices": []}]}
 
-# The five leaves #303 deduplicated, plus `compare_vel_rtl_model` -- which
+# The play-mode trace's shape (`model/voice/playmode/run_model.py`): each
+# block carries a `slots` list of per-slot field lists and no `voices` at
+# all -- what kept this leaf off the shared skeleton until #645's opt-in.
+SLOTS_MODEL_TRACE = {"carrier": "test", "pool": 8,
+                     "blocks": [{"b": 0, "slots": [[0] * 17] * 8}]}
+
+# The six leaves #303 deduplicated, plus `compare_vel_rtl_model` -- which
 # #303 excluded for lack of its own analysis and issue #631 supplied that
 # analysis for and moved across (measured failure-mode gap, pin status,
 # report-shape plan; its `sequence`/`control_mode`/`rtl_done_line` now ride
-# `extra_summary_fields` + `summary_key_order`).
+# `extra_summary_fields` + `summary_key_order`) -- plus
+# `compare_pm_rtl_model`, which #631 could not take (its model trace carries
+# `blocks[].slots`, not the shared `voices` minimum) and issue #645 adopted
+# through the explicit per-leaf `model_block_shape` opt-in.
 DEDUPED_LEAVES = ("compare_rtl_model", "compare_classic_rtl_model",
                   "compare_kt_rtl_model", "compare_lfo_rtl_model",
-                  "compare_mw_rtl_model", "compare_vel_rtl_model")
+                  "compare_mw_rtl_model", "compare_vel_rtl_model",
+                  "compare_pm_rtl_model")
+# Each leaf's declared model-trace block shape: every leaf but the play-mode
+# leaf walks `blocks[].voices`; the play-mode leaf opted into `slots`.
+LEAF_BLOCK_SHAPE = {name: ("slots" if name == "compare_pm_rtl_model"
+                           else "voices") for name in DEDUPED_LEAVES}
 # Still deliberately apart, each for a reason recorded in #303 (a `--trace`
-# reuse branch; a 187-line `main()` with its own flag set) or #631
-# (`compare_pm_rtl_model`: its model trace carries `blocks[].slots`, not the
-# `blocks[].voices` that `_load_model_trace` requires as the shared minimum,
-# so adopting it would mean widening that check for every leaf that routes
-# through it -- #631's stop condition, reported rather than taken).
-EXCLUDED_LEAVES = ("compare_sine_rtl_model", "compare_wt_rtl_model",
-                   "compare_pm_rtl_model")
+# reuse branch; a 187-line `main()` with its own flag set).  #631 is what
+# moving one entry out of this list costs -- it supplied that analysis for
+# the velocity leaf; #645 is what moving `compare_pm_rtl_model` out cost --
+# the `model_block_shape` opt-in with its own per-shape refusal controls.
+EXCLUDED_LEAVES = ("compare_sine_rtl_model", "compare_wt_rtl_model")
 
 
 def _write_trace(tmp_path):
@@ -429,6 +446,139 @@ def test_control_caller_supplied_report_sim_fails_raises(tmp_path,
 
 
 # --------------------------------------------------------------------------
+# The model_block_shape opt-in (issue #645): named per leaf, never an
+# either-or relaxation of the #361 refusal guard
+# --------------------------------------------------------------------------
+
+
+def _write_slots_trace(tmp_path):
+    run_dir = str(tmp_path)
+    with open(os.path.join(run_dir, "model_trace.json"), "w") as f:
+        json.dump(SLOTS_MODEL_TRACE, f)
+    return run_dir
+
+
+def _bomb_sim(monkeypatch):
+    """A compile/run step that must never be reached; records attempts."""
+    launched = []
+    monkeypatch.setattr(rcc, "compile_and_run",
+                        lambda *a, **k: launched.append(1))
+    return launched
+
+
+def test_slots_shape_adopts_the_play_mode_trace(tmp_path, monkeypatch):
+    """The `slots` opt-in accepts exactly the shape pm's `compare` walks."""
+    run_dir = _write_slots_trace(tmp_path)
+    _stub_sim(monkeypatch)
+
+    rc, _, _, d = _run(run_dir, model_block_shape="slots")
+
+    assert rc == 0
+    assert d["comparison"] == "PASS"
+    assert "input_error" not in d
+
+
+def test_default_shape_refuses_a_slots_substituted_trace(tmp_path,
+                                                         monkeypatch):
+    """Issue #361's live refusal guard, unchanged under the opt-in: the six
+    `voices` leaves must still refuse a trace whose blocks carry `slots`
+    instead of `voices`, before the simulator is ever launched."""
+    run_dir = _write_slots_trace(tmp_path)
+    launched = _bomb_sim(monkeypatch)
+
+    rc, _, _, d = _run(run_dir)
+
+    assert rc == 1
+    assert launched == []
+    assert d["comparison"] == "NOT_RUN"
+    assert d["input_error"]["input"] == "model"
+    assert "blocks[0].voices" in d["input_error"]["reason"]
+    assert set(d["checked"].values()) == {0}
+
+
+def test_slots_shape_refuses_a_voices_shaped_trace(tmp_path, monkeypatch):
+    """The reciprocal guard: the `slots` leaf refuses a `voices`-shaped
+    trace the same way, so neither adoption weakens the other's refusal."""
+    run_dir = _write_trace(tmp_path)
+    launched = _bomb_sim(monkeypatch)
+
+    rc, _, _, d = _run(run_dir, model_block_shape="slots")
+
+    assert rc == 1
+    assert launched == []
+    assert d["comparison"] == "NOT_RUN"
+    assert d["input_error"]["input"] == "model"
+    assert "blocks[0].slots" in d["input_error"]["reason"]
+
+
+def test_slots_shape_refuses_a_dropped_slots_key(tmp_path, monkeypatch):
+    run_dir = str(tmp_path)
+    with open(os.path.join(run_dir, "model_trace.json"), "w") as f:
+        json.dump({"blocks": [{"b": 0}]}, f)
+    launched = _bomb_sim(monkeypatch)
+
+    rc, _, _, d = _run(run_dir, model_block_shape="slots")
+
+    assert rc == 1
+    assert launched == []
+    assert d["input_error"]["input"] == "model"
+    assert "blocks[0].slots" in d["input_error"]["reason"]
+
+
+def test_slots_shape_refuses_a_non_list_slot_record(tmp_path, monkeypatch):
+    """`slots` records are field LISTS (`compare` takes len(rec) and
+    iterates); anything else would crash the leaf's compare mid-report
+    instead of being refused at the input boundary."""
+    run_dir = str(tmp_path)
+    with open(os.path.join(run_dir, "model_trace.json"), "w") as f:
+        json.dump({"blocks": [{"b": 0, "slots": [0] * 8}]}, f)
+    launched = _bomb_sim(monkeypatch)
+
+    rc, _, _, d = _run(run_dir, model_block_shape="slots")
+
+    assert rc == 1
+    assert launched == []
+    assert d["input_error"]["input"] == "model"
+
+
+def test_unknown_model_block_shape_is_a_caller_defect(tmp_path, monkeypatch):
+    run_dir = _write_trace(tmp_path)
+
+    with pytest.raises(ValueError) as exc:
+        _run(run_dir, model_block_shape="voices-or-slots")
+
+    assert "model block shape" in str(exc.value)
+
+
+def test_control_a_widened_either_shape_check_accepts_the_substitution(
+        tmp_path, monkeypatch):
+    """The substitution control above must demonstrably fail a permissive
+    check -- proving the trace is refused because the guard is
+    shape-specific, not because the mutated trace is garbage.  The widened
+    check below is exactly the rejected alternative (#645's curation): it
+    accepts `voices` OR `slots` unconditionally, which would have let the
+    substitution through and weakened the #361 refusal for every leaf."""
+
+    def widened_either_shape(model):
+        blocks = model.get("blocks")
+        assert isinstance(blocks, list) and blocks
+        for blk in blocks:
+            assert isinstance(blk.get("b"), int) and not isinstance(
+                blk.get("b"), bool)
+            assert isinstance(blk.get("voices"), list) or \
+                isinstance(blk.get("slots"), list)
+
+    run_dir = _write_slots_trace(tmp_path)
+    with open(os.path.join(run_dir, "model_trace.json")) as f:
+        model = json.load(f)
+    widened_either_shape(model)          # the widened check accepts it...
+
+    rc, _, _, d = _run(run_dir)          # ...the real default guard refuses
+    assert rc == 1
+    assert d["input_error"]["input"] == "model"
+
+
+# --------------------------------------------------------------------------
 # The dedup itself: who routes through the shared skeleton, and who does not
 # --------------------------------------------------------------------------
 
@@ -441,13 +591,56 @@ def test_deduped_leaf_uses_the_shared_skeleton(name):
 
 @pytest.mark.parametrize("name", EXCLUDED_LEAVES)
 def test_excluded_leaf_was_left_alone(name):
-    """#303's and #631's scope decisions, kept visible: these three were
-    verified divergent and must not be quietly folded into the shared
-    skeleton without their own analysis.  #631 is what moving one entry out
-    of this list costs -- it supplied that analysis for the velocity leaf
-    and left `compare_pm_rtl_model` here with the blocker named above."""
+    """#303's scope decision, kept visible: these two were verified
+    divergent and must not be quietly folded into the shared skeleton
+    without their own analysis.  #631 (velocity) and #645 (play-mode) are
+    what moving an entry out of this list cost -- each supplied its own
+    analysis and controls before adopting."""
     mod = __import__(name)
     assert getattr(mod, "run_leaf_comparison", None) is None
+
+
+# --------------------------------------------------------------------------
+# Issue #645's per-shape refusal controls, through each adopted leaf's CLI
+# --------------------------------------------------------------------------
+#
+# Each adopted leaf must refuse a model trace in the OTHER block shape (or
+# with the key dropped) as an input refusal -- `comparison: NOT_RUN`, zero
+# coverage, `input_error.input == "model"` -- before the simulator is ever
+# launched.  A live control per adopted leaf, not one shared control.
+
+
+@pytest.mark.parametrize("mutation", ["substituted", "dropped"])
+@pytest.mark.parametrize("name", DEDUPED_LEAVES)
+def test_leaf_cli_refuses_the_other_model_shape(name, mutation, tmp_path,
+                                                monkeypatch):
+    shape = LEAF_BLOCK_SHAPE[name]
+    other = "slots" if shape == "voices" else "voices"
+    run_dir = str(tmp_path)
+    if mutation == "substituted":
+        block = {"b": 0, other: ([[0] * 17] if other == "slots"
+                                 else [{"slot": 0}])}
+    else:
+        block = {"b": 0}
+    with open(os.path.join(run_dir, "model_trace.json"), "w") as f:
+        json.dump({"blocks": [block]}, f)
+    out = os.path.join(run_dir, "verdict.json")
+    launched = _bomb_sim(monkeypatch)
+    mod = __import__(name)
+    monkeypatch.setattr(sys, "argv",
+                        [name + ".py", "--run-dir", run_dir, "--out", out])
+
+    rc = mod.main()
+
+    assert rc == 1
+    assert launched == []
+    with open(out) as f:
+        d = json.load(f)
+    assert d["verdict"] == "FAIL"
+    assert d["comparison"] == "NOT_RUN"
+    assert d["input_error"]["input"] == "model"
+    assert "blocks[0].%s" % shape in d["input_error"]["reason"]
+    assert set(d["checked"].values()) == {0}
 
 
 # --------------------------------------------------------------------------
