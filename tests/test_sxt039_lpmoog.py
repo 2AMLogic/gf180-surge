@@ -188,13 +188,6 @@ def test_runner_refuses_subtype_change_without_reset(monkeypatch):
         rfl.run_case("king-b1")
 
 
-def _malformed_king_b1():
-    spec = fx.build("king-b1")
-    spec["blocks"][1]["subtype"] = 1
-    spec["blocks"][1]["reset"] = False
-    return spec
-
-
 def _runner_with_missing_reset_refusal_disabled():
     """The committed runner with ONLY the missing-reset refusal disabled:
     the raise site is textually muted, everything else is byte-identical."""
@@ -246,21 +239,19 @@ def test_nc_c_detects_a_runner_that_accepts_subtype_change_without_reset(
     # fixture is accepted (all 256 trace blocks, no exception), and the
     # NC-C transcript must turn CONTROL-BROKEN and exit nonzero
     mut = _runner_with_missing_reset_refusal_disabled()
-    spec = _malformed_king_b1()
-    real_build = fx.build
-    fx.build = lambda _case: spec
-    try:
-        trace = mut.run_case("king-b1")   # an unrelated exception fails here
-    finally:
-        fx.build = real_build
-    assert trace["n_blocks"] == 256
-    assert len(trace["trace_blocks"]) == 256
+    block_counts = []
 
-    monkeypatch.setattr(rfl, "run_case", mut.run_case)
+    def record_run(case):
+        trace = mut.run_case(case)
+        block_counts.append((trace["n_blocks"], len(trace["trace_blocks"])))
+        return trace
+
+    monkeypatch.setattr(rfl, "run_case", record_run)
     nc_dir = os.path.join(str(tmp_path), "nc")
     rc = lnc.run_controls(nc_dir, ARTIFACTS, require_rtl=False,
                           run_root=str(tmp_path))
-    assert rc != 0
+    assert block_counts == [(256, 256)]
+    assert rc == 1
     with open(os.path.join(nc_dir, "negative-control.json"),
               encoding="utf-8") as f:
         nc = json.load(f)
@@ -272,6 +263,34 @@ def test_nc_c_detects_a_runner_that_accepts_subtype_change_without_reset(
                if k != "subtype change w/o reset")
     assert all(nc[k]["outcome"].startswith("CONTROL-OK")
                for k in nc if k.startswith(("NC-A", "NC-B")))
+
+
+def test_nc_c_propagates_an_unrelated_runner_exception(monkeypatch, tmp_path):
+    mut = _runner_with_missing_reset_refusal_disabled()
+    real_build = fx.build
+
+    def run_with_missing_cut(case):
+        # Corrupt the fixture NC-C supplied to this invocation.
+        del fx.build(case)["blocks"][1]["cut"]
+        return mut.run_case(case)
+
+    monkeypatch.setattr(rfl, "run_case", run_with_missing_cut)
+    with pytest.raises(KeyError, match="cut"):
+        lnc.run_controls(tmp_path, ARTIFACTS, require_rtl=False)
+    assert fx.build is real_build
+
+
+def test_nc_c_rejects_an_incomplete_runner_trace(monkeypatch, tmp_path):
+    mut = _runner_with_missing_reset_refusal_disabled()
+
+    def run_with_short_trace(case):
+        trace = mut.run_case(case)
+        trace["trace_blocks"].pop()
+        return trace
+
+    monkeypatch.setattr(rfl, "run_case", run_with_short_trace)
+    with pytest.raises(ValueError, match="255 trace blocks"):
+        lnc.run_controls(tmp_path, ARTIFACTS, require_rtl=False)
 
 
 def test_comparator_refuses_a_short_reference_coefficient_stream(tmp_path):

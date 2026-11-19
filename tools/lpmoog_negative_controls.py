@@ -199,8 +199,6 @@ def run_controls(artifact_dir, ref_dir, require_rtl=True, run_root="/tmp"):
             fn()
         except fp.Refuse:
             return True
-        except Exception:
-            return None
         return False
 
     refusals.append(("subtype=4", refused(lambda: fp.LPMoogUnit(4))))
@@ -222,9 +220,14 @@ def run_controls(artifact_dir, ref_dir, require_rtl=True, run_root="/tmp"):
         real_build = fx.build
         fx.build = lambda _case: spec
         try:
-            rfl.run_case("king-b1")
+            trace = rfl.run_case("king-b1")
         finally:
             fx.build = real_build
+        expected = spec["n_blocks"]
+        actual = len(trace["trace_blocks"])
+        if trace["n_blocks"] != expected or actual != expected:
+            raise ValueError(f"king-b1 returned {actual} trace blocks "
+                             f"(declared {trace['n_blocks']}, expected {expected})")
 
     refusals.append(("subtype change w/o reset", refused(subtype_change_without_reset)))
     c_ok = all(r is True for _, r in refusals)
