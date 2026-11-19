@@ -15,21 +15,66 @@ separately).
 Mirrors tools/compare_vel_rtl_model.py (same verdict JSON schema, same
 exit-code convention) for rtl/voice/tb_pm_mono_st_fp.sv.
 
+SIMULATOR-LEVEL FAILURES ARE NOT COMPARISON DISAGREEMENTS (issues #188,
+#193). This leaf carried a private `build_and_run()` + report skeleton
+until issue #645 moved it onto `_rtl_compile_common.run_leaf_comparison`;
+#631 had deferred it because its model trace carries `blocks[].slots`
+(per-slot field lists) instead of the `blocks[].voices` the shared minimum
+required, and relaxing that check for every leaf was #631's stop condition.
+#645's shape opt-in (`model_block_shape="slots"`) leaves the six `voices`
+leaves' refusal untouched and gives this leaf its own symmetric guard.
+Measured before that move, on Icarus 13.0 against a run dir built by
+`model/voice/playmode/run_model.py --inputs
+model/voice/playmode/inputs/bass2.json --sequence seq-notes-holds-v1`:
+
+  * `rtl/ev.hex` removed -> Icarus reports the open failure on stdout and
+    still exits 0, so `check=True` saw nothing; the stimulus-less run still
+    wrote a trace of 74,400 `T` rows, the old harness graded that output as
+    if it were a real render, and the report counted 24 checkpoints, 384
+    fields and 42 mismatches before the comparator stopped -- a NUMERIC
+    disagreement verdict, `"FAIL", "mismatches": 42` with `rtl_done_line:
+    "DONE pm-qmuls=0 voice-blocks=0"`, on output produced without the
+    event stimulus (#188's blind spot; zero coverage describes the
+    migrated harness's refusal, not this run). The shared path asserts the
+    declared stimulus before the simulator is invoked and publishes
+    `comparison: NOT_RUN` naming the file instead.
+  * an uncompilable `--tb` with a `{"verdict": "PASS", "mismatches": 0}`
+    already at `--out` -> CalledProcessError traceback, exit 1, and that
+    stale PASS left in place byte-for-byte, with the compiler's own
+    diagnostic discarded (`subprocess.DEVNULL`). The shared path
+    invalidates a prior verdict at `--out` before it touches an input
+    (issue #361) and records the compile failure with `comparison:
+    NOT_RUN` instead.
+
+FALSE-POSITIVE BASELINE for the stdout matcher (mechanism 2), measured for
+THIS testbench on Icarus 13.0 as issue #193's per-harness rule requires: a
+healthy `tb_pm_mono_st_fp.sv` run prints two `$readmemh(...): Not enough
+words...` WARNINGs (this repo's hex fixtures are deliberately shorter than
+the testbench's declared ranges), `DONE pm-qmuls=... voice-blocks=...` and
+`$finish` -- never the `$readmem` + `Unable to open` conjunction the
+matcher requires, so it cannot turn a genuinely passing exactness run into
+a FAIL.
+
 Usage:
   python3 tools/compare_pm_rtl_model.py --run-dir DIR [--tb rtl/voice/tb_pm_mono_st_fp.sv]
 """
 
 import argparse
-import json
 import os
-import subprocess
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _rtl_compile_common import CheckpointKeys  # noqa: E402
+from _rtl_compile_common import CheckpointKeys, run_leaf_comparison  # noqa: E402
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TB = os.path.join(REPO, "rtl", "voice", "tb_pm_mono_st_fp.sv")
+
+# The hex stimulus tb_pm_mono_st_fp.sv `$readmemh`s (lines 249-250),
+# relative to the run dir: issue #193's mechanism-1 pre-flight axis,
+# declared here so the check can never drift from what the testbench
+# actually reads. Generated into the run dir by
+# model/voice/playmode/run_model.py; not tracked.
+STIMULUS_RELPATHS = ("rtl/init.hex", "rtl/ev.hex")
 
 FIELD_NAMES = ["active"] + [
     "gate", "uberrelease", "key",
@@ -41,6 +86,7 @@ FIELD_NAMES = ["active"] + [
 
 
 def _int(x):
+    # an unresolved RTL value (x/z) can never equal a model word
     try:
         return int(x)
     except ValueError:
@@ -67,6 +113,9 @@ def parse_tb(path):
 
 
 def compare(model_trace, tb_trace):
+    """The leaf's own judgement, unchanged by #645: returns
+    `(checked, fails, pool)` and is imported directly by
+    tests/test_sxt043_playmode.py."""
     fails = []
     checked = {"block_slot_checkpoints": 0, "fields": 0}
     pool = model_trace.get("pool")
@@ -99,16 +148,42 @@ def compare(model_trace, tb_trace):
     return checked, fails, pool
 
 
-def build_and_run(sv_file, workdir):
-    workdir = os.path.abspath(workdir)
-    vvp = os.path.join(workdir, "tb_pm_mono_st_fp.vvp")
-    subprocess.run(["iverilog", "-g2012", "-o", vvp, os.path.abspath(sv_file)],
-                   check=True, cwd=workdir,
-                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    r = subprocess.run(["vvp", vvp], cwd=workdir, check=True,
-                       capture_output=True, text=True)
-    done = [ln for ln in r.stdout.splitlines() if ln.startswith("DONE")]
-    return os.path.join(workdir, "tb_pm_trace.txt"), (done[-1] if done else "")
+def _compare(model_trace, tb_trace):
+    """Adapt `compare`'s `(checked, fails, pool)` to the helper's
+    `(checked, fails)`; `pool` is re-reported through
+    `extra_summary_fields` from the same model trace."""
+    checked, fails, _pool = compare(model_trace, tb_trace)
+    return checked, fails
+
+
+# This leaf reports `carrier` / `sequence` / `pool` after `tb` and
+# `rtl_done_line` after `first_failures`, interleaved among the shared keys
+# rather than appended (reports/SXT-043/artifacts/exactness-*.json).
+# SUMMARY_KEY_ORDER pins that published order so the shared report-assembly
+# helper cannot silently re-order committed evidence; it is checked against
+# the actual key set on every run (ValueError on drift). `comparison`,
+# `sim_fails` and `sim_stdout_tail` are additive.
+SUMMARY_KEY_ORDER = ("tb", "carrier", "sequence", "pool", "verdict",
+                     "comparison", "checked", "mismatches", "first_failures",
+                     "rtl_done_line", "sim_fails", "sim_stdout_tail")
+
+
+def extra_summary_fields(model_trace, sim):
+    """The four pm-only summary fields (see SUMMARY_KEY_ORDER).
+
+    `rtl_done_line` is the full `DONE ...` string, not a count, so it is
+    read off the captured stdout rather than through `compile_and_run`'s
+    `done_prefix` (which returns an int and would change the field's type).
+    A simulator-level failure leaves stdout empty or DONE-less, which
+    reports "" exactly as the private copy did when no DONE line appeared.
+    """
+    done = [ln for ln in sim.stdout.splitlines() if ln.startswith("DONE")]
+    return {
+        "carrier": model_trace.get("carrier"),
+        "sequence": model_trace.get("sequence"),
+        "pool": model_trace.get("pool"),
+        "rtl_done_line": done[-1] if done else "",
+    }
 
 
 def main():
@@ -119,28 +194,18 @@ def main():
     ap.add_argument("--out", help="write summary JSON here")
     args = ap.parse_args()
 
-    with open(os.path.join(args.run_dir, "model_trace.json")) as f:
-        model_trace = json.load(f)
-
-    trace_path, done = build_and_run(args.tb, args.run_dir)
-    checked, fails, pool = compare(model_trace, parse_tb(trace_path))
-    summary = {
-        "tb": os.path.relpath(os.path.abspath(args.tb), REPO),
-        "carrier": model_trace.get("carrier"),
-        "sequence": model_trace.get("sequence"),
-        "pool": pool,
-        "verdict": "PASS" if not fails else "FAIL",
-        "checked": checked,
-        "mismatches": len(fails),
-        "first_failures": fails[:10],
-        "rtl_done_line": done,
-    }
-    print(json.dumps(summary, indent=2))
-    if args.out:
-        with open(args.out, "w") as f:
-            json.dump(summary, f, indent=2)
-            f.write("\n")
-    return 0 if not fails else 1
+    return run_leaf_comparison(
+        tb=args.tb, tb_label=os.path.relpath(os.path.abspath(args.tb), REPO),
+        run_dir=args.run_dir, out=args.out,
+        parse_tb=parse_tb, compare=_compare,
+        model_block_shape="slots",
+        compile_kwargs=dict(
+            out_name="tb_pm_mono_st_fp.vvp", absolute=True,
+            compile_in_workdir=True, quiet_compile=True,
+            trace_name="tb_pm_trace.txt", stimulus_files=STIMULUS_RELPATHS),
+        default_checked={"block_slot_checkpoints": 0, "fields": 0},
+        extra_summary_fields=extra_summary_fields,
+        summary_key_order=SUMMARY_KEY_ORDER)
 
 
 if __name__ == "__main__":

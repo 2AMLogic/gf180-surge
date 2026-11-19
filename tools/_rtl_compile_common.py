@@ -413,8 +413,8 @@ def _compile_and_run_reporting(sv_file, workdir, vvp, *, extra_sources,
 def run_leaf_comparison(*, tb, tb_label, run_dir, out, parse_tb, compare,
                         compile_kwargs, default_checked,
                         extra_summary_fields=None, summary_key_order=None,
-                        validate_model=None):
-    """The report-assembly skeleton shared by six RTL-vs-model leaves.
+                        validate_model=None, model_block_shape="voices"):
+    """The report-assembly skeleton shared by seven RTL-vs-model leaves.
 
     Extracted by issue #303 from the byte-identical halves of
     `compare_rtl_model.py`, `compare_classic_rtl_model.py`,
@@ -423,7 +423,9 @@ def run_leaf_comparison(*, tb, tb_label, run_dir, out, parse_tb, compare,
     a parameter here, so each call site keeps its *exact* previous JSON
     (same keys, same key order, same values) and exit code.  Nothing is
     normalized: a leaf whose report shape differs keeps the difference by
-    passing it in.
+    passing it in.  Issue #631 moved the velocity leaf across; issue #645
+    adopted the play-mode leaf through the `model_block_shape` opt-in
+    below -- the one new parameter that adoption needed.
 
     Parameters:
       tb            testbench source to compile (the leaf's `--tb` value)
@@ -462,6 +464,15 @@ def run_leaf_comparison(*, tb, tb_label, run_dir, out, parse_tb, compare,
 
       validate_model  optional callable(model_trace) raising `LeafInputError`
                     for leaf-specific structure beyond the shared minimum.
+      model_block_shape  which per-block model-trace shape this leaf's
+                    `compare` walks: "voices" (the default, the check every
+                    leaf adopted before issue #645 carried) or "slots" (the
+                    play-mode trace's per-slot field lists).  An explicit
+                    per-leaf opt-in, NOT an either-or relaxation: under the
+                    default a trace whose blocks carry `slots` instead of
+                    `voices` is still refused (issue #361's live refusal
+                    guard on the six `voices` leaves), and a `slots` leaf
+                    refuses a `voices`-shaped trace the same way.
 
     Input failures (issue #361): an unreadable/malformed/mis-shaped
     `model_trace.json` is refused BEFORE the simulator launches; an absent
@@ -492,7 +503,8 @@ def run_leaf_comparison(*, tb, tb_label, run_dir, out, parse_tb, compare,
 
     model_path = os.path.join(run_dir, "model_trace.json")
     try:
-        model_trace = _load_model_trace(model_path)
+        model_trace = _load_model_trace(model_path,
+                                        block_shape=model_block_shape)
         if validate_model is not None:
             validate_model(model_trace)
     except LeafInputError as exc:
@@ -634,24 +646,30 @@ class CheckpointKeys:
                 % (len(self._dups), "; ".join(self._dups[:5])))
 
 
-def _load_model_trace(path):
+def _load_model_trace(path, *, block_shape="voices"):
     """Read and minimally structure-check the frozen model trace.
 
-    Structure required by all six adopted leaves: a JSON object whose
-    `blocks` is a non-empty list of objects, each with an integer `b` and a
-    `voices` list of objects carrying `slot`.  Anything deeper stays the
-    leaf's `compare` contract; JSON syntax alone is not accepted as a model.
+    Structure required by every adopted leaf: a JSON object whose `blocks`
+    is a non-empty list of objects, each with an integer `b`, plus the
+    per-block shape its leaf declared through
+    `run_leaf_comparison(model_block_shape=...)`:
 
-    This per-block `voices` requirement is what currently keeps
-    `tools/compare_pm_rtl_model.py` off `run_leaf_comparison` (issue #631):
-    that leaf's model trace carries `blocks[].slots` (a list of per-slot
-    field lists) and no `voices` at all, and `validate_model` runs AFTER
-    this function, so a leaf can only add constraints here, never relax
-    them.  Adopting it therefore means widening this shared minimum for
-    every leaf that routes through it -- a change to a live refusal guard on
-    six claim-(1) harnesses, which needs its own analysis and controls
-    rather than riding along with a de-duplication.
+      * "voices" (the default, unchanged since issue #361): a `voices` list
+        of objects carrying `slot` -- the shape the six leaves adopted
+        before #645 compare.
+      * "slots" (issue #645's opt-in): a `slots` list of lists -- the
+        play-mode trace's per-slot field lists.
+
+    The shape is a named per-leaf opt-in, never an either-or acceptance:
+    under the default a block carrying `slots` instead of `voices` is
+    refused exactly as a block with neither is, and a `slots` leaf refuses
+    a `voices`-shaped block the same way, so neither shape's refusal is
+    weakened by the other's adoption (issue #645, with the live controls in
+    `tests/test_rtl_leaf_comparison.py`).  Anything deeper stays the leaf's
+    `compare` contract; JSON syntax alone is not accepted as a model.
     """
+    if block_shape not in ("voices", "slots"):
+        raise ValueError("unknown model block shape %r" % (block_shape,))
     try:
         with open(path) as f:
             model = json.load(f)
@@ -670,12 +688,22 @@ def _load_model_trace(path):
                 or not isinstance(blk.get("b"), int):
             raise LeafInputError("model", path,
                                  "blocks[%d] lacks an integer `b`" % n)
-        voices = blk.get("voices")
-        if not isinstance(voices, list) or not all(
-                isinstance(v, dict) and "slot" in v for v in voices):
-            raise LeafInputError(
-                "model", path,
-                "blocks[%d].voices is not a list of objects with `slot`" % n)
+        if block_shape == "slots":
+            slots = blk.get("slots")
+            if not isinstance(slots, list) or not all(
+                    isinstance(rec, list) for rec in slots):
+                raise LeafInputError(
+                    "model", path,
+                    "blocks[%d].slots is not a list of per-slot field "
+                    "lists" % n)
+        else:
+            voices = blk.get("voices")
+            if not isinstance(voices, list) or not all(
+                    isinstance(v, dict) and "slot" in v for v in voices):
+                raise LeafInputError(
+                    "model", path,
+                    "blocks[%d].voices is not a list of objects with "
+                    "`slot`" % n)
     return model
 
 
