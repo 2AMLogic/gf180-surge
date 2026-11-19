@@ -2,6 +2,17 @@
 
 Recent merged pull requests and closed issues. Entries record forge events only; acceptance and claim limits remain in each committed evidence record. Initial history window: 2026-09-30 onward.
 
+### 2026-11-19
+
+- **PR #790**: refactor: share the grading/report block between the Chorus and Reverb 2 comparators
+- **Issue #787** (closed): Share the identical grading and report block in the Chorus and Reverb 2 comparators
+- **PR #788**: fix: name the DEVNULL'd compile streams in _rtl_compile_common's quiet_compile fallback
+- **Issue #785** (closed): _rtl_compile_common's compile-failure message names a stream DEVNULL'd by quiet_compile=True (3 of 6 adopted leaves)
+- **PR #786**: fix(tools): drive the SXT-039 NC-C subtype-change refusal through the real runner
+- **Issue #784** (closed): Remove the duplicate subtype-reset guard from the SXT-039 NC-C evidence tool
+- **PR #652**: refactor(sxt-036): route the velocity exactness harness through run_leaf_comparison
+- **Issue #631** (closed): Remove the private build_and_run/main copies in compare_vel_rtl_model.py and compare_pm_rtl_model.py: last two leaf harnesses off the shared run_leaf_comparison path
+
 ### 2026-11-18
 
 - **PR #689**: refactor(tools): delegate the wavetable renderer's render loop to the shared harness
