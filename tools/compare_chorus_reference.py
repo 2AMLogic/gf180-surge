@@ -81,58 +81,18 @@ def refuse(reason, out_json=None):
     return car.refuse(reason, out_json)
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--slug", required=True)
-    ap.add_argument("--seq", required=True)
-    ap.add_argument("--fixtures-dir",
-                    default=os.path.join(REPO, "reports", "SXT-028c", "fixtures"))
-    ap.add_argument("--art-dir",
-                    default=os.path.join(REPO, "reports", "SXT-028c", "artifacts"))
-    ap.add_argument("--model",
-                    help="model wet render (default: "
-                         "<art-dir>/model__<slug>__<seq>.f32.wav)")
-    ap.add_argument("--sidecar",
-                    help="fixture sidecar declaring the tail region (default: "
-                         "<fixtures-dir>/<slug>__<seq>.json)")
-    ap.add_argument("--json", help="write metrics JSON here")
-    args = ap.parse_args()
+def grade_and_report(ref, mod, region, sidecar, metrics, args):
+    """Shared grading and report block (issue #787).
 
-    ref_path = os.path.join(args.fixtures_dir,
-                            f"{args.slug}__{args.seq}-wet.f32.wav")
-    mod_path = args.model or os.path.join(
-        args.art_dir, f"model__{args.slug}__{args.seq}.f32.wav")
-    sidecar = args.sidecar or os.path.join(
-        args.fixtures_dir, f"{args.slug}__{args.seq}.json")
-
-    # The tail region must come from declared fixture metadata; refuse first.
-    if not os.path.exists(sidecar):
-        return refuse(
-            "fixture sidecar not found: %s -- the wet-path tail region cannot "
-            "be declared, and this tool does not guess one (issue #100)"
-            % sidecar, args.json)
-    try:
-        region = car.declared_tail_region(sidecar, "wet")
-    except car.TailRegionError as e:
-        return refuse(str(e), args.json)
-
-    ref, sr = read_wav_stereo_f32(ref_path)
-    mod, sr2 = read_wav_stereo_f32(mod_path)
-    assert sr == sr2 == 48000, (sr, sr2)
-    why = car.validate_region_against_render(region, sr, ref.shape[1], ref_path)
-    if why:
-        return refuse(why, args.json)
-
-    metrics = {
-        "schema_version": 2,
-        "leaf": "SXT-028c",
-        "slug": args.slug,
-        "sequence": args.seq,
-        "ref": os.path.relpath(ref_path, REPO),
-        "model": os.path.relpath(mod_path, REPO),
-        "path": "wet",
-        "fixture_sidecar": os.path.relpath(sidecar, REPO),
-    }
+    The final statements of the Chorus and Reverb 2 CLIs -- per-channel and
+    mono metrics, the proposed mono-budget grading, the stereo tail gate,
+    the verdict, the stdout summary and the JSON report -- are identical;
+    this is the one implementation and Reverb 2 imports it. Callers supply
+    their validated arrays, declared tail region, sidecar path, the
+    leaf-specific metrics header and the parsed CLI arguments; each leaf
+    keeps its own input checks (sidecar presence, determinism gate,
+    wet-reference identity) ahead of this call.
+    """
     chs = {}
     for name, idx in (("L", 0), ("R", 1)):
         chs[name] = channel_metrics(ref[idx], mod[idx])
@@ -186,6 +146,61 @@ def main():
         json.dump(metrics, f, indent=2)
         f.write("\n")
     return 0
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--slug", required=True)
+    ap.add_argument("--seq", required=True)
+    ap.add_argument("--fixtures-dir",
+                    default=os.path.join(REPO, "reports", "SXT-028c", "fixtures"))
+    ap.add_argument("--art-dir",
+                    default=os.path.join(REPO, "reports", "SXT-028c", "artifacts"))
+    ap.add_argument("--model",
+                    help="model wet render (default: "
+                         "<art-dir>/model__<slug>__<seq>.f32.wav)")
+    ap.add_argument("--sidecar",
+                    help="fixture sidecar declaring the tail region (default: "
+                         "<fixtures-dir>/<slug>__<seq>.json)")
+    ap.add_argument("--json", help="write metrics JSON here")
+    args = ap.parse_args()
+
+    ref_path = os.path.join(args.fixtures_dir,
+                            f"{args.slug}__{args.seq}-wet.f32.wav")
+    mod_path = args.model or os.path.join(
+        args.art_dir, f"model__{args.slug}__{args.seq}.f32.wav")
+    sidecar = args.sidecar or os.path.join(
+        args.fixtures_dir, f"{args.slug}__{args.seq}.json")
+
+    # The tail region must come from declared fixture metadata; refuse first.
+    if not os.path.exists(sidecar):
+        return refuse(
+            "fixture sidecar not found: %s -- the wet-path tail region cannot "
+            "be declared, and this tool does not guess one (issue #100)"
+            % sidecar, args.json)
+    try:
+        region = car.declared_tail_region(sidecar, "wet")
+    except car.TailRegionError as e:
+        return refuse(str(e), args.json)
+
+    ref, sr = read_wav_stereo_f32(ref_path)
+    mod, sr2 = read_wav_stereo_f32(mod_path)
+    assert sr == sr2 == 48000, (sr, sr2)
+    why = car.validate_region_against_render(region, sr, ref.shape[1], ref_path)
+    if why:
+        return refuse(why, args.json)
+
+    metrics = {
+        "schema_version": 2,
+        "leaf": "SXT-028c",
+        "slug": args.slug,
+        "sequence": args.seq,
+        "ref": os.path.relpath(ref_path, REPO),
+        "model": os.path.relpath(mod_path, REPO),
+        "path": "wet",
+        "fixture_sidecar": os.path.relpath(sidecar, REPO),
+    }
+    return grade_and_report(ref, mod, region, sidecar, metrics, args)
 
 
 if __name__ == "__main__":

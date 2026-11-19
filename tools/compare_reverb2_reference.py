@@ -42,9 +42,7 @@ sys.path.insert(0, REPO)
 sys.path.insert(0, os.path.join(REPO, "tools"))
 
 import compare_audio_reference as car  # noqa: E402
-from compare_chorus_reference import (  # noqa: E402
-    PROPOSED, PROPOSED_TAIL, channel_metrics, read_wav_stereo_f32,
-)
+from compare_chorus_reference import grade_and_report, read_wav_stereo_f32  # noqa: E402
 
 LSB = 2.0 ** -21
 
@@ -140,60 +138,7 @@ def main():
             "drift_asserted": gate.get("drift_asserted"),
         },
     }
-    chs = {}
-    for name, idx in (("L", 0), ("R", 1)):
-        chs[name] = channel_metrics(ref[idx], mod[idx])
-    chs["mono"] = channel_metrics(0.5 * (ref[0] + ref[1]),
-                                  0.5 * (mod[0] + mod[1]))
-    metrics["channels"] = chs
-
-    worst = chs["mono"]
-    proposed_results = {
-        "max_abs_diff_lsb": worst["max_abs_diff_lsb"] <= PROPOSED["max_abs_diff_lsb"],
-        "rms_diff_dbfs": worst["rms_diff_dbfs"] <= PROPOSED["rms_diff_dbfs"],
-        "spectral_corr": worst["spectral_corr"] >= PROPOSED["spectral_corr_min"],
-    }
-    metrics["proposed_budgets"] = PROPOSED
-    metrics["spectral_corr_definition"] = car.SPECTRAL_CORR_DEFINITION
-    metrics["proposed_budget_results"] = proposed_results
-    metrics["proposed_tail_budget"] = dict(PROPOSED_TAIL)
-    tc, tc_lr, tail_ok, tail_reason = car.stereo_tail_gate(
-        ref, mod, dict(region, sidecar=os.path.relpath(sidecar, REPO)), LSB)
-    metrics["tail_check"] = tc
-    metrics["tail_check_lr"] = tc_lr
-    metrics["tail_gate_ok"] = tail_ok
-    budgets_ok = all(proposed_results.values())
-    if budgets_ok and tail_ok:
-        metrics["verdict"] = (
-            "PASS (PENDING-FREEZE: budgets and the wet-path tail-region gate "
-            "are proposals, not frozen policy; freeze gated on SXT-017 #12 / "
-            "shared delay-semantics #16)")
-    else:
-        parts = []
-        if not budgets_ok:
-            parts.append("budget: " + ", ".join(
-                sorted(k for k, v in proposed_results.items() if not v)))
-        if not tail_ok:
-            parts.append("tail-region gate: " + tail_reason)
-        metrics["verdict"] = ("FAIL against proposed budgets (%s)"
-                              % "; ".join(parts))
-
-    print(json.dumps({
-        "slug": args.slug, "seq": args.seq,
-        "max_abs_diff_lsb": worst["max_abs_diff_lsb"],
-        "rms_diff_dbfs": worst["rms_diff_dbfs"],
-        "spectral_corr": worst["spectral_corr"],
-        "best_shift": worst["best_shift"],
-        "tail_rms_rel_db": tc["tail_rms_rel_db"],
-        "tail_gate_ok": tail_ok,
-        "verdict": metrics["verdict"],
-    }, indent=2))
-    out = args.json or os.path.join(
-        args.art_dir, f"compare-{args.slug}__{args.seq}.json")
-    with open(out, "w") as f:
-        json.dump(metrics, f, indent=2)
-        f.write("\n")
-    return 0
+    return grade_and_report(ref, mod, region, sidecar, metrics, args)
 
 
 if __name__ == "__main__":

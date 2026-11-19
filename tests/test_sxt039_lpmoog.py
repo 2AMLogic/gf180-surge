@@ -30,6 +30,7 @@ import voice_model as vm  # noqa: E402
 import filter_lpmoog_model as fp  # noqa: E402
 import fixtures as fx  # noqa: E402
 import run_filter_leg as rfl  # noqa: E402
+import lpmoog_negative_controls as lnc  # noqa: E402
 
 ARTIFACTS = os.path.join(REPO, "reports", "SXT-039", "artifacts")
 ONE = vm.ONE
@@ -185,6 +186,111 @@ def test_runner_refuses_subtype_change_without_reset(monkeypatch):
     monkeypatch.setattr(fx, "build", lambda case: spec)
     with pytest.raises(fp.Refuse):
         rfl.run_case("king-b1")
+
+
+def _runner_with_missing_reset_refusal_disabled():
+    """The committed runner with ONLY the missing-reset refusal disabled:
+    the raise site is textually muted, everything else is byte-identical."""
+    import importlib.util
+    with open(rfl.__file__, encoding="utf-8") as f:
+        src = f.read()
+    anchor = ('raise fp.Refuse(f"block {b}: subtype change without the engine "\n'
+              '                                "reset path (memset + CM.Reset)")')
+    assert src.count(anchor) == 1, "mutation anchor not unique"
+    spec = importlib.util.spec_from_file_location("run_filter_leg_mutant_784",
+                                                  rfl.__file__)
+    mod = importlib.util.module_from_spec(spec)
+    muted = src.replace(anchor, "pass  # mutant under test: guard disabled")
+    exec(compile(muted, rfl.__file__, "exec"), mod.__dict__)
+    return mod
+
+
+def test_nc_c_records_the_real_runner_refusal(tmp_path):
+    # clean runner: the NC-C transcript must show the REFUSAL coming from
+    # run_filter_leg (the tool no longer keeps its own copy of the guard),
+    # with the other controls preserved
+    nc_dir = os.path.join(str(tmp_path), "nc")
+    rc = lnc.run_controls(nc_dir, ARTIFACTS, require_rtl=False,
+                          run_root=str(tmp_path))
+    assert rc == 0
+    with open(os.path.join(nc_dir, "negative-control.json"),
+              encoding="utf-8") as f:
+        nc = json.load(f)
+    assert sorted(nc) == [
+        "NC-A-wrong-subtype-chords-as-0",
+        "NC-A-wrong-subtype-disturb-as-3",
+        "NC-A-wrong-subtype-king-b1-as-1",
+        "NC-B-wrong-algorithm-lp12-driven-disturb",
+        "NC-B-wrong-algorithm-lp12-driven-king-b1",
+        "NC-C-out-of-scope-refused",
+        "NC-D-rtl-mutant",
+    ]
+    nc_c = nc["NC-C-out-of-scope-refused"]
+    assert nc_c["refusals"]["subtype change w/o reset"] == "REFUSED"
+    assert all(v == "REFUSED" for v in nc_c["refusals"].values())
+    assert nc_c["outcome"].startswith("CONTROL-OK")
+    assert all(v["outcome"].startswith(("CONTROL-OK", "NOT_RUN"))
+               for v in nc.values())
+
+
+def test_nc_c_detects_a_runner_that_accepts_subtype_change_without_reset(
+        monkeypatch, tmp_path):
+    # with ONLY the runner's missing-reset refusal disabled, the malformed
+    # fixture is accepted (all 256 trace blocks, no exception), and the
+    # NC-C transcript must turn CONTROL-BROKEN and exit nonzero
+    mut = _runner_with_missing_reset_refusal_disabled()
+    block_counts = []
+
+    def record_run(case):
+        trace = mut.run_case(case)
+        block_counts.append((trace["n_blocks"], len(trace["trace_blocks"])))
+        return trace
+
+    monkeypatch.setattr(rfl, "run_case", record_run)
+    nc_dir = os.path.join(str(tmp_path), "nc")
+    rc = lnc.run_controls(nc_dir, ARTIFACTS, require_rtl=False,
+                          run_root=str(tmp_path))
+    assert block_counts == [(256, 256)]
+    assert rc == 1
+    with open(os.path.join(nc_dir, "negative-control.json"),
+              encoding="utf-8") as f:
+        nc = json.load(f)
+    nc_c = nc["NC-C-out-of-scope-refused"]
+    assert nc_c["refusals"]["subtype change w/o reset"] == \
+        "ACCEPTED (CONTROL-BROKEN)"
+    assert nc_c["outcome"] == "CONTROL-BROKEN"
+    assert all(v == "REFUSED" for k, v in nc_c["refusals"].items()
+               if k != "subtype change w/o reset")
+    assert all(nc[k]["outcome"].startswith("CONTROL-OK")
+               for k in nc if k.startswith(("NC-A", "NC-B")))
+
+
+def test_nc_c_propagates_an_unrelated_runner_exception(monkeypatch, tmp_path):
+    mut = _runner_with_missing_reset_refusal_disabled()
+    real_build = fx.build
+
+    def run_with_missing_cut(case):
+        # Corrupt the fixture NC-C supplied to this invocation.
+        del fx.build(case)["blocks"][1]["cut"]
+        return mut.run_case(case)
+
+    monkeypatch.setattr(rfl, "run_case", run_with_missing_cut)
+    with pytest.raises(KeyError, match="cut"):
+        lnc.run_controls(tmp_path, ARTIFACTS, require_rtl=False)
+    assert fx.build is real_build
+
+
+def test_nc_c_rejects_an_incomplete_runner_trace(monkeypatch, tmp_path):
+    mut = _runner_with_missing_reset_refusal_disabled()
+
+    def run_with_short_trace(case):
+        trace = mut.run_case(case)
+        trace["trace_blocks"].pop()
+        return trace
+
+    monkeypatch.setattr(rfl, "run_case", run_with_short_trace)
+    with pytest.raises(ValueError, match="255 trace blocks"):
+        lnc.run_controls(tmp_path, ARTIFACTS, require_rtl=False)
 
 
 def test_comparator_refuses_a_short_reference_coefficient_stream(tmp_path):
