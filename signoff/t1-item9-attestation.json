@@ -1305,7 +1305,7 @@
         "role": "testbench",
         "path": "tests/test_tail_gate.py",
         "passed": true,
-        "content_hash": "sha256:7f0eaac0b0bf8ff05e1f198f782f0d9f12c08e9af3d6e908b2c8fdcde6eee165"
+        "content_hash": "sha256:62e63cbead285e441ab925763ce34c47be678570b74d164b271ffcf88c5896b9"
       },
       {
         "check": "present",
