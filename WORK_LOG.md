@@ -4,6 +4,11 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-11-19
 
+- **Issue #167** (closed): Re-grade the 4 STALE SXT-034 spectral_corr artifacts on the oracle host under the #110 definition
+- **Issue #645** (closed): Decide and land compare_pm_rtl_model.py on run_leaf_comparison: its model trace carries blocks[].slots, not the blocks[].voices the shared minimum requires
+- **PR #789**: refactor(sxt-043): route the play-mode exactness harness through run_leaf_comparison
+- **Issue #791** (closed): Remove unused imports left in compare_reverb2_reference.py by #786
+- **PR #792**: refactor: remove unused chorus imports from the Reverb2 comparator
 - **PR #790**: refactor: share the grading/report block between the Chorus and Reverb 2 comparators
 - **Issue #787** (closed): Share the identical grading and report block in the Chorus and Reverb 2 comparators
 - **PR #788**: fix: name the DEVNULL'd compile streams in _rtl_compile_common's quiet_compile fallback
