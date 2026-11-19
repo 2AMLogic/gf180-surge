@@ -88,6 +88,7 @@
     "tests/test_halfband_d2_voice.py",
     "tests/test_halfband_limit_cycle.py",
     "tests/test_halfband_republication.py",
+    "tests/test_leaf_refusal_publication.py",
     "tests/test_lfo_checkpoint_key_ownership.py",
     "tests/test_lowpass_rtl_harness_reporting.py",
     "tests/test_negative_controls_live.py",

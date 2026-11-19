@@ -42,7 +42,7 @@ sys.path.insert(0, REPO)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from _rtl_compile_common import (CheckpointKeys,  # noqa: E402
-                                 compile_and_run)
+                                 LeafInputError, compile_and_run)
 from model.control import render_sequence  # noqa: E402
 from model.control.engine_stub_counter import CounterStubEngine  # noqa: E402
 
@@ -190,21 +190,37 @@ def run_comparison(seq, run_dir, dut=DUT_DEFAULT):
     fails = list(sim.sim_fails)
     byte_identical = False
     comparison = "NOT_RUN"
+    input_error = None
     if not sim.sim_fails:
-        rtl = parse_tb(os.path.join(run_dir, "rtl_trace.txt"))
-        checked, cmp_fails = compare(trace, out, rtl)
-        fails += cmp_fails
+        try:
+            rtl = parse_tb(os.path.join(run_dir, "rtl_trace.txt"))
+        except LeafInputError as exc:
+            # Refuse before grading: ambiguous records are not evidence
+            # (issues #455/#639).  The refusal still takes the existing
+            # verdict assembly and the verdict.json write below, so it
+            # replaces a prior verdict in run_dir instead of leaving a
+            # stale PASS standing (issue #647): comparison stays NOT_RUN,
+            # coverage zeroed, byte-identity False, and `input_error` is
+            # added on this path only.
+            input_error = {"input": exc.which, "path": exc.path,
+                           "reason": exc.reason}
+            fails.append("input refusal: %s" % exc)
+        else:
+            checked, cmp_fails = compare(trace, out, rtl)
+            fails += cmp_fails
 
-        # byte-identity of the assembled RTL recording vs the model
-        # recording
-        rtl_bytes = bytearray()
-        for rec in trace["blocks"]:
-            b = rec["b"]
-            for i in range(32):
-                l, r = rtl["m"][(b, i)]
-                rtl_bytes += l.to_bytes(2, "little") + r.to_bytes(2, "little")
-        byte_identical = bytes(rtl_bytes) == out
-        comparison = "FAIL" if (cmp_fails or not byte_identical) else "PASS"
+            # byte-identity of the assembled RTL recording vs the model
+            # recording
+            rtl_bytes = bytearray()
+            for rec in trace["blocks"]:
+                b = rec["b"]
+                for i in range(32):
+                    l, r = rtl["m"][(b, i)]
+                    rtl_bytes += l.to_bytes(2, "little") \
+                        + r.to_bytes(2, "little")
+            byte_identical = bytes(rtl_bytes) == out
+            comparison = "FAIL" if (cmp_fails or not byte_identical) \
+                else "PASS"
 
     verdict = {
         "sequence": seq.get("id"),
@@ -219,6 +235,8 @@ def run_comparison(seq, run_dir, dut=DUT_DEFAULT):
         "sim_fails": sim.sim_fails,
         "sim_stdout_tail": sim.stdout_tail,
     }
+    if input_error is not None:
+        verdict["input_error"] = input_error
     with open(os.path.join(run_dir, "verdict.json"), "w") as f:
         json.dump(verdict, f, indent=2)
         f.write("\n")
