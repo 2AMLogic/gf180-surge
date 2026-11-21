@@ -303,6 +303,58 @@ def probe_record(group):
     return load(group, "open_pin_probe.json")
 
 
+def geometry_record(group):
+    return load(group, "pin_geometry_probe.json")
+
+
+def geometry_violations(rec, g):
+    """Everything wrong with one pin-geometry record, as a list of strings,
+    so the live negative controls can mutate a copy and re-audit with the
+    same code the positive tests run. Anti-vacuity: zero inverter instances
+    examined fails loudly (the control group's "no isolated masters" would
+    otherwise pass vacuously). No check here reads a trace-stop layer as an
+    openness verdict: openness is the connectivity record's to say."""
+    v = []
+    prov = rec["provenance"]
+    if prov["pin"] != (ROOT / "signoff" / "requirements.txt").read_text().strip():
+        v.append(f"{g}: recorded pin differs from signoff/requirements.txt")
+    if prov["stream_content_hash"] != stream_hash(g):
+        v.append(f"{g}: stream hash differs from the committed .gds.gz")
+    pin = json.loads((ROOT / "signoff" / "t1-item1" / "pdk-pin.json").read_text())
+    if prov["lef"]["pdk_revision"] != pin["pdk"]["revision"]:
+        v.append(f"{g}: LEF pdk revision differs from "
+                 f"signoff/t1-item1/pdk-pin.json")
+    masters = rec.get("masters", [])
+    if sum(mm.get("instances_total", 0) for mm in masters) <= 0:
+        v.append(f"NO_VERDICT: {g}: zero inverter instances examined -- the "
+                 f"zero-isolated-masters check would pass vacuously")
+    for mm in masters:
+        if not mm.get("lef_irects_um"):
+            v.append(f"{g}: master {mm.get('master')} resolved no LEF I-pin "
+                     f"rects (the named pin did not resolve)")
+        if mm.get("instances_total", 0) != mm.get("connectivity_instance_count"):
+            v.append(f"{g}: master {mm.get('master')} instance count "
+                     f"{mm.get('instances_total')} != connectivity record's "
+                     f"{mm.get('connectivity_instance_count')}")
+    # The isolated-input summary must be exactly what the same stream's
+    # committed connectivity record reports, master by master.
+    conn = probe_record(g)
+    conn_masters = {f["master"].rsplit("__", 1)[-1] for f in conn["findings"]
+                    if f["direction"] == "input"}
+    geo_isolated = {mm["master"] for mm in masters
+                    if mm.get("isolated_inputs_from_connectivity")}
+    summary = set(rec["summary"]["masters_with_isolated_inputs"])
+    if geo_isolated != summary:
+        v.append(f"{g}: per-master isolated inputs differ from the summary")
+    if geo_isolated != conn_masters:
+        v.append(f"{g}: isolated inputs differ from the committed open-pin "
+                 f"findings' masters {sorted(conn_masters)}")
+    if not any("different sets" in n for n in rec.get("notes", [])):
+        v.append(f"{g}: LEF/GDS note (the two pin-rect sets differ for the "
+                 f"wide inverters) is missing from the record")
+    return v
+
+
 def probe_violations(rec):
     """Everything wrong with one open-pin probe record, as a list of strings,
     so the live negative controls can mutate a copy and re-audit with the
@@ -450,6 +502,78 @@ class T1PhysicalOpenPinProbe(unittest.TestCase):
         for g in PROBE_GROUPS:
             rec = probe_record(g)
             self.assertTrue(any("#1063" in n for n in rec["notes"]), g)
+
+
+class T1PhysicalPinGeometryProbe(unittest.TestCase):
+    """#804 step 1: the committed pin-geometry records re-bind to their
+    streams and to the connectivity record they annotate.
+
+    Binds each record's stream hash and tool pin, requires every inverter
+    master's LEF I-pin rects to have resolved, and re-derives the
+    masters-with-isolated-inputs summary from the same stream's committed
+    open_pin_probe.json findings -- the geometry record may never disagree
+    with the connectivity record it annotates. DOES NOT: read a trace-stop
+    layer as an openness verdict, make a cause or fix claim, or establish
+    anything about fidelity or hardware.
+    """
+
+    def test_records_rebind_to_streams_masters_and_connectivity(self):
+        for g in PROBE_GROUPS:
+            rec = geometry_record(g)
+            self.assertEqual(rec["group"], g)
+            self.assertEqual(geometry_violations(rec, g), [], g)
+
+    def test_negative_control_mutated_stream_hash_fails_the_binding(self):
+        rec = copy.deepcopy(geometry_record("ext_mem_instr"))
+        rec["provenance"]["stream_content_hash"] = "sha256:" + "0" * 64
+        bad = geometry_violations(rec, "ext_mem_instr")
+        self.assertTrue(any("stream hash differs" in x for x in bad), bad)
+
+    def test_negative_control_empty_pin_selection_fails_the_control(self):
+        # A geometry pass that resolved no inverter instances at all would
+        # make control_top's "zero isolated masters" pass vacuously.
+        rec = copy.deepcopy(geometry_record("control_top"))
+        for mm in rec["masters"]:
+            mm["instances_total"] = 0
+        bad = geometry_violations(rec, "control_top")
+        self.assertTrue(any("vacuously" in x for x in bad), bad)
+
+    def test_negative_control_unresolved_lef_pin_fails_the_named_pins(self):
+        rec = copy.deepcopy(geometry_record("ext_mem_instr"))
+        next(mm for mm in rec["masters"]
+             if mm["master"] == "clkinv_12")["lef_irects_um"] = []
+        bad = geometry_violations(rec, "ext_mem_instr")
+        self.assertTrue(any("resolved no LEF I-pin rects" in x for x in bad),
+                        bad)
+
+    def test_negative_control_stale_isolated_masters_break_the_cross_check(self):
+        # Simulate a geometry record re-run against a different stream
+        # without refreshing the connectivity binding: the summary must
+        # stop agreeing with the committed open-pin findings.
+        rec = copy.deepcopy(geometry_record("ext_mem_instr"))
+        rec["masters"][0]["isolated_inputs_from_connectivity"] = [
+            "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_0"]
+        bad = geometry_violations(rec, "ext_mem_instr")
+        self.assertTrue(any("isolated inputs differ" in x for x in bad), bad)
+
+    def test_negative_control_dropped_lef_gds_note_hides_the_measurement(self):
+        rec = copy.deepcopy(geometry_record("ext_mem_instr"))
+        rec["notes"] = [n for n in rec["notes"] if "different sets" not in n]
+        bad = geometry_violations(rec, "ext_mem_instr")
+        self.assertTrue(any("LEF/GDS note" in x for x in bad), bad)
+
+    def test_baseline_expectation_pins_the_four_open_instances(self):
+        rec = geometry_record("ext_mem_instr")
+        self.assertEqual(
+            set(rec["summary"]["masters_with_isolated_inputs"]),
+            {"clkinv_12", "clkinv_16", "inv_8"})
+        ctl = geometry_record("control_top")
+        self.assertEqual(ctl["summary"]["masters_with_isolated_inputs"], [])
+        # control_top places inv_8 and it is NOT isolated there: the master
+        # identity alone does not decide the open, and the record says so
+        # by carrying it with an empty isolated list.
+        inv8 = next(mm for mm in ctl["masters"] if mm["master"] == "inv_8")
+        self.assertEqual(inv8["isolated_inputs_from_connectivity"], [])
 
 
 if __name__ == "__main__":

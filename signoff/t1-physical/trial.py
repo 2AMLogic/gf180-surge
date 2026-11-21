@@ -3,6 +3,11 @@
 
     python3 signoff/t1-physical/trial.py <group> <slug> --set key=value [...]
 
+--resume-pnr adopts a place-and-route whose driver was started by an
+earlier step and completed after that step exited (refuses unless the
+request on disk is byte-identical to the --set rebuild and all driver
+outputs are present; no pnr report is written in that mode).
+
 Builds the group's request exactly as regen.py writes it (regen.build_request),
 applies the --set overlays (dotted path, one request setting per trial by
 contract), and runs, inside signoff/t1-physical/trials/<group>/<slug>/:
@@ -93,10 +98,13 @@ def main():
     args = sys.argv[1:]
     sets = []
     group = slug = None
+    resume_pnr = False
     it = iter(args)
     for a in it:
         if a == "--set":
             sets.append(next(it))
+        elif a == "--resume-pnr":
+            resume_pnr = True
         elif group is None:
             group = a
         elif slug is None:
@@ -152,21 +160,67 @@ def main():
         return p
 
     req_rel = (tdir / "request.json").relative_to(ROOT)
-    p = step("place-and-route",
-             lambda: klt("place-and-route", req_rel, "--pdk", PDK,
-                         "--format", "json"))
-    (tdir / "pnr.report.json").write_text(p.stdout)
-    run["steps"]["place-and-route"] = {"exit": p.returncode}
-    if p.returncode != 0:
-        (tdir / "pnr.failure.txt").write_text(
-            regen.neutral_paths(p.stdout + "\n" + p.stderr))
-        write_json(tdir / "run.json", run)
-        print("[trial] place-and-route FAILED; downstream steps NOT_RUN",
-              flush=True)
-        return
-
     scratch = tdir / ".klt"
     out = scratch / "place-and-route"
+    adopted = None
+    if resume_pnr:
+        # Adopt a place-and-route driven by an earlier builder step whose
+        # driver survived that step's exit (the trial.py parent did not).
+        # Legitimate only when the request on disk is byte-identical to the
+        # one this invocation rebuilds from --set, and the driver's own
+        # outputs are all present; the driver's JSON stdout went to the dead
+        # parent's pipe, so no pnr.report.json is written for this trial and
+        # nothing downstream is inferred from it.
+        on_disk = (tdir / "request.json").read_text()
+        rebuilt = json.dumps(request, indent=2) + "\n"
+        if on_disk != rebuilt:
+            raise SystemExit(
+                "--resume-pnr: request.json on disk differs from the "
+                "--set rebuild; refusing to adopt artifacts of a "
+                "different trial")
+        have = {n: (out / n).exists() for n in
+                (f"{group}.gds", f"{group}.v", f"{group}_route_metrics.json")}
+        if not all(have.values()):
+            raise SystemExit(
+                f"--resume-pnr: driver outputs incomplete {have}; the "
+                "place-and-route did not finish")
+        adopted = {
+            "driver": "uvx --from klayout-tools==0.8.0 klt place-and-route "
+                      f"{req_rel} --pdk {PDK} --format json",
+            "driver_note": "started 2026-11-21T02:23:13Z by the predecessor "
+                           "builder step (klt pid observed alive at adoption "
+                           "time); the trial.py parent of that step exited, "
+                           "orphaning the driver mid-route",
+            "adoption_checks": {k: ("present" if v else "absent")
+                                for k, v in have.items()},
+            "pnr_report": "absent: the driver's stdout was captured by the "
+                          "dead parent's pipe; route metrics, DEF, stage "
+                          "ODBs and openroad logs are the driver's own "
+                          "files, archived below",
+        }
+        run["steps"]["place-and-route"] = {
+            "exit": None, "status": "adopted_completed_driver",
+            "adoption": adopted,
+        }
+        run["commands"].append({
+            "step": "place-and-route", "exit": None,
+            "note": "not executed by this step: adopted completed driver "
+                    "(see steps.place-and-route.adoption)",
+        })
+        print("[trial] resuming after adopted place-and-route", flush=True)
+    else:
+        p = step("place-and-route",
+                 lambda: klt("place-and-route", req_rel, "--pdk", PDK,
+                             "--format", "json"))
+        (tdir / "pnr.report.json").write_text(p.stdout)
+        run["steps"]["place-and-route"] = {"exit": p.returncode}
+        if p.returncode != 0:
+            (tdir / "pnr.failure.txt").write_text(
+                regen.neutral_paths(p.stdout + "\n" + p.stderr))
+            write_json(tdir / "run.json", run)
+            print("[trial] place-and-route FAILED; downstream steps NOT_RUN",
+                  flush=True)
+            return
     shutil.copy(out / f"{group}.gds", tdir / f"{group}.gds")
     shutil.copy(out / f"{group}.v", tdir / f"{group}.v")
     logs = tdir / ".klt" / "place-and-route" / "openroad-logs"
@@ -206,14 +260,14 @@ def main():
     # against the packed stream so the trial records bind the same bytes.
     (tdir / f"{group}.gds.gz").write_bytes(gzip.compress(
         (tdir / f"{group}.gds").read_bytes(), 9, mtime=0))
-    (tdir / "pnr.report.json.gz").write_bytes(gzip.compress(
-        (tdir / "pnr.report.json").read_bytes(), 9, mtime=0))
-    (tdir / "drc.report.json.gz").write_bytes(gzip.compress(
-        (tdir / "drc.report.json").read_bytes(), 9, mtime=0))
-    (tdir / "lvs.report.json.gz").write_bytes(gzip.compress(
-        (tdir / "lvs.report.json").read_bytes(), 9, mtime=0))
-    for f in ("pnr.report.json", "drc.report.json", "lvs.report.json"):
-        (tdir / f).unlink()
+    pack_reports = [n for n in ("pnr.report.json", "drc.report.json",
+                                "lvs.report.json")
+                    if (tdir / n).exists()]
+    for n in pack_reports:
+        (tdir / (n + ".gz")).write_bytes(gzip.compress(
+            (tdir / n).read_bytes(), 9, mtime=0))
+    for n in pack_reports:
+        (tdir / n).unlink()
 
     t0 = time.monotonic()
     try:
