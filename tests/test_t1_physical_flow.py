@@ -171,6 +171,65 @@ def mutated_netlist():
     return "\n".join(lines)
 
 
+ERC_KLT = "0.9.2"
+ERC_METALS = ("Metal1", "Metal2", "Metal3", "Metal4", "Metal5")
+
+
+def erc_antenna_problems(erc):
+    """(#803) every way a committed ERC report's antenna coverage falls
+    short, as a list of strings -- so the live negative controls can re-audit
+    a mutated copy with the same code the positive tests run. Full coverage
+    = a nonzero gate count and exactly one level for each of Metal1..Metal5
+    on every gate, each with a table limit, a rule source and a pass or
+    violate verdict, with `coverage.checked` reconciling to exactly those
+    gate/metal pairs. The gate role `poly` is inapplicable (klt never grades
+    stackup[0]) and must stay ungraded. Any skip -- `missing_antenna_pdk`
+    (the 0.8.0 shape) or `missing_antenna_limit` (the lowercase-spec shape)
+    -- is a problem, never a pass; a `violate` verdict is not."""
+    v = []
+    gates = erc.get("gates") or []
+    if not gates or not erc.get("gate_count"):
+        return ["no gates: antenna coverage would pass vacuously"]
+    if len(gates) != erc["gate_count"]:
+        v.append(f"gates listed {len(gates)} != gate_count {erc['gate_count']}")
+    pairs = set()
+    for gate in gates:
+        metals = [l for l in gate["levels"] if l["layer"] in ERC_METALS]
+        names = [l["layer"] for l in metals]
+        for metal in ERC_METALS:
+            if names.count(metal) != 1:
+                v.append(f"{gate['gate_id']}: {names.count(metal)} levels "
+                         f"for {metal}, want exactly one")
+        for l in metals:
+            pairs.add((gate["gate_id"], l["layer"]))
+            if l.get("antenna_ratio_max") is None:
+                v.append(f"{gate['gate_id']}/{l['layer']}: no table limit")
+            if not l.get("antenna_ratio_source"):
+                v.append(f"{gate['gate_id']}/{l['layer']}: no rule source")
+            if l.get("verdict") not in ("pass", "violate"):
+                v.append(f"{gate['gate_id']}/{l['layer']}: verdict "
+                         f"{l.get('verdict')!r} is not a checked verdict")
+        poly = [l for l in gate["levels"] if l["layer"] == "poly"]
+        if len(poly) != 1:
+            v.append(f"{gate['gate_id']}: gate role 'poly' level missing")
+        elif poly[0].get("antenna_ratio_max") is not None \
+                or poly[0].get("verdict") != "unchecked":
+            v.append(f"{gate['gate_id']}: gate role 'poly' must stay ungraded")
+    cov = erc.get("coverage", {})
+    if not cov.get("checked"):
+        v.append("no checked antenna levels")
+    checked = set()
+    for c in cov.get("checked", []):
+        cid = c["id"] if isinstance(c, dict) else c
+        checked.add(tuple(json.loads(cid.split(":", 1)[1])))
+    if checked != pairs:
+        v.append(f"coverage.checked holds {len(checked)} gate/metal pairs, "
+                 f"the gates' levels hold {len(pairs)}")
+    for s in cov.get("skipped", []):
+        v.append(f"skipped {s['id']}: {s['reason']}")
+    return v
+
+
 class T1PhysicalTriage(unittest.TestCase):
     """#544 Phase A2: triage pins. Recorded, not waived."""
 
@@ -212,18 +271,42 @@ class T1PhysicalTriage(unittest.TestCase):
         for g in ("control_top", "wavetable_core"):
             self.assertEqual(load(g, "lvs.report.json")["status"], "match", g)
 
-    def test_erc_not_checked_reason_is_missing_antenna_pdk(self):
-        # klt 0.8.0 `erc --pdk` has no gf180mcu antenna table: a tool gap,
-        # not an input this repo can supply. Never reported as met.
+    def test_erc_full_antenna_coverage_under_klt_092(self):
+        # #803: ERC re-run under klt 0.9.2 (`--pdk gf180mcu`) through the
+        # case-matched Metal1..Metal5 role names. Recorded outcome for all
+        # three groups: every gate has one graded level per metal with a
+        # table limit and rule source, zero skipped pairs, status clean,
+        # exit 0, no electrical findings. Nothing here waives a finding: a
+        # future `violate` stays a checked level and a nonzero exit.
         for g in physical_groups():
             erc = load(g, "erc.report.json")
-            self.assertEqual(erc["status"], "not_checked", g)
-            self.assertIsNone(erc["pdk"], g)
-            self.assertEqual(erc["coverage"]["checked"], [], g)
+            self.assertEqual(erc["provenance"]["klt_version"], ERC_KLT, g)
+            self.assertEqual(erc["pdk"], "gf180mcu", g)
+            self.assertEqual(erc_antenna_problems(erc), [], g)
+            self.assertEqual(erc["status"], "clean", g)
+            self.assertEqual(erc["erc_status"], "clean", g)
+            self.assertEqual(erc["erc_finding_count"],
+                             len(erc["erc_findings"]), g)
+            self.assertEqual(load(g, "exit_status.json")["erc"], 0, g)
+
+    def test_erc_bound_to_mapped_spec_and_092_version(self):
+        # Each ERC report is bound to the mapped supply spec (content hash)
+        # and states the klt that produced it; DRC/LVS/P&R reports stay
+        # 0.8.0 -- the pin did not move (#803 keeps requirements.txt).
+        spec = BASE / "erc-supply-spec.json"
+        want = "sha256:" + sha(spec.read_bytes())
+        names = [e["name"] for e in json.loads(spec.read_text())["stackup"]]
+        self.assertEqual(names, ["poly", *ERC_METALS])
+        for g in physical_groups():
+            erc = load(g, "erc.report.json")
             self.assertEqual(
-                {s["reason"] for s in erc["coverage"]["skipped"]},
-                {"missing_antenna_pdk"}, g)
-            self.assertNotEqual(load(g, "exit_status.json")["erc"], 0, g)
+                erc["spec"], "signoff/t1-physical/erc-supply-spec.json", g)
+            self.assertEqual(erc["provenance"]["spec"]["content_hash"], want, g)
+            drc = load(g, "drc.report.json")
+            self.assertEqual(
+                drc["provenance"]["klt_version"],
+                (ROOT / "signoff" / "requirements.txt").read_text().strip()
+                .split("==")[1], g)
 
 
 class T1PhysicalNegativeControl(unittest.TestCase):
@@ -256,6 +339,54 @@ class T1PhysicalNegativeControl(unittest.TestCase):
         # failure is attributable to the injected defect.
         self.assertEqual(load("wavetable_core", "lvs.report.json")["status"], "match")
         self.assertEqual(load("wavetable_core", "drc.report.json")["status"], "clean")
+
+    def test_erc_lowercase_spec_control_fails_antenna_coverage(self):
+        # #803 failure control: the retained pre-mapping spec (lowercase role
+        # names) on the SAME wavetable_core stream and the SAME klt 0.9.2
+        # misses every gf180mcu table key -- zero checked, every intended
+        # metal level skipped `missing_antenna_limit`, exit 4. The positive
+        # coverage check must reject this report.
+        erc = nc_json("erc.report.json")
+        lc = NC / "erc-supply-spec-lowercase.json"
+        self.assertEqual(erc["provenance"]["klt_version"], ERC_KLT)
+        self.assertEqual(
+            erc["provenance"]["input"]["content_hash"],
+            stream_hash("wavetable_core"))
+        self.assertEqual(
+            erc["provenance"]["spec"]["content_hash"], "sha256:" + sha(lc.read_bytes()))
+        names = [e["name"] for e in json.loads(lc.read_text())["stackup"]]
+        self.assertEqual(
+            names, ["poly", "metal1", "metal2", "metal3", "metal4", "metal5"])
+        self.assertEqual(erc["coverage"]["checked"], [])
+        self.assertEqual(
+            {s["reason"] for s in erc["coverage"]["skipped"]},
+            {"missing_antenna_limit"})
+        bad = erc_antenna_problems(erc)
+        self.assertTrue(any("no checked antenna levels" in x for x in bad), bad)
+        self.assertTrue(any("missing_antenna_limit" in x for x in bad), bad)
+        self.assertEqual(nc_json("exit_status.json")["erc"], 4)
+
+    def test_erc_control_stale_0080_report_fails_the_positive_checks(self):
+        # Regress a copy of the committed report to the recorded 0.8.0 shape
+        # (klt 0.8.0, pdk null, every level unchecked with
+        # missing_antenna_pdk): the coverage check must reject it, so a
+        # committed PASS record cannot silently go stale.
+        erc = copy.deepcopy(load("wavetable_core", "erc.report.json"))
+        erc["provenance"]["klt_version"] = "0.8.0"
+        erc["pdk"] = None
+        erc["coverage"]["checked"] = []
+        erc["coverage"]["skipped"] = [
+            {"id": 'antenna:["gate0","metal1"]', "reason": "missing_antenna_pdk"}]
+        for gate in erc["gates"]:
+            for lv in gate["levels"]:
+                lv["antenna_ratio_max"] = None
+                lv["antenna_ratio_source"] = None
+                lv["verdict"] = "unchecked"
+        self.assertNotEqual(erc["provenance"]["klt_version"], ERC_KLT)
+        bad = erc_antenna_problems(erc)
+        self.assertTrue(any("no checked antenna levels" in x for x in bad), bad)
+        self.assertTrue(any("missing_antenna_pdk" in x for x in bad), bad)
+        self.assertTrue(any("not a checked verdict" in x for x in bad), bad)
 
 
 # #679 -- committed open-pin probe records: `signoff/t1-physical/<g>/
