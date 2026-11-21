@@ -33,8 +33,8 @@ runner is NOT_RUN on this host — its temp dir is a hardcoded macOS path).
 | wavetable_core | native | PASS | 33 `undriven_wire` warnings in report |
 | reverb1_core | sv2v | PASS | 36290 instances; real datapath (external-memory ports) |
 | rf_ains34_core | sv2v | exit 0, **NOT datapath evidence** | 7467 instances, but the core has **no input ports** (they are internal `logic`, poked hierarchically by its testbench), so Yosys constant-folds the datapath: 3054 tie-lows, 2058 flops, 2054 AND2, no adder or multiplier. Its `area_um2`/timing must not be cited (#580); see `RECORD.md` |
-| rf_bins12_core, rf_global2_core, rf_global34_core, rf_send34_core, logical4_core | sv2v | NO_VERDICT | Yosys killed at a **1800 s** budget (`request.yosys_timeout_s`, klt **`0.9.2`** — a tagged release), all five inside `synth`'s generic ABC pass at the blif extraction; 0.25M–2.0M cells reach it. No unsortable-cells warnings (unlike `galactic_core`). Cause established 2026-11-16 by the pre-ABC operator census (#695): the cells are the multiply/accumulator arithmetic itself — 94–100 % of each design — with every `rf_*` product already reduced by Yosys to its integer-exact width (widening refuted) and `logical4_core` additionally carrying 10 unreduced 192-wide products and a 34 %-share 192-bit divider; see `RECORD.md` (#580, #695) and each group's `census.md` |
-| galactic_core | sv2v | NO_VERDICT | sv2v converts; Yosys was killed at a **1800 s** budget (`request.yosys_timeout_s`, klt `0.9.2.dev890+gd9bc36811ddd` — an unreleased rev pin, not a tagged release), having reached only the generic ABC pass. Not a proof of non-synthesizability. #641 narrowed the 128-bit arithmetic to its integer-exact widths (no schedule or port change; RTL-vs-model still exact) and re-ran at the same budget: **same outcome, same pass, same warnings**, so that suspected cause is now measured and refuted as the dominant cost. #657 then traced the 20 unsortable-cell warnings / 35 ABC loop reports to the `counts`/`adv_idx` memory mapping and removed them (constant-indexed arrays; RTL-vs-model still exact, transaction logs byte-identical): the third 1800 s run carries **zero** loop reports and **still** dies at `4.22.1` — the loops are gone, the obstacle (generic ABC over ~2.8e5 cells) is not, an upstream/tool-pin question per #657's stop condition. See `galactic_core/RECORD.md` (#641, #657) |
+| rf_bins12_core, rf_global2_core, rf_global34_core, rf_send34_core, logical4_core | sv2v | NO_VERDICT | Yosys killed at a **1800 s** budget (`request.yosys_timeout_s`, klt **`0.9.2`** — a tagged release), all five inside `synth`'s generic ABC pass at the blif extraction; 0.25M–2.0M cells reach it. No unsortable-cells warnings (unlike `galactic_core`). Cause established 2026-11-16 by the pre-ABC operator census (#695): the cells are the multiply/accumulator arithmetic itself — 94–100 % of each design — with every `rf_*` product already reduced by Yosys to its integer-exact width (widening refuted) and `logical4_core` additionally carrying 10 unreduced 192-wide products and a 34 %-share 192-bit divider; see `RECORD.md` (#580, #695) and each group's `census.md`. **#802 (2026-11-21) measured the timeout as compute, not a tool wedge**: guarded re-runs with in-run CPU readings show `yosys-abc` consuming ≈1 CPU s per wall s for the whole 1800 s in every group (klayout-tools#5780 excluded by measurement); each group's `RECORD.md` |
+| galactic_core | sv2v | NO_VERDICT | sv2v converts; Yosys was killed at a **1800 s** budget (`request.yosys_timeout_s`, klt `0.9.2.dev890+gd9bc36811ddd` — an unreleased rev pin, not a tagged release), having reached only the generic ABC pass. Not a proof of non-synthesizability. #641 narrowed the 128-bit arithmetic to its integer-exact widths (no schedule or port change; RTL-vs-model still exact) and re-ran at the same budget: **same outcome, same pass, same warnings**, so that suspected cause is now measured and refuted as the dominant cost. #657 then traced the 20 unsortable-cell warnings / 35 ABC loop reports to the `counts`/`adv_idx` memory mapping and removed them (constant-indexed arrays; RTL-vs-model still exact, transaction logs byte-identical): the third 1800 s run carries **zero** loop reports and **still** dies at `4.22.1` — the loops are gone, the obstacle (generic ABC over ~2.8e5 cells) is not, an upstream/tool-pin question per #657's stop condition. **#802 (2026-11-21)**: guarded re-run at the same budget with in-run CPU readings — `yosys-abc` computed for the whole 1800 s; the handshake wedge is excluded by measurement (`galactic_core/RECORD.md` § #802) |
 
 **Result ports exposed (#580).** The six cores (`logical4_core`, `rf_{ains34,
 bins12,global2,global34,send34}_core`) previously had `block_done` as their only
@@ -60,7 +60,12 @@ git history); `failure.txt` records a timeout as NO_VERDICT, not a pass.
   from #657's. **The cause is now established (#695, 2026-11-16): a pre-ABC
   operator census per group (`RECORD.md`, each group's `census.md`) shows the
   cells are the multiply/accumulator arithmetic itself — 94–100 % of every
-  design — not decode or control overhead.** The `rf_*` products are already
+  design — not decode or control overhead.** #802 (2026-11-21) then measured
+  the runs **computing** rather than wedged: guarded re-runs with in-run CPU
+  readings show `yosys-abc` consuming ≈1 CPU s per wall s for the whole
+  1800 s in all five (the yosys-abc handshake wedge, klayout-tools#5780,
+  excluded by measurement — the #802 control could not even provoke it on
+  the post-fix abc build of 2026-11-19); see `RECORD.md` § "#802". The `rf_*` products are already
   reduced by Yosys's coarse passes to integer-exact widths (the widening
   hypothesis is measured-refuted there, #641's finding transfers);
   `logical4_core` keeps 10 unreduced 192-wide products (its declared-192-bit
@@ -143,6 +148,11 @@ failed twice — a budget argument, not a mechanism). `failure.txt` stays a
 NO_VERDICT (timeout), never a pass.
 
 Pins: `pdk-pin.json`. Regenerate: `python3 signoff/t1-item1/regen.py [group...]`.
+`regen.py` exports the #802 yosys-abc handshake guard (`COLUMNS=1000`, and a
+short `TMPDIR` when the ambient one is 36 characters or longer) for every klt
+invocation, so regeneration cannot wedge silently on a pre-fix toolchain
+(klayout-tools#5780; `RECORD.md` § "#802" records the control and which
+toolchain builds make the guard redundant).
 Any group in `regen.py`'s `YOSYS_TIMEOUT_S` table needs a klt that accepts
 `yosys_timeout_s`, supplied via `$KLT` — see `RECORD.md` § "Reproduce" and
 `galactic_core/RECORD.md`; the host-wide klt is never installed over.

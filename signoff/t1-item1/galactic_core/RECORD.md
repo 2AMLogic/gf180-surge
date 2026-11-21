@@ -291,6 +291,42 @@ frontend instead of by `memory_map`), not datapath growth.
 This file records synthesizability progress only. It establishes nothing
 about P&R, timing, area, RTL-vs-netlist equivalence, or fidelity.
 
+## #802 guarded re-measurement (2026-11-21): computing, not wedged
+
+Verdict: **NO_VERDICT — computing at the budget** (outcome unchanged;
+the missing CPU measurement now exists). #802 re-ran this group at the same
+1800 s budget with the yosys-abc handshake guard exported
+(`TMPDIR=/tmp/s1`, `COLUMNS=1000`) under klt **`0.9.2`** (tagged, throwaway
+`uvx --from klayout-tools==0.9.2`; the ambient environment was `TMPDIR`
+length 29, `COLUMNS` unset — see `../rf_global2_core/RECORD.md` for the full
+as-found table, including the `yosys-abc` ABC 1.01 build dated 2026-11-19
+that already postdates the klayout-tools#5780 fix).
+
+In-run CPU readings (60 s apart; yosys pid 917753, `yosys-abc` pid 934614):
+
+| wall clock | yosys CPU (etime) | yosys-abc CPU (etime) |
+|---|---|---|
+| 04:32:35 (≈T+3 min) | 00:00:27 (02:57) | 00:02:37 (02:37) |
+| 04:38:35 | 00:00:27 (08:57) | 00:08:35 (08:37) |
+| 04:48:36 | 00:00:27 (18:58) | 00:18:33 (18:37) |
+| 04:58:36 (last live snap) | 00:00:27 (28:58) | 00:28:30 (28:37) |
+| ~04:59:35 (budget) | killed | killed |
+
+`yosys-abc` consumed ≈1.0 CPU-second per wall second from ~23 s after Yosys
+start to the 1800 s kill; `yosys` was flat at 27 CPU s after the blif
+extraction. Flat CPU on both processes is the wedge's signature; this run is
+the opposite — the generic ABC pass computes for the whole budget over the
+~270k-cell post-#641/#657 netlist.
+
+Outcome: exit 1, same last line `4.22.1 Extracting gate netlist …`
+(`timeout-progress.txt`, byte-identical to the committed record); the
+refreshed `failure.txt` carries the same JSON error payload with a changed
+uvx provenance banner only (PyPI-tag build vs the #579-era `git+…@d9bc3681`
+source build — committed as refreshed). The orphaned `yosys-abc` child was
+killed after the run; none left on the host. The follow-up stays where
+#657 left it: an upstream/tool-pin question on generic ABC over ~2.7e5 cells
+of arithmetic, not a budget change and not a wedge.
+
 Reproduce (never the host klt):
 
 ```

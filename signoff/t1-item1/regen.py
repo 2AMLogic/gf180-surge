@@ -72,6 +72,21 @@ YOSYS_TIMEOUT_S = {
 # reproduce line in that group's RECORD.md names it).
 KLT = shlex.split(os.environ.get("KLT", "klt"))
 
+# The yosys-abc handshake wedge (klayout-tools#5780, measured against this
+# repo in #802): Yosys drives `yosys-abc -s` over a pipe and waits for abc to
+# echo its `source <script>` line; once `len(TMPDIR) + 43` reaches the 79
+# column default, readline wraps that echo, the match never fires and both
+# processes sit idle until the caller's budget kills them -- the last log
+# line is then forever `4.22.1 Extracting gate netlist ...`. Guard every
+# klt invocation: pin a wide COLUMNS and, when the ambient TMPDIR is 36
+# characters or longer, replace it with a short one. Belt-and-braces only --
+# the durable fix is a toolchain build carrying #5780 (a `yosys-abc` compiled
+# on/after 2026-11-19 already does; see RECORD.md "wedge control").
+os.environ["COLUMNS"] = "1000"
+if len(os.environ.get("TMPDIR", "")) >= 36:
+    os.environ["TMPDIR"] = "/tmp/klt-t1item1"
+    pathlib.Path("/tmp/klt-t1item1").mkdir(parents=True, exist_ok=True)
+
 
 #: Lines kept by :func:`distil_log`: every numbered Yosys step header (so the
 #: last step reached is visible, including a sub-step like "Extracting gate
