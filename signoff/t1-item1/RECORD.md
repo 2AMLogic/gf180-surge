@@ -95,6 +95,77 @@ in `logical4_core`'s case roughly 7x past it.
   already failed, and nothing in these logs suggests the pass was close to
   finishing.
 
+## #802 — the wedge alternative measured out (2026-11-21): all six groups were computing
+
+Every one of the six NO_VERDICT logs ends on the same line — `4.22.1
+Extracting gate netlist … to '<abc-temp-dir>/input.blif'` — which is also the
+signature of the yosys-abc handshake wedge (klayout-tools#5780: a long
+enough TMPDIR wraps readline's echo of abc's `source` line and both processes
+idle to the budget). The klt builds the committed records were made under
+(`0.9.2`, tagged 2026-11-14, and `0.9.2.dev890+gd9bc36811ddd`) predate that
+fix, and no earlier record carried a CPU reading taken during the pass, so
+"ABC computed for 1800 s" could not be told from "ABC never started". #802
+closed that gap with a fast control plus guarded re-runs of all six groups.
+
+**As-found environment** (recorded before any change): ambient `TMPDIR`
+length **29** (below the 36-character wrap threshold), `COLUMNS` unset;
+host klt `0.9.3.dev2575+g6bd18bbc8637` (not used for any evidence run);
+run klt `0.9.2` (tagged) from a throwaway `uvx --from klayout-tools==0.9.2`
+environment; Yosys `0.67+post` (`b8e7da6f40ae8f…`) — the host-provisioned
+binary, same sha1 as every committed record; `yosys-abc` UC Berkeley ABC
+1.01 **compiled 2026-11-19 20:03:50** (`libreadline.so.8`) — i.e. the
+provisioned abc build already postdates the #5780 close (2026-11-17).
+
+**Fast control (minutes, `control_top`, same host and klt).** With
+`TMPDIR` forced to 61 characters and `COLUMNS` unset, the run **did not
+wedge**: it exited 0 in seconds, reached `4.22.1`/ABC and completed it
+(`ABC RESULTS: output signals: 2110`, `Removing temp directory.` in the
+abc log). The guarded variant (`TMPDIR=/tmp/s1`, `COLUMNS=1000`) also
+exited 0. The wedge cannot be provoked on this host's current toolchain —
+consistent with the post-fix abc build date — so the guard is
+belt-and-braces here, not the difference between the two controls. No
+control-group evidence was committed (both runs' artifacts were discarded;
+the committed `control_top` record is untouched).
+
+**Guarded re-run of the six groups** (`TMPDIR=/tmp/s1`, `COLUMNS=1000`,
+klt `0.9.2`, budget unchanged at 1800 s, at most two groups concurrently,
+CPU read via `ps -o pid,etime,time` at 60 s intervals during the pass;
+per-group readings in each `<group>/RECORD.md`):
+
+| group | exit | yosys CPU | yosys-abc CPU | verdict |
+|---|---|---|---|---|
+| `rf_global2_core` | 1 | flat at 00:00:32 after extraction | 00:30:27 over 30:37 elapsed | **computing** |
+| `rf_bins12_core` | 1 | flat at 00:00:32 | 00:30:25 over 30:37 elapsed | **computing** |
+| `rf_global34_core` | 1 | flat at 00:00:28 | 00:28:29 over 28:39 elapsed | **computing** |
+| `rf_send34_core` | 1 | flat at 00:01:06 | 00:28:02 over 28:12 elapsed | **computing** |
+| `logical4_core` | 1 | 00:08:34 during extraction, then flat | 00:22:58 over 23:03 (spawned at ~T+6) | **computing** |
+| `galactic_core` | 1 | flat at 00:00:27 | 00:28:30 over 28:37 elapsed | **computing** |
+
+Every group's `yosys-abc` consumed ≈1.0 CPU-second per wall second from
+handshake to the 1800 s kill — the opposite of the wedge's flat-CPU-on-both
+signature. The refreshed `failure.txt`/`timeout-progress.txt` of the five
+`#695` groups are **byte-identical to the committed records** (md5 checked);
+`galactic_core`'s differ only in uvx's provenance banner (PyPI-tag build vs
+the #579-era `git+…@d9bc3681` source build), error payload identical. All
+orphaned `yosys-abc` children were found after the kills and killed; none
+left running.
+
+**What this changes in the reading.** The six timeouts are now **measured
+compute findings**: generic ABC legitimately computing over the arithmetic
+(#695's per-construct attribution stands) for the whole budget, not a tool
+handshake failure. The earlier "keeps burning a core" note below was a
+post-kill `ps` **elapsed-time** observation; the in-run **CPU-time**
+readings above are what establish it. The follow-up is unchanged — the
+arithmetic/schedule question (SXT-017, #554) on the tool side of generic
+ABC — and the budget stays at 1800 s. `regen.py` now exports the guard
+(`COLUMNS=1000`, and a short `TMPDIR` whenever the ambient one is 36
+characters or longer) for every klt invocation, so a later regeneration
+cannot wedge silently on a pre-fix toolchain; the guard becomes redundant
+under a klt/abc build carrying klayout-tools#5780 (post-0.9.2; no such klt
+tag exists as of 2026-11-21, and this host's abc build of 2026-11-19
+already carries it).
+
+
 ## rf_ains34_core — exits 0, and is still not datapath evidence
 
 `rf_ains34_core` is the one group of the six whose `klt synthesize` exits 0
@@ -168,10 +239,20 @@ invocation per job (it is sequential within a process). Each timed-out group
 costs the full 1800 s budget.
 
 **klt leaves the `yosys-abc` child alive when it kills Yosys on a timeout.**
-Observed on every one of the five runs: the `yosys` process goes away at the
-budget and its `yosys-abc` child is reparented and keeps burning a core. Check
-for and kill orphans after a timed-out run (`ps -eo pid,ppid,etimes,comm |
-grep yosys-abc`); leaving them is what the long-running-compute rule forbids.
+Observed on every one of the five 2026-11-14 runs and again on all six #802
+runs: the `yosys` process goes away at the budget and its `yosys-abc` child
+is reparented. The #802 in-run readings (each group's `RECORD.md`) show the
+child **computed** — ≈1 CPU second per wall second — for the whole budget;
+the earlier "keeps burning a core" wording was a post-kill `ps` elapsed-time
+observation, not a CPU reading. Check for and kill orphans after a timed-out
+run (`ps -eo pid,comm | awk '$2=="yosys-abc"'`); leaving them is what the
+long-running-compute rule forbids.
+
+`regen.py` exports the #802 handshake guard itself (`COLUMNS=1000`, and a
+short `TMPDIR` when the ambient one is 36 characters or longer), so the
+invocation above is guarded regardless of the ambient environment; see the
+"#802" section for why (klayout-tools#5780) and which toolchain builds make
+it redundant.
 
 ## The cost driver: pre-ABC operator census (#695, 2026-11-16)
 
