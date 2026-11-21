@@ -310,9 +310,16 @@ def probe(group, d=None, stream_gz=None, out_name="open_pin_probe.json"):
         findings_dir_tally[dd] = findings_dir_tally.get(dd, 0) + 1
 
     # Cheap corroboration from the committed P&R report (not a substitute
-    # signal: wavetable_core matches with 480 single-pin markers).
-    pnr = json.loads(gzip.decompress((d / "pnr.report.json.gz").read_bytes()))
-    markers = pnr.get("def_net_names", {}).get("single_pin_markers")
+    # signal: wavetable_core matches with 480 single-pin markers). A trial
+    # that adopted a completed place-and-route driver (#804) has no P&R
+    # report (the driver's stdout went to a dead pipe), so markers is None
+    # and the corroboration block records the absence instead of a number.
+    if (d / "pnr.report.json.gz").is_file():
+        pnr = json.loads(gzip.decompress(
+            (d / "pnr.report.json.gz").read_bytes()))
+        markers = pnr.get("def_net_names", {}).get("single_pin_markers")
+    else:
+        markers = None
 
     ver = (summary.get("provenance") or {}).get("klt_version") \
         or summary.get("klt_version")

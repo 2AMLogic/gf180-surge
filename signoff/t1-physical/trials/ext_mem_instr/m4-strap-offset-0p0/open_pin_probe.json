@@ -1,0 +1,1328 @@
+{
+  "schema": "gf180-surge.open-pin-probe/2",
+  "group": "ext_mem_instr",
+  "doc": "Every abstracted-cell pin on a net with no other pin (top-level ports excluded), from `klt extract` of the committed routed stream. Records where the extraction opens are; no cause claim, no fix claim. The LVS verdict of this group stays whatever its committed lvs.report.json records.",
+  "provenance": {
+    "pin": "klayout-tools==0.8.0",
+    "klt_version": "0.8.0",
+    "argv": [
+      "extract",
+      "ext_mem_instr.gds",
+      "--deck",
+      "gf180mcu",
+      "--top",
+      "ext_mem_instr",
+      "--abstract-cells",
+      "gf180mcu_fd_sc_mcu9t5v0__*",
+      "-o",
+      "ext_mem_instr.probe.spice",
+      "--format",
+      "json"
+    ],
+    "cwd": "signoff/t1-physical/trials/ext_mem_instr/m4-strap-offset-0p0",
+    "stream_file": "ext_mem_instr.gds.gz",
+    "stream_content_hash": "sha256:aa2b2e02621d0b3b0967217600f8aa92c8f3579f8c28a2ed56a5edafd84a1068",
+    "netlist_sha256": "76c31c122df73b86488dc79eedc6b3281b4a9c7710cccc7b1e8abb050558e261",
+    "netlist_normalized_sha256": "ed6e688859c39184e9869f45dfb2ba20411ae83723ba45bd15f0b4f0f62b46d8",
+    "liberty": {
+      "revision": "open_pdks f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7",
+      "content_hash": "sha256:c0b6946a2d48a4604c687a29d3c8b1e05b3da5a42866b21592eaacfeae6e9ca7",
+      "resolved": true,
+      "reason": null,
+      "direction_note": "signal pins carry the liberty's `direction`; pg pins carry their pg_type (primary_power->power, primary_ground->ground); null means the liberty was unavailable"
+    }
+  },
+  "netlist": {
+    "port_nets": [
+      "VDD",
+      "VSS",
+      "clk",
+      "frame_start",
+      "mem_ack",
+      "mem_addr[0]",
+      "mem_addr[10]",
+      "mem_addr[11]",
+      "mem_addr[12]",
+      "mem_addr[13]",
+      "mem_addr[14]",
+      "mem_addr[15]",
+      "mem_addr[16]",
+      "mem_addr[17]",
+      "mem_addr[18]",
+      "mem_addr[19]",
+      "mem_addr[1]",
+      "mem_addr[20]",
+      "mem_addr[21]",
+      "mem_addr[22]",
+      "mem_addr[23]",
+      "mem_addr[2]",
+      "mem_addr[3]",
+      "mem_addr[4]",
+      "mem_addr[5]",
+      "mem_addr[6]",
+      "mem_addr[7]",
+      "mem_addr[8]",
+      "mem_addr[9]",
+      "mem_rdata[0]",
+      "mem_rdata[10]",
+      "mem_rdata[11]",
+      "mem_rdata[12]",
+      "mem_rdata[13]",
+      "mem_rdata[14]",
+      "mem_rdata[15]",
+      "mem_rdata[16]",
+      "mem_rdata[17]",
+      "mem_rdata[18]",
+      "mem_rdata[19]",
+      "mem_rdata[1]",
+      "mem_rdata[20]",
+      "mem_rdata[21]",
+      "mem_rdata[22]",
+      "mem_rdata[23]",
+      "mem_rdata[24]",
+      "mem_rdata[25]",
+      "mem_rdata[26]",
+      "mem_rdata[27]",
+      "mem_rdata[28]",
+      "mem_rdata[29]",
+      "mem_rdata[2]",
+      "mem_rdata[30]",
+      "mem_rdata[31]",
+      "mem_rdata[3]",
+      "mem_rdata[4]",
+      "mem_rdata[5]",
+      "mem_rdata[6]",
+      "mem_rdata[7]",
+      "mem_rdata[8]",
+      "mem_rdata[9]",
+      "mem_req",
+      "mem_tag[0]",
+      "mem_tag[1]",
+      "mem_wdata[0]|mem_we",
+      "mem_wdata[10]",
+      "mem_wdata[11]",
+      "mem_wdata[12]",
+      "mem_wdata[13]",
+      "mem_wdata[14]",
+      "mem_wdata[15]",
+      "mem_wdata[16]",
+      "mem_wdata[17]",
+      "mem_wdata[18]",
+      "mem_wdata[19]",
+      "mem_wdata[1]",
+      "mem_wdata[20]",
+      "mem_wdata[21]",
+      "mem_wdata[22]",
+      "mem_wdata[23]",
+      "mem_wdata[24]",
+      "mem_wdata[25]",
+      "mem_wdata[26]",
+      "mem_wdata[27]",
+      "mem_wdata[28]",
+      "mem_wdata[29]",
+      "mem_wdata[2]",
+      "mem_wdata[30]",
+      "mem_wdata[31]",
+      "mem_wdata[3]",
+      "mem_wdata[4]",
+      "mem_wdata[5]",
+      "mem_wdata[6]",
+      "mem_wdata[7]",
+      "mem_wdata[8]",
+      "mem_wdata[9]",
+      "out_l[0]|out_r[0]",
+      "out_l[10]",
+      "out_l[11]",
+      "out_l[12]",
+      "out_l[13]",
+      "out_l[14]",
+      "out_l[15]",
+      "out_l[1]",
+      "out_l[2]",
+      "out_l[3]",
+      "out_l[4]",
+      "out_l[5]",
+      "out_l[6]",
+      "out_l[7]",
+      "out_l[8]",
+      "out_l[9]",
+      "out_r[10]",
+      "out_r[11]",
+      "out_r[12]",
+      "out_r[13]",
+      "out_r[14]",
+      "out_r[15]",
+      "out_r[1]",
+      "out_r[2]",
+      "out_r[3]",
+      "out_r[4]",
+      "out_r[5]",
+      "out_r[6]",
+      "out_r[7]",
+      "out_r[8]",
+      "out_r[9]",
+      "out_valid",
+      "reg_addr[0]",
+      "reg_addr[1]",
+      "reg_addr[2]",
+      "reg_addr[3]",
+      "reg_addr[4]",
+      "reg_addr[5]",
+      "reg_addr[6]",
+      "reg_addr[7]",
+      "reg_rdata[0]",
+      "reg_rdata[10]",
+      "reg_rdata[11]",
+      "reg_rdata[12]",
+      "reg_rdata[13]",
+      "reg_rdata[14]",
+      "reg_rdata[15]",
+      "reg_rdata[16]",
+      "reg_rdata[17]",
+      "reg_rdata[18]",
+      "reg_rdata[19]",
+      "reg_rdata[1]",
+      "reg_rdata[20]",
+      "reg_rdata[21]",
+      "reg_rdata[22]",
+      "reg_rdata[23]",
+      "reg_rdata[24]",
+      "reg_rdata[25]",
+      "reg_rdata[26]",
+      "reg_rdata[27]",
+      "reg_rdata[28]",
+      "reg_rdata[29]",
+      "reg_rdata[2]",
+      "reg_rdata[30]",
+      "reg_rdata[31]",
+      "reg_rdata[3]",
+      "reg_rdata[4]",
+      "reg_rdata[5]",
+      "reg_rdata[6]",
+      "reg_rdata[7]",
+      "reg_rdata[8]",
+      "reg_rdata[9]",
+      "reg_wdata[0]",
+      "reg_wdata[10]",
+      "reg_wdata[11]",
+      "reg_wdata[12]",
+      "reg_wdata[13]",
+      "reg_wdata[14]",
+      "reg_wdata[15]",
+      "reg_wdata[16]",
+      "reg_wdata[17]",
+      "reg_wdata[18]",
+      "reg_wdata[19]",
+      "reg_wdata[1]",
+      "reg_wdata[20]",
+      "reg_wdata[21]",
+      "reg_wdata[22]",
+      "reg_wdata[23]",
+      "reg_wdata[24]",
+      "reg_wdata[25]",
+      "reg_wdata[26]",
+      "reg_wdata[27]",
+      "reg_wdata[28]",
+      "reg_wdata[29]",
+      "reg_wdata[2]",
+      "reg_wdata[30]",
+      "reg_wdata[31]",
+      "reg_wdata[3]",
+      "reg_wdata[4]",
+      "reg_wdata[5]",
+      "reg_wdata[6]",
+      "reg_wdata[7]",
+      "reg_wdata[8]",
+      "reg_wdata[9]",
+      "reg_we",
+      "rst",
+      "stall_led",
+      "stall_strobe"
+    ],
+    "pin_entries": 104930,
+    "nets": 9023,
+    "masters": {
+      "gf180mcu_fd_sc_mcu9t5v0__and2_1": 250,
+      "gf180mcu_fd_sc_mcu9t5v0__and2_2": 40,
+      "gf180mcu_fd_sc_mcu9t5v0__and2_4": 43,
+      "gf180mcu_fd_sc_mcu9t5v0__and3_1": 69,
+      "gf180mcu_fd_sc_mcu9t5v0__and3_2": 6,
+      "gf180mcu_fd_sc_mcu9t5v0__and3_4": 9,
+      "gf180mcu_fd_sc_mcu9t5v0__and4_1": 77,
+      "gf180mcu_fd_sc_mcu9t5v0__and4_2": 4,
+      "gf180mcu_fd_sc_mcu9t5v0__and4_4": 10,
+      "gf180mcu_fd_sc_mcu9t5v0__aoi211_1": 186,
+      "gf180mcu_fd_sc_mcu9t5v0__aoi211_2": 7,
+      "gf180mcu_fd_sc_mcu9t5v0__aoi211_4": 2,
+      "gf180mcu_fd_sc_mcu9t5v0__aoi21_1": 396,
+      "gf180mcu_fd_sc_mcu9t5v0__aoi21_2": 36,
+      "gf180mcu_fd_sc_mcu9t5v0__aoi21_4": 4,
+      "gf180mcu_fd_sc_mcu9t5v0__aoi221_1": 53,
+      "gf180mcu_fd_sc_mcu9t5v0__aoi222_1": 94,
+      "gf180mcu_fd_sc_mcu9t5v0__aoi22_1": 279,
+      "gf180mcu_fd_sc_mcu9t5v0__buf_1": 6,
+      "gf180mcu_fd_sc_mcu9t5v0__buf_12": 208,
+      "gf180mcu_fd_sc_mcu9t5v0__buf_20": 2,
+      "gf180mcu_fd_sc_mcu9t5v0__buf_4": 85,
+      "gf180mcu_fd_sc_mcu9t5v0__clkbuf_1": 31,
+      "gf180mcu_fd_sc_mcu9t5v0__clkbuf_12": 7,
+      "gf180mcu_fd_sc_mcu9t5v0__clkbuf_2": 1,
+      "gf180mcu_fd_sc_mcu9t5v0__clkbuf_4": 2,
+      "gf180mcu_fd_sc_mcu9t5v0__clkbuf_8": 2,
+      "gf180mcu_fd_sc_mcu9t5v0__clkinv_1": 721,
+      "gf180mcu_fd_sc_mcu9t5v0__clkinv_12": 2,
+      "gf180mcu_fd_sc_mcu9t5v0__clkinv_16": 1,
+      "gf180mcu_fd_sc_mcu9t5v0__clkinv_2": 14,
+      "gf180mcu_fd_sc_mcu9t5v0__clkinv_3": 12,
+      "gf180mcu_fd_sc_mcu9t5v0__clkinv_4": 1,
+      "gf180mcu_fd_sc_mcu9t5v0__clkinv_8": 4,
+      "gf180mcu_fd_sc_mcu9t5v0__dffq_1": 910,
+      "gf180mcu_fd_sc_mcu9t5v0__dffq_2": 16,
+      "gf180mcu_fd_sc_mcu9t5v0__dffq_4": 6,
+      "gf180mcu_fd_sc_mcu9t5v0__endcap": 428,
+      "gf180mcu_fd_sc_mcu9t5v0__fill_1": 4726,
+      "gf180mcu_fd_sc_mcu9t5v0__fill_16": 1787,
+      "gf180mcu_fd_sc_mcu9t5v0__fill_2": 4428,
+      "gf180mcu_fd_sc_mcu9t5v0__fill_32": 2265,
+      "gf180mcu_fd_sc_mcu9t5v0__fill_4": 3920,
+      "gf180mcu_fd_sc_mcu9t5v0__fill_64": 2055,
+      "gf180mcu_fd_sc_mcu9t5v0__fill_8": 5011,
+      "gf180mcu_fd_sc_mcu9t5v0__filltie": 3890,
+      "gf180mcu_fd_sc_mcu9t5v0__inv_1": 7,
+      "gf180mcu_fd_sc_mcu9t5v0__inv_12": 1,
+      "gf180mcu_fd_sc_mcu9t5v0__inv_2": 6,
+      "gf180mcu_fd_sc_mcu9t5v0__inv_3": 7,
+      "gf180mcu_fd_sc_mcu9t5v0__inv_4": 6,
+      "gf180mcu_fd_sc_mcu9t5v0__inv_8": 1,
+      "gf180mcu_fd_sc_mcu9t5v0__mux2_1": 129,
+      "gf180mcu_fd_sc_mcu9t5v0__mux4_1": 40,
+      "gf180mcu_fd_sc_mcu9t5v0__mux4_2": 8,
+      "gf180mcu_fd_sc_mcu9t5v0__nand2_1": 1218,
+      "gf180mcu_fd_sc_mcu9t5v0__nand2_2": 17,
+      "gf180mcu_fd_sc_mcu9t5v0__nand2_4": 2,
+      "gf180mcu_fd_sc_mcu9t5v0__nand3_1": 143,
+      "gf180mcu_fd_sc_mcu9t5v0__nand3_2": 14,
+      "gf180mcu_fd_sc_mcu9t5v0__nand3_4": 3,
+      "gf180mcu_fd_sc_mcu9t5v0__nand4_1": 105,
+      "gf180mcu_fd_sc_mcu9t5v0__nand4_2": 2,
+      "gf180mcu_fd_sc_mcu9t5v0__nand4_4": 3,
+      "gf180mcu_fd_sc_mcu9t5v0__nor2_1": 1022,
+      "gf180mcu_fd_sc_mcu9t5v0__nor2_2": 26,
+      "gf180mcu_fd_sc_mcu9t5v0__nor2_4": 20,
+      "gf180mcu_fd_sc_mcu9t5v0__nor3_1": 175,
+      "gf180mcu_fd_sc_mcu9t5v0__nor3_2": 4,
+      "gf180mcu_fd_sc_mcu9t5v0__nor3_4": 2,
+      "gf180mcu_fd_sc_mcu9t5v0__nor4_1": 54,
+      "gf180mcu_fd_sc_mcu9t5v0__nor4_2": 3,
+      "gf180mcu_fd_sc_mcu9t5v0__oai211_1": 53,
+      "gf180mcu_fd_sc_mcu9t5v0__oai211_2": 1,
+      "gf180mcu_fd_sc_mcu9t5v0__oai211_4": 1,
+      "gf180mcu_fd_sc_mcu9t5v0__oai21_1": 682,
+      "gf180mcu_fd_sc_mcu9t5v0__oai21_2": 17,
+      "gf180mcu_fd_sc_mcu9t5v0__oai21_4": 12,
+      "gf180mcu_fd_sc_mcu9t5v0__oai221_1": 20,
+      "gf180mcu_fd_sc_mcu9t5v0__oai221_2": 1,
+      "gf180mcu_fd_sc_mcu9t5v0__oai222_1": 1,
+      "gf180mcu_fd_sc_mcu9t5v0__oai22_1": 36,
+      "gf180mcu_fd_sc_mcu9t5v0__oai22_2": 14,
+      "gf180mcu_fd_sc_mcu9t5v0__oai31_1": 20,
+      "gf180mcu_fd_sc_mcu9t5v0__oai31_2": 1,
+      "gf180mcu_fd_sc_mcu9t5v0__oai32_1": 13,
+      "gf180mcu_fd_sc_mcu9t5v0__oai32_2": 2,
+      "gf180mcu_fd_sc_mcu9t5v0__oai33_1": 3,
+      "gf180mcu_fd_sc_mcu9t5v0__or2_1": 122,
+      "gf180mcu_fd_sc_mcu9t5v0__or2_2": 3,
+      "gf180mcu_fd_sc_mcu9t5v0__or2_4": 4,
+      "gf180mcu_fd_sc_mcu9t5v0__or3_1": 12,
+      "gf180mcu_fd_sc_mcu9t5v0__or3_2": 1,
+      "gf180mcu_fd_sc_mcu9t5v0__or4_1": 2,
+      "gf180mcu_fd_sc_mcu9t5v0__or4_4": 1,
+      "gf180mcu_fd_sc_mcu9t5v0__tieh": 2,
+      "gf180mcu_fd_sc_mcu9t5v0__tiel": 60,
+      "gf180mcu_fd_sc_mcu9t5v0__xnor2_1": 646,
+      "gf180mcu_fd_sc_mcu9t5v0__xnor2_2": 10,
+      "gf180mcu_fd_sc_mcu9t5v0__xnor3_1": 138,
+      "gf180mcu_fd_sc_mcu9t5v0__xnor3_2": 1,
+      "gf180mcu_fd_sc_mcu9t5v0__xor2_1": 367,
+      "gf180mcu_fd_sc_mcu9t5v0__xor2_2": 45,
+      "gf180mcu_fd_sc_mcu9t5v0__xor3_1": 28,
+      "gf180mcu_fd_sc_mcu9t5v0__xor3_2": 7
+    }
+  },
+  "pins_examined": {
+    "input": 21090,
+    "power": 37450,
+    "ground": 37450,
+    "output": 8940
+  },
+  "summary": {
+    "single_pin_nets": 118,
+    "findings_by_direction": {
+      "input": 3,
+      "output": 115
+    },
+    "input_findings": 3
+  },
+  "corroboration": {
+    "pnr_single_pin_markers": 46,
+    "tie_cell_output_findings": 46,
+    "tie_cell_output_tally": {
+      "gf180mcu_fd_sc_mcu9t5v0__tieh/Z": 2,
+      "gf180mcu_fd_sc_mcu9t5v0__tiel/ZN": 44
+    },
+    "non_tie_single_pin_findings": 72,
+    "open_input_findings_not_in_markers": 3,
+    "marker_scope": "agrees exactly with the unused tie-cell output subset (tiel/ZN, tieh/Z) of summary.single_pin_nets, not with the total; single-pin nets outside that subset are not corroborated by it",
+    "note": "pnr.report.json def_net_names.single_pin_markers; a cheap corroboration only, not a substitute signal: wavetable_core matches with 480 of them"
+  },
+  "notes": [
+    "klt extract --help (klayout-tools 0.8.0): anonymous net numbering ('$N' labels assigned to a net with no drawn label) is NOT a stable contract across klayout versions or host platforms (issue #1063) -- do not diff raw netlist text across environments. Net names in this record are observed values, explicitly non-contractual; no test asserts them.",
+    "The extracted SPICE and the LVS report escape these names as \\$21170 etc.; this record carries the unescaped form ($21170)."
+  ],
+  "findings": [
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_12_0",
+      "pin": "I",
+      "net": "$21166",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_12",
+      "master_instances": 2,
+      "direction": "input"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_12_1",
+      "pin": "ZN",
+      "net": "$5201",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_12",
+      "master_instances": 2,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_16_0",
+      "pin": "ZN",
+      "net": "$15961",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_16",
+      "master_instances": 1,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_297",
+      "pin": "ZN",
+      "net": "$2057",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1",
+      "master_instances": 721,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_307",
+      "pin": "ZN",
+      "net": "$9086",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1",
+      "master_instances": 721,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_364",
+      "pin": "ZN",
+      "net": "$7634",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1",
+      "master_instances": 721,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_375",
+      "pin": "ZN",
+      "net": "$11270",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1",
+      "master_instances": 721,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_404",
+      "pin": "ZN",
+      "net": "$312",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1",
+      "master_instances": 721,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_408",
+      "pin": "ZN",
+      "net": "$17662",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1",
+      "master_instances": 721,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_416",
+      "pin": "ZN",
+      "net": "$3919",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1",
+      "master_instances": 721,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_420",
+      "pin": "ZN",
+      "net": "$15074",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1",
+      "master_instances": 721,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_427",
+      "pin": "ZN",
+      "net": "$4955",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1",
+      "master_instances": 721,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_428",
+      "pin": "ZN",
+      "net": "$7295",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1",
+      "master_instances": 721,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_446",
+      "pin": "ZN",
+      "net": "$10890",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1",
+      "master_instances": 721,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_466",
+      "pin": "ZN",
+      "net": "$13805",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1",
+      "master_instances": 721,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_491",
+      "pin": "ZN",
+      "net": "$3933",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1",
+      "master_instances": 721,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_495",
+      "pin": "ZN",
+      "net": "$18618",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1",
+      "master_instances": 721,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_498",
+      "pin": "ZN",
+      "net": "$20131",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1",
+      "master_instances": 721,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_508",
+      "pin": "ZN",
+      "net": "$1303",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1",
+      "master_instances": 721,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_535",
+      "pin": "ZN",
+      "net": "$7474",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1",
+      "master_instances": 721,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_537",
+      "pin": "ZN",
+      "net": "$11291",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1",
+      "master_instances": 721,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_552",
+      "pin": "ZN",
+      "net": "$13824",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1",
+      "master_instances": 721,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_562",
+      "pin": "ZN",
+      "net": "$18775",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1",
+      "master_instances": 721,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_565",
+      "pin": "ZN",
+      "net": "$20325",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1",
+      "master_instances": 721,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_576",
+      "pin": "ZN",
+      "net": "$6188",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1",
+      "master_instances": 721,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_585",
+      "pin": "ZN",
+      "net": "$15090",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1",
+      "master_instances": 721,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_588",
+      "pin": "ZN",
+      "net": "$3083",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1",
+      "master_instances": 721,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_600",
+      "pin": "ZN",
+      "net": "$13833",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1",
+      "master_instances": 721,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_675",
+      "pin": "ZN",
+      "net": "$13651",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1",
+      "master_instances": 721,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_683",
+      "pin": "ZN",
+      "net": "$4510",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1",
+      "master_instances": 721,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_686",
+      "pin": "ZN",
+      "net": "$1031",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1",
+      "master_instances": 721,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_712",
+      "pin": "ZN",
+      "net": "$10931",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_1",
+      "master_instances": 721,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_2_0",
+      "pin": "ZN",
+      "net": "$1896",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_2",
+      "master_instances": 14,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_2_1",
+      "pin": "ZN",
+      "net": "$7462",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_2",
+      "master_instances": 14,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_2_10",
+      "pin": "ZN",
+      "net": "$17800",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_2",
+      "master_instances": 14,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_2_11",
+      "pin": "ZN",
+      "net": "$13103",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_2",
+      "master_instances": 14,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_2_2",
+      "pin": "ZN",
+      "net": "$21150",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_2",
+      "master_instances": 14,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_2_3",
+      "pin": "ZN",
+      "net": "$9539",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_2",
+      "master_instances": 14,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_2_4",
+      "pin": "ZN",
+      "net": "$5627",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_2",
+      "master_instances": 14,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_2_5",
+      "pin": "ZN",
+      "net": "$17000",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_2",
+      "master_instances": 14,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_2_8",
+      "pin": "ZN",
+      "net": "$5418",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_2",
+      "master_instances": 14,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_2_9",
+      "pin": "ZN",
+      "net": "$11143",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_2",
+      "master_instances": 14,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_3_0",
+      "pin": "ZN",
+      "net": "$16258",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_3",
+      "master_instances": 12,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_3_1",
+      "pin": "ZN",
+      "net": "$11053",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_3",
+      "master_instances": 12,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_3_10",
+      "pin": "ZN",
+      "net": "$6950",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_3",
+      "master_instances": 12,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_3_11",
+      "pin": "ZN",
+      "net": "$8757",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_3",
+      "master_instances": 12,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_3_2",
+      "pin": "ZN",
+      "net": "$12804",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_3",
+      "master_instances": 12,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_3_3",
+      "pin": "ZN",
+      "net": "$17150",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_3",
+      "master_instances": 12,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_3_4",
+      "pin": "ZN",
+      "net": "$15258",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_3",
+      "master_instances": 12,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_3_5",
+      "pin": "ZN",
+      "net": "$8087",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_3",
+      "master_instances": 12,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_3_6",
+      "pin": "ZN",
+      "net": "$8092",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_3",
+      "master_instances": 12,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_3_7",
+      "pin": "ZN",
+      "net": "$1309",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_3",
+      "master_instances": 12,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_3_8",
+      "pin": "ZN",
+      "net": "$15945",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_3",
+      "master_instances": 12,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_3_9",
+      "pin": "ZN",
+      "net": "$6945",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_3",
+      "master_instances": 12,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_8_2",
+      "pin": "ZN",
+      "net": "$6526",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_8",
+      "master_instances": 4,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__clkinv_8_3",
+      "pin": "ZN",
+      "net": "$15100",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__clkinv_8",
+      "master_instances": 4,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__inv_12_0",
+      "pin": "I",
+      "net": "$3800",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__inv_12",
+      "master_instances": 1,
+      "direction": "input"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__inv_12_0",
+      "pin": "ZN",
+      "net": "$3660",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__inv_12",
+      "master_instances": 1,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__inv_3_1",
+      "pin": "ZN",
+      "net": "$1664",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__inv_3",
+      "master_instances": 7,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__inv_3_2",
+      "pin": "ZN",
+      "net": "$21123",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__inv_3",
+      "master_instances": 7,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__inv_3_3",
+      "pin": "ZN",
+      "net": "$18442",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__inv_3",
+      "master_instances": 7,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__inv_3_4",
+      "pin": "ZN",
+      "net": "$3707",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__inv_3",
+      "master_instances": 7,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__inv_3_5",
+      "pin": "ZN",
+      "net": "$3286",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__inv_3",
+      "master_instances": 7,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__inv_3_6",
+      "pin": "ZN",
+      "net": "$4386",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__inv_3",
+      "master_instances": 7,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__inv_4_0",
+      "pin": "ZN",
+      "net": "$20924",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__inv_4",
+      "master_instances": 6,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__inv_4_1",
+      "pin": "ZN",
+      "net": "$13588",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__inv_4",
+      "master_instances": 6,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__inv_4_2",
+      "pin": "ZN",
+      "net": "$7435",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__inv_4",
+      "master_instances": 6,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__inv_4_3",
+      "pin": "ZN",
+      "net": "$16993",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__inv_4",
+      "master_instances": 6,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__inv_4_4",
+      "pin": "ZN",
+      "net": "$19252",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__inv_4",
+      "master_instances": 6,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__inv_4_5",
+      "pin": "ZN",
+      "net": "$14891",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__inv_4",
+      "master_instances": 6,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__inv_8_0",
+      "pin": "I",
+      "net": "$15501",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__inv_8",
+      "master_instances": 1,
+      "direction": "input"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__inv_8_0",
+      "pin": "ZN",
+      "net": "$15416",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__inv_8",
+      "master_instances": 1,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tieh_0",
+      "pin": "Z",
+      "net": "$21752",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tieh",
+      "master_instances": 2,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tieh_1",
+      "pin": "Z",
+      "net": "$21606",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tieh",
+      "master_instances": 2,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_0",
+      "pin": "ZN",
+      "net": "$21728",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_1",
+      "pin": "ZN",
+      "net": "$21730",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_11",
+      "pin": "ZN",
+      "net": "$21598",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_13",
+      "pin": "ZN",
+      "net": "$21521",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_14",
+      "pin": "ZN",
+      "net": "$21600",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_2",
+      "pin": "ZN",
+      "net": "$21702",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_24",
+      "pin": "ZN",
+      "net": "$21756",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_25",
+      "pin": "ZN",
+      "net": "$21522",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_26",
+      "pin": "ZN",
+      "net": "$21764",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_27",
+      "pin": "ZN",
+      "net": "$21742",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_28",
+      "pin": "ZN",
+      "net": "$21736",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_29",
+      "pin": "ZN",
+      "net": "$21734",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_3",
+      "pin": "ZN",
+      "net": "$21402",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_30",
+      "pin": "ZN",
+      "net": "$21638",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_31",
+      "pin": "ZN",
+      "net": "$21602",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_32",
+      "pin": "ZN",
+      "net": "$21758",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_33",
+      "pin": "ZN",
+      "net": "$21604",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_34",
+      "pin": "ZN",
+      "net": "$21745",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_35",
+      "pin": "ZN",
+      "net": "$21678",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_36",
+      "pin": "ZN",
+      "net": "$21754",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_37",
+      "pin": "ZN",
+      "net": "$21762",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_38",
+      "pin": "ZN",
+      "net": "$21550",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_39",
+      "pin": "ZN",
+      "net": "$21679",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_4",
+      "pin": "ZN",
+      "net": "$21768",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_40",
+      "pin": "ZN",
+      "net": "$21680",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_41",
+      "pin": "ZN",
+      "net": "$21738",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_42",
+      "pin": "ZN",
+      "net": "$21744",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_43",
+      "pin": "ZN",
+      "net": "$21137",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_44",
+      "pin": "ZN",
+      "net": "$21766",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_45",
+      "pin": "ZN",
+      "net": "$21704",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_46",
+      "pin": "ZN",
+      "net": "$21746",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_47",
+      "pin": "ZN",
+      "net": "$21681",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_48",
+      "pin": "ZN",
+      "net": "$21682",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_49",
+      "pin": "ZN",
+      "net": "$21662",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_50",
+      "pin": "ZN",
+      "net": "$21706",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_51",
+      "pin": "ZN",
+      "net": "$21723",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_52",
+      "pin": "ZN",
+      "net": "$21770",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_53",
+      "pin": "ZN",
+      "net": "$21683",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_54",
+      "pin": "ZN",
+      "net": "$21708",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_55",
+      "pin": "ZN",
+      "net": "$21750",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_56",
+      "pin": "ZN",
+      "net": "$21725",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_57",
+      "pin": "ZN",
+      "net": "$21760",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_58",
+      "pin": "ZN",
+      "net": "$21732",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    },
+    {
+      "instance": "gf180mcu_fd_sc_mcu9t5v0__tiel_59",
+      "pin": "ZN",
+      "net": "$21740",
+      "master": "gf180mcu_fd_sc_mcu9t5v0__tiel",
+      "master_instances": 60,
+      "direction": "output"
+    }
+  ]
+}
