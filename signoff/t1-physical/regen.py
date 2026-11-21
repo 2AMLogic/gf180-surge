@@ -96,11 +96,11 @@ def pack(d):
             f.unlink()
 
 
-def run_group(top):
-    d = BASE / top
-    d.mkdir(parents=True, exist_ok=True)
+def build_request(top):
+    """The group's place-and-route request exactly as run_group writes it
+    (#804: factored out so bounded trials build from the same baseline)."""
     edge = DIE_UM[top]
-    pnr_req = {
+    return {
         "schema": "klt.place-and-route.request/1",
         "engine": "openroad",
         "netlist": f"../../t1-item1/{top}/{top}_synth.v",
@@ -116,6 +116,12 @@ def run_group(top):
         "target_stage": "route",
         "portable_paths": True,
     }
+
+
+def run_group(top):
+    d = BASE / top
+    d.mkdir(parents=True, exist_ok=True)
+    pnr_req = build_request(top)
     write_json(d / "request.json", pnr_req)
     scratch = d / ".klt"
     shutil.rmtree(scratch, ignore_errors=True)

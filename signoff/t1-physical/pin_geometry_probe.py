@@ -107,7 +107,7 @@ def lef_irects(lef_text, master):
 
 
 def measure(group, stream_path, stream_hash, source_name, out_path,
-            invoked_argv):
+            invoked_argv, conn_path=None):
     import klayout
     import klayout.db as db
 
@@ -321,9 +321,10 @@ def measure(group, stream_path, stream_hash, source_name, out_path,
 
     # -- cross-reference with the committed connectivity record -------------
     conn = None
-    conn_path = BASE / group / "open_pin_probe.json"
-    if conn_path.is_file():
-        conn = json.loads(conn_path.read_text())
+    if conn_path is None:
+        conn_path = BASE / group / "open_pin_probe.json"
+    if pathlib.Path(conn_path).is_file():
+        conn = json.loads(pathlib.Path(conn_path).read_text())
     open_masters = {}
     if conn:
         for f in conn["findings"]:
@@ -442,6 +443,7 @@ def measure(group, stream_path, stream_hash, source_name, out_path,
             "klayout_module": klayout.__version__,
             "argv": invoked_argv,
             "stream_file": source_name,
+            "connectivity_record": os.path.relpath(conn_path, ROOT),
             "stream_content_hash": stream_hash,
             "dbu_um": dbu,
             "lef": {
@@ -494,7 +496,7 @@ def measure(group, stream_path, stream_hash, source_name, out_path,
 
 def main():
     args = sys.argv[1:]
-    stream = out = None
+    stream = out = conn = None
     group = None
     it = iter(args)
     for a in it:
@@ -502,6 +504,8 @@ def main():
             stream = pathlib.Path(next(it))
         elif a == "--out":
             out = pathlib.Path(next(it))
+        elif a == "--conn":
+            conn = pathlib.Path(next(it))
         else:
             group = a
     if group is None:
@@ -535,7 +539,7 @@ def main():
                               str(pathlib.Path(__file__).resolve()),
                               *args])
         measure(group, stream, stream_hash, source_name, out,
-                ["pin_geometry_probe.py", *args])
+                ["pin_geometry_probe.py", *args], conn_path=conn)
     finally:
         if cleanup is not None:
             cleanup.unlink(missing_ok=True)
