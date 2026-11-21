@@ -102,10 +102,10 @@ def corroboration_block(markers, findings, input_findings):
     }
 
 
-def klt(group, *args):
+def klt(group, *args, d=None):
     """The pinned klt through uvx, cwd = the group directory so the argv the
     record stores stays relative (no absolute host paths in the record)."""
-    d = BASE / group
+    d = BASE / group if d is None else pathlib.Path(d)
     cmd = ["uvx", "--from", PIN, "klt", *map(str, args)]
     return subprocess.run(cmd, cwd=d, capture_output=True, text=True,
                           env={**os.environ, "PDK": "gf180mcuD"})
@@ -115,17 +115,21 @@ def write_json(path, obj):
     path.write_text(json.dumps(obj, indent=2) + "\n")
 
 
-def stream_sha(group):
-    b = gzip.decompress((BASE / group / f"{group}.gds.gz").read_bytes())
+def stream_sha(group, d=None, stream_gz=None):
+    d = BASE / group if d is None else pathlib.Path(d)
+    stream_gz = f"{group}.gds.gz" if stream_gz is None else stream_gz
+    b = gzip.decompress((d / stream_gz).read_bytes())
     return "sha256:" + hashlib.sha256(b).hexdigest()
 
 
-def gunzip_stream(group):
+def gunzip_stream(group, d=None, stream_gz=None):
     """The committed <group>.gds.gz unpacked to a scratch path in the group
-    directory (deleted after the run); returns its name relative to the dir."""
-    dst = BASE / group / f"{group}.gds"
-    dst.write_bytes(gzip.decompress((BASE / group / f"{group}.gds.gz")
-                                    .read_bytes()))
+    directory (deleted after the run); returns its name relative to the dir.
+    #804 trials pass their own directory and stream name."""
+    d = BASE / group if d is None else pathlib.Path(d)
+    stream_gz = f"{group}.gds.gz" if stream_gz is None else stream_gz
+    dst = d / f"{group}.gds"
+    dst.write_bytes(gzip.decompress((d / stream_gz).read_bytes()))
     return dst.name
 
 
@@ -249,17 +253,22 @@ def parse_spice(text, top):
     return ports, entries, masters
 
 
-def probe(group):
-    d = BASE / group
-    if not (d / f"{group}.gds.gz").is_file():
+def probe(group, d=None, stream_gz=None, out_name="open_pin_probe.json"):
+    """Connectivity-probe one routed stream. Defaults keep the committed
+    behavior (`<group>/<group>.gds.gz` -> `<group>/open_pin_probe.json`);
+    #804 trials pass a trial directory and its own stream/report names,
+    so a trial record never overwrites the committed one."""
+    d = BASE / group if d is None else pathlib.Path(d)
+    stream_gz = f"{group}.gds.gz" if stream_gz is None else stream_gz
+    if not (d / stream_gz).is_file():
         raise SystemExit(f"no committed stream for {group}")
-    scratch_gds = gunzip_stream(group)
+    scratch_gds = gunzip_stream(group, d, stream_gz)
     scratch_spice = f"{group}.probe.spice"
     argv = ["extract", scratch_gds, "--deck", "gf180mcu", "--top", group,
             "--abstract-cells", f"{CELL_LIBRARY}__*", "-o", scratch_spice,
             "--format", "json"]
     try:
-        p = klt(group, *argv)
+        p = klt(group, *argv, d=d)
         if p.returncode != 0:
             raise SystemExit(f"klt extract failed ({p.returncode}):\n"
                              f"{p.stdout}\n{p.stderr}")
@@ -301,9 +310,16 @@ def probe(group):
         findings_dir_tally[dd] = findings_dir_tally.get(dd, 0) + 1
 
     # Cheap corroboration from the committed P&R report (not a substitute
-    # signal: wavetable_core matches with 480 single-pin markers).
-    pnr = json.loads(gzip.decompress((d / "pnr.report.json.gz").read_bytes()))
-    markers = pnr.get("def_net_names", {}).get("single_pin_markers")
+    # signal: wavetable_core matches with 480 single-pin markers). A trial
+    # that adopted a completed place-and-route driver (#804) has no P&R
+    # report (the driver's stdout went to a dead pipe), so markers is None
+    # and the corroboration block records the absence instead of a number.
+    if (d / "pnr.report.json.gz").is_file():
+        pnr = json.loads(gzip.decompress(
+            (d / "pnr.report.json.gz").read_bytes()))
+        markers = pnr.get("def_net_names", {}).get("single_pin_markers")
+    else:
+        markers = None
 
     ver = (summary.get("provenance") or {}).get("klt_version") \
         or summary.get("klt_version")
@@ -319,9 +335,9 @@ def probe(group):
             "pin": PIN,
             "klt_version": ver,
             "argv": argv,
-            "cwd": f"signoff/t1-physical/{group}",
-            "stream_file": f"{group}.gds.gz",
-            "stream_content_hash": stream_sha(group),
+            "cwd": os.path.relpath(d, ROOT),
+            "stream_file": stream_gz,
+            "stream_content_hash": stream_sha(group, d, stream_gz),
             "netlist_sha256": summary.get("netlist_sha256"),
             "netlist_normalized_sha256":
                 summary.get("netlist_normalized_sha256"),
@@ -355,7 +371,7 @@ def probe(group):
         "findings": findings,
     }
     (d / scratch_spice).unlink(missing_ok=True)
-    write_json(d / "open_pin_probe.json", record)
+    write_json(d / out_name, record)
     print(group, "findings:", len(findings), "input:",
           findings_dir_tally.get("input", 0), "pins_examined:",
           dir_tally.get("input", 0), flush=True)
