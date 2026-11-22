@@ -3,7 +3,7 @@
 This is a forge workflow snapshot. Issue closure and labels establish no fidelity, preset-quality, or hardware qualification claim.
 
 <!-- guide:plan-body:start -->
-_Generated: 2026-11-21T21:40:52Z (snapshot; compare against live labels)_
+_Generated: 2026-11-22T21:05:00Z (snapshot; compare against live labels)_
 ## Operator Attention: Merge-Risk-Hold Pileup
 
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
@@ -46,7 +46,6 @@ Issues currently being built (`loom:building`).
 PRs waiting on Judge (`loom:review-requested`).
 
 - **#808**: signoff(t1-item1): measure the six NO_VERDICT groups computing in-run; guard regen.py against the yosys-abc wedge
-- **#809**: trial: bound the ext_mem_instr open-input P&R trials to evidence (m4 strap offset ruled out)
 
 ## Approved (Awaiting Merge)
 
@@ -105,7 +104,7 @@ Issues carrying `loom:curated`.
 | Important | 3 |
 | Ready (`loom:issue`, net of holds/building/merge-pending) | 0 |
 | In Progress (`loom:building`) | 6 |
-| PRs awaiting review | 2 |
+| PRs awaiting review | 1 |
 | Approved PRs awaiting merge | 0 |
 | Curated | 26 |
 | Architect / Hermit proposals | 1 |
