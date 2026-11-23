@@ -3,7 +3,7 @@
 This is a forge workflow snapshot. Issue closure and labels establish no fidelity, preset-quality, or hardware qualification claim.
 
 <!-- guide:plan-body:start -->
-_Generated: 2026-11-22T21:05:00Z (snapshot; compare against live labels)_
+_Generated: 2026-11-23T09:41:29Z (snapshot; compare against live labels)_
 ## Operator Attention: Merge-Risk-Hold Pileup
 
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
@@ -22,7 +22,6 @@ _None._
 
 - **#381**: SXT-012 follow-up (#310): implement the one-command carrier reproducibility census per decision record 0019 *(held)*
 - **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus) *(held)*
-- **#802**: T1 item 1: re-measure the six NO_VERDICT synthesis groups with the yosys-abc handshake wedge excluded (every log stops at the wedge's signature line; no in-run CPU reading exists)
 
 ## Ready
 
@@ -35,9 +34,7 @@ _None._
 Issues currently being built (`loom:building`).
 
 - **#372**: Settle-boundary audit: input-only effect tap so Delay/EQ, Chorus and Reverb 2 get a verdict (split from #318)
-- **#475**: RTL: rf_ains34_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
 - **#634**: Remove the five copy-pasted per-leaf RTL harness-reporting test files: fold onto one table-parametrized battery
-- **#802**: T1 item 1: re-measure the six NO_VERDICT synthesis groups with the yosys-abc handshake wedge excluded (every log stops at the wedge's signature line; no in-run CPU reading exists)
 - **#803**: T1 item 11: re-run ERC for the three routed groups under klt 0.9.2, which has the gf180mcu antenna table (0.8.0 pin reports not_checked)
 - **#804**: T1 item 4: close the ext_mem_instr LVS mismatch (four input pins the router left open) with a bounded P&R iteration
 
@@ -45,7 +42,7 @@ Issues currently being built (`loom:building`).
 
 PRs waiting on Judge (`loom:review-requested`).
 
-- **#808**: signoff(t1-item1): measure the six NO_VERDICT groups computing in-run; guard regen.py against the yosys-abc wedge
+_None._
 
 ## Approved (Awaiting Merge)
 
@@ -75,18 +72,18 @@ Issues carrying `loom:curated`.
 - **#372**: Settle-boundary audit: input-only effect tap so Delay/EQ, Chorus and Reverb 2 get a verdict (split from #318) *(curated)*
 - **#381**: SXT-012 follow-up (#310): implement the one-command carrier reproducibility census per decision record 0019 *(curated)* *(held)*
 - **#382**: SXT-012 follow-up (#310): one-factor voice-path diagnostic for the Novuo Reverb 2 carrier (ALL-OFF dry bus) *(curated)* *(held)*
-- **#475**: RTL: rf_ains34_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN) *(curated)*
+- **#475**: RTL: rf_ains34_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN) *(curated)* *(held)*
 - **#497**: Track the gap to T1 (klayout-tools design-evidence-tiers.md) *(curated)*
 - **#554**: T1 items 2/3/4/11 Phase B: gf180mcu physical flow for the 8 groups blocked on #537 *(curated)* *(held)*
 - **#565**: Rebuild the DR-0006 tap-patched oracle builds (sxt028a-tap, sxt028c-tap) from source with a recorded identity *(curated)* *(held)*
 - **#580**: T1 item 1: logical4_core and rf_* cores expose only block_done, so synthesis removes the datapath *(curated)* *(held)*
-- **#802**: T1 item 1: re-measure the six NO_VERDICT synthesis groups with the yosys-abc handshake wedge excluded (every log stops at the wedge's signature line; no in-run CPU reading exists) *(curated)*
+- **#635**: Remove never-instantiated fx_line_ext.sv: the SXT-023 'external-memory model' is dead and has drifted from the inline arrays the bench uses *(curated)*
 - **#803**: T1 item 11: re-run ERC for the three routed groups under klt 0.9.2, which has the gf180mcu antenna table (0.8.0 pin reports not_checked) *(curated)*
 - **#804**: T1 item 4: close the ext_mem_instr LVS mismatch (four input pins the router left open) with a bounded P&R iteration *(curated)*
 
 ## Proposed (Architect / Hermit)
 
-- **#635**: Remove never-instantiated fx_line_ext.sv: the SXT-023 'external-memory model' is dead and has drifted from the inline arrays the bench uses *(hermit)* *(held)*
+- **#635**: Remove never-instantiated fx_line_ext.sv: the SXT-023 'external-memory model' is dead and has drifted from the inline arrays the bench uses *(hermit)*
 
 ## Epics
 
@@ -101,10 +98,10 @@ Issues carrying `loom:curated`.
 |------|-------|
 | Operator merge-risk holds | 0 |
 | Very important | 1 |
-| Important | 3 |
+| Important | 2 |
 | Ready (`loom:issue`, net of holds/building/merge-pending) | 0 |
-| In Progress (`loom:building`) | 6 |
-| PRs awaiting review | 1 |
+| In Progress (`loom:building`) | 4 |
+| PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
 | Curated | 26 |
 | Architect / Hermit proposals | 1 |
