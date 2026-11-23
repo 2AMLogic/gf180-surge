@@ -3,7 +3,7 @@
 This is a forge workflow snapshot. Issue closure and labels establish no fidelity, preset-quality, or hardware qualification claim.
 
 <!-- guide:plan-body:start -->
-_Generated: 2026-11-21T02:44:20Z (snapshot; compare against live labels)_
+_Generated: 2026-11-22T21:05:00Z (snapshot; compare against live labels)_
 ## Operator Attention: Merge-Risk-Hold Pileup
 
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
@@ -28,7 +28,7 @@ _None._
 
 Human-approved issues (`loom:issue`) ready for implementation — excluding held (`loom:blocked`/`loom:operator`/`loom:frozen`), `loom:building`, and issues closed by an open `loom:pr` PR (listed under Approved).
 
-- **#802**: T1 item 1: re-measure the six NO_VERDICT synthesis groups with the yosys-abc handshake wedge excluded (every log stops at the wedge's signature line; no in-run CPU reading exists)
+_None._
 
 ## In Progress
 
@@ -37,6 +37,7 @@ Issues currently being built (`loom:building`).
 - **#372**: Settle-boundary audit: input-only effect tap so Delay/EQ, Chorus and Reverb 2 get a verdict (split from #318)
 - **#475**: RTL: rf_ains34_core has 11 non-port signals read but undriven in standalone elaboration (Verilator UNDRIVEN)
 - **#634**: Remove the five copy-pasted per-leaf RTL harness-reporting test files: fold onto one table-parametrized battery
+- **#802**: T1 item 1: re-measure the six NO_VERDICT synthesis groups with the yosys-abc handshake wedge excluded (every log stops at the wedge's signature line; no in-run CPU reading exists)
 - **#803**: T1 item 11: re-run ERC for the three routed groups under klt 0.9.2, which has the gf180mcu antenna table (0.8.0 pin reports not_checked)
 - **#804**: T1 item 4: close the ext_mem_instr LVS mismatch (four input pins the router left open) with a bounded P&R iteration
 
@@ -44,7 +45,7 @@ Issues currently being built (`loom:building`).
 
 PRs waiting on Judge (`loom:review-requested`).
 
-_None._
+- **#808**: signoff(t1-item1): measure the six NO_VERDICT groups computing in-run; guard regen.py against the yosys-abc wedge
 
 ## Approved (Awaiting Merge)
 
@@ -101,9 +102,9 @@ Issues carrying `loom:curated`.
 | Operator merge-risk holds | 0 |
 | Very important | 1 |
 | Important | 3 |
-| Ready (`loom:issue`, net of holds/building/merge-pending) | 1 |
-| In Progress (`loom:building`) | 5 |
-| PRs awaiting review | 0 |
+| Ready (`loom:issue`, net of holds/building/merge-pending) | 0 |
+| In Progress (`loom:building`) | 6 |
+| PRs awaiting review | 1 |
 | Approved PRs awaiting merge | 0 |
 | Curated | 26 |
 | Architect / Hermit proposals | 1 |
