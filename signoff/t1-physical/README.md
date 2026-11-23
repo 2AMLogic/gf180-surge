@@ -179,13 +179,27 @@ fails to parse (klt's own message says to use cheap mode). Only
 
 **`--rerun` re-test under klt 0.9.2 (#803, wavetable_core, from copies of the
 committed reports and a fresh 0.9.2 pair, 2026-11-21).** Both observations
-re-checked; the tracking issue is #803 (an issue, not a PR); measured outputs are summarized below, and the upstream DRC filing 2AMLogic/klayout-tools#6986 currently carries only a command with a `<gds>` placeholder and the drift excerpt -- the exact request/input and a fresh report are **not yet attached** there (open item, not claimed done):
+re-checked; the tracking issue is #803 (an issue, not a PR); measured outputs
+are summarized below. Upstream status, re-checked 2026-11-23: the DRC filing
+2AMLogic/klayout-tools#6986 is closed **COMPLETED** (2026-11-23T06:59:11Z) --
+upstream independently reproduced the drift from the written reproducer alone
+(the filing's "Curator verification": `main` at `6bd18bbc8`, KLayout 0.30.12,
+explicit layout path, both PDK flags tried) and fixed it there. The #803
+step-5 artifacts are a separate fact, also re-checked 2026-11-23: they are
+**not attached** to the filing as of that date (it links only the two command
+lines, `> drc.report.json` and `--check drc.report.json --rerun`); upstream
+resolved the bug from the written reproducer, and the attachment request
+stays tracked by #803. No tagged klt release contains the fix (latest
+`v0.9.2`, 2026-11-15, re-checked 2026-11-23), so the klt 0.9.2 measurement
+below stands as scoped:
 
 - **DRC: still reproduces.** On a *fresh* 0.9.2 DRC report (clean, PDK
   resolved, exit 0), `klt drc --check --rerun` still exits 3 with the only
   drift `provenance.pdk` `fresh: null` -- `--pdk`/`--pdk-root`/`$PDK` on the
-  rerun are still ignored. Filed upstream:
-  2AMLogic/klayout-tools#6986. Re-running the *committed 0.8.0* report under
+  rerun are still ignored. Filed upstream as
+  2AMLogic/klayout-tools#6986, since closed COMPLETED (2026-11-23) and fixed
+  from the written reproducer; the fix landed after the `v0.9.2` tag, so the
+  0.9.2 measurement stands. Re-running the *committed 0.8.0* report under
   0.9.2 additionally and expectedly drifts on curated-deck content
   (`coverage.deck_layers/deck_scope/inapplicable/rules_skipped/
   unmodeled_rules`, `provenance.deck.content_hash`) and records
