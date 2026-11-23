@@ -16,8 +16,8 @@ the connectivity probe and the geometry probe. Nothing in the committed
 group directories is read except the baseline request/netlist, and nothing
 there is written.
 
-Router diagnostics (klt's openroad-logs scratch) are archived as
-openroad-logs.tar.gz before the scratch is removed. Every command, exit
+Router diagnostics are retained under openroad-logs/<invocation-id>/
+before klt scratch is removed. Every command, exit
 code and wall time lands in run.json together with the baseline-relative
 request diff and the outcome summary. Sequential, single run at a time;
 place-and-route alone is ~40 minutes for ext_mem_instr.
@@ -29,7 +29,6 @@ import pathlib
 import shutil
 import subprocess
 import sys
-import tarfile
 import time
 
 HERE = pathlib.Path(__file__).resolve().parent
@@ -99,12 +98,15 @@ def main():
     sets = []
     group = slug = None
     resume_pnr = False
+    rerun_geometry = False
     it = iter(args)
     for a in it:
         if a == "--set":
             sets.append(next(it))
         elif a == "--resume-pnr":
             resume_pnr = True
+        elif a == "--rerun-geometry":
+            rerun_geometry = True
         elif group is None:
             group = a
         elif slug is None:
@@ -163,6 +165,56 @@ def main():
     scratch = tdir / ".klt"
     out = scratch / "place-and-route"
     adopted = None
+    if rerun_geometry:
+        # Repair path for the first m4-strap-offset-0p0 run: the
+        # connectivity probe's scratch cleanup deleted the trial's
+        # unpacked <group>.gds before the geometry probe opened it
+        # (same filename, fixed in the same change: the geometry probe
+        # now reads the packed .gds.gz). Re-executes only the geometry
+        # step against the same stream and rewrites its run.json entry;
+        # the failed attempt stays in commands.
+        run_path = tdir / "run.json"
+        if not run_path.is_file():
+            raise SystemExit("--rerun-geometry: no run.json to repair")
+        run = json.loads(run_path.read_text())
+        for need in (f"{group}.gds.gz", "open_pin_probe.json"):
+            if not (tdir / need).is_file():
+                raise SystemExit(
+                    f"--rerun-geometry: {need} missing; nothing to re-run "
+                    "against")
+        t0 = time.monotonic()
+        gp = subprocess.run(
+            [sys.executable, str(HERE / "pin_geometry_probe.py"), group,
+             "--stream", str(tdir / f"{group}.gds.gz"), "--out",
+             str(tdir / "pin_geometry_probe.json"), "--conn",
+             str(tdir / "open_pin_probe.json")],
+            cwd=ROOT, capture_output=True, text=True, env=os.environ)
+        dt = round(time.monotonic() - t0, 1)
+        print(f"[trial] pin-geometry-probe (rerun): exit {gp.returncode} "
+              f"in {dt}s", flush=True)
+        if gp.returncode != 0:
+            print(gp.stdout[-2000:], gp.stderr[-2000:], flush=True)
+            raise SystemExit("--rerun-geometry: probe still failing")
+        run["commands"].append({
+            "step": "pin-geometry-probe", "exit": gp.returncode,
+            "seconds": dt,
+            "note": "re-execution after the trial's original geometry step "
+                    "failed on FileNotFoundError: open_pin_probe's scratch "
+                    "cleanup had deleted the unpacked trial .gds (same "
+                    "name); fixed by reading the packed .gds.gz, and this "
+                    "rerun path, in the same change",
+        })
+        geo = json.loads((tdir / "pin_geometry_probe.json").read_text())
+        run["steps"]["pin-geometry-probe"] = {
+            "exit": gp.returncode,
+            "isolated_input_masters":
+                geo["summary"]["masters_with_isolated_inputs"],
+            "first_attempt": "exit 1 (FileNotFoundError; see commands)",
+        }
+        write_json(run_path, run)
+        print(f"[trial] pin-geometry-probe summary: "
+              f"{run['steps']['pin-geometry-probe']}", flush=True)
+        return
     if resume_pnr:
         # Adopt a place-and-route driven by an earlier builder step whose
         # driver survived that step's exit (the trial.py parent did not).
@@ -223,10 +275,21 @@ def main():
             return
     shutil.copy(out / f"{group}.gds", tdir / f"{group}.gds")
     shutil.copy(out / f"{group}.v", tdir / f"{group}.v")
-    logs = tdir / ".klt" / "place-and-route" / "openroad-logs"
+    # The generated stage scripts are the proof a request leaf reached the
+    # flow (the placebo trial's density leaf never did); keep them out of
+    # the scratch that is deleted below. m4-strap-offset-0p0's own scripts
+    # were archived by hand mid-run the same way before this line existed.
+    scripts = sorted(out.glob("pnr_*.tcl"))
+    if scripts:
+        (tdir / "pnr-scripts").mkdir(exist_ok=True)
+        for s in scripts:
+            shutil.copy(s, tdir / "pnr-scripts" / s.name)
+    logs = out / "openroad-logs"
     if logs.is_dir():
-        with tarfile.open(tdir / "openroad-logs.tar.gz", "w:gz") as tf:
-            tf.add(logs, arcname="openroad-logs")
+        retained_logs = tdir / "openroad-logs"
+        if retained_logs.exists():
+            shutil.rmtree(retained_logs)
+        logs.rename(retained_logs)
     shutil.rmtree(scratch, ignore_errors=True)
 
     gds = (tdir / f"{group}.gds").relative_to(ROOT)
@@ -290,7 +353,7 @@ def main():
     t0 = time.monotonic()
     gp = subprocess.run(
         [sys.executable, str(HERE / "pin_geometry_probe.py"), group,
-         "--stream", str(tdir / f"{group}.gds"), "--out",
+         "--stream", str(tdir / f"{group}.gds.gz"), "--out",
          str(tdir / "pin_geometry_probe.json"), "--conn",
          str(tdir / "open_pin_probe.json")],
         cwd=ROOT, capture_output=True, text=True, env=os.environ)

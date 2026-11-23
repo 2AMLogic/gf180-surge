@@ -1,0 +1,26 @@
+OpenROAD 26Q3-1510-g6cb3f2b704 
+Features included (+) or not (-): +GPU +GUI +Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ODB-0388] unsupported LEF58_EOLENCLOSURE property for layer Via1 :"
+  	EOLENCLOSURE 0.34 0.06 ;"
+[INFO ODB-0388] unsupported LEF58_EOLENCLOSURE property for layer Via2 :" EOLENCLOSURE 0.34 0.06 ; "
+[INFO ODB-0388] unsupported LEF58_EOLENCLOSURE property for layer Via3 :" EOLENCLOSURE 0.34 0.06 ; "
+[INFO ODB-0388] unsupported LEF58_EOLENCLOSURE property for layer Via4 :" EOLENCLOSURE 0.34 0.06 ; "
+[INFO ODB-0227] LEF file: /home/ubuntu/.ciel/gf180mcuD/libs.ref/gf180mcu_fd_sc_mcu9t5v0/techlef/gf180mcu_fd_sc_mcu9t5v0__nom.tlef, created 15 layers, 56 vias
+[WARNING ODB-0220] WARNING (LEFPARS-2008): NOWIREEXTENSIONATPIN statement is obsolete in version 5.6 or later.
+The NOWIREEXTENSIONATPIN statement will be ignored. See file /home/ubuntu/.ciel/gf180mcuD/libs.ref/gf180mcu_fd_sc_mcu9t5v0/lef/gf180mcu_fd_sc_mcu9t5v0.lef at line 2.
+
+[INFO ODB-0227] LEF file: /home/ubuntu/.ciel/gf180mcuD/libs.ref/gf180mcu_fd_sc_mcu9t5v0/lef/gf180mcu_fd_sc_mcu9t5v0.lef, created 229 library cells
+[WARNING IFP-0028] Core area lower left (10.000, 10.000) snapped to (10.080, 10.080).
+[INFO IFP-0001] Added 214 rows of 1928 site GF018hv5v_green_sc9.
+[INFO IFP-0100] Die BBox:  (  0.000  0.000 ) ( 1100.000 1100.000 ) um
+[INFO IFP-0101] Core BBox: ( 10.080 10.080 ) ( 1089.760 1088.640 ) um
+[INFO IFP-0102] Core area:                      1164499.661 um^2
+[INFO IFP-0103] Total instances area:            257391.590 um^2
+[INFO IFP-0104] Effective utilization:                0.221
+[INFO IFP-0105] Number of instances:                   8856
+[INFO TAP-0004] Inserted 428 endcaps.
+[INFO TAP-0005] Inserted 3890 tapcells.
+[INFO PDN-0001] Inserting grid: grid
+[INFO PDN-0500] Runtime: 0.17s

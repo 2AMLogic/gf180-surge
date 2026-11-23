@@ -1,0 +1,91 @@
+{
+  "schema": "gf180-surge.pnr-trial/1",
+  "group": "ext_mem_instr",
+  "slug": "m4-strap-offset-0p0",
+  "sets": [
+    "power.straps.1.offset_um=0.0"
+  ],
+  "commands": [
+    {
+      "step": "place-and-route",
+      "exit": 0,
+      "seconds": 3253.1
+    },
+    {
+      "step": "drc",
+      "exit": 0,
+      "seconds": 383.4
+    },
+    {
+      "step": "lvs",
+      "exit": 3,
+      "seconds": 1166.6
+    },
+    {
+      "step": "open-pin-probe",
+      "exit": 0,
+      "seconds": 1084.8
+    },
+    {
+      "step": "pin-geometry-probe",
+      "exit": 1,
+      "seconds": 0.1
+    },
+    {
+      "step": "pin-geometry-probe",
+      "exit": 0,
+      "seconds": 16.4,
+      "note": "re-execution after the trial's original geometry step failed on FileNotFoundError: open_pin_probe's scratch cleanup had deleted the unpacked trial .gds (same name); fixed by reading the packed .gds.gz, and this rerun path, in the same change"
+    }
+  ],
+  "steps": {
+    "place-and-route": {
+      "exit": 0
+    },
+    "drc": {
+      "exit": 0,
+      "status": "clean",
+      "violations": 0
+    },
+    "lvs": {
+      "exit": 3,
+      "status": "mismatch",
+      "errors": 31
+    },
+    "open-pin-probe": {
+      "exit": 0,
+      "single_pin_nets": 118,
+      "open_input_pins": [
+        "gf180mcu_fd_sc_mcu9t5v0__clkinv_12_0",
+        "gf180mcu_fd_sc_mcu9t5v0__inv_12_0",
+        "gf180mcu_fd_sc_mcu9t5v0__inv_8_0"
+      ],
+      "input_pins_examined": 21090
+    },
+    "pin-geometry-probe": {
+      "exit": 0,
+      "isolated_input_masters": [
+        "clkinv_12",
+        "inv_12",
+        "inv_8"
+      ],
+      "first_attempt": "exit 1 (FileNotFoundError; see commands)"
+    }
+  },
+  "request_diff": [
+    {
+      "path": "power.straps[1].offset_um",
+      "baseline": 22.4,
+      "trial": 0.0
+    }
+  ],
+  "netlist_path_rewrite": {
+    "group_request": "../../t1-item1/ext_mem_instr/ext_mem_instr_synth.v",
+    "trial_request": "../../../../t1-item1/ext_mem_instr/ext_mem_instr_synth.v",
+    "reason": "trial requests live at trials/<group>/<slug>/; the referenced bytes are the same committed netlist"
+  },
+  "erc": {
+    "status": "NOT_RUN",
+    "reason": "erc is not_changed by a routing trial and stays not_checked (missing antenna PDK) for the committed groups; not part of this trial's acceptance"
+  }
+}
