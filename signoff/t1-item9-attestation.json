@@ -892,7 +892,7 @@
         "role": "testbench",
         "path": "tests/test_sxt019_provenance.py",
         "passed": true,
-        "content_hash": "sha256:964cd7ac2aedfe3562ad186826d2d1dade9488aa3bd4ea0d1ff4f929bd86ddea"
+        "content_hash": "sha256:a12d3baa7e64d61189eae139ba06fcccf56f5043091a3d502a41a871f7b1fff6"
       },
       {
         "check": "present",
