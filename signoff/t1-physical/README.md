@@ -179,7 +179,7 @@ fails to parse (klt's own message says to use cheap mode). Only
 
 **`--rerun` re-test under klt 0.9.2 (#803, wavetable_core, from copies of the
 committed reports and a fresh 0.9.2 pair, 2026-11-21).** Both observations
-re-checked; commands and outputs in the PR #803 record:
+re-checked; the tracking issue is #803 (an issue, not a PR); measured outputs are summarized below, and the upstream DRC filing 2AMLogic/klayout-tools#6986 currently carries only a command with a `<gds>` placeholder and the drift excerpt -- the exact request/input and a fresh report are **not yet attached** there (open item, not claimed done):
 
 - **DRC: still reproduces.** On a *fresh* 0.9.2 DRC report (clean, PDK
   resolved, exit 0), `klt drc --check --rerun` still exits 3 with the only

@@ -193,6 +193,10 @@ def erc_antenna_problems(erc):
     if len(gates) != erc["gate_count"]:
         v.append(f"gates listed {len(gates)} != gate_count {erc['gate_count']}")
     pairs = set()
+    ids = [g["gate_id"] for g in gates]
+    if len(set(ids)) != len(ids):
+        v.append(f"gate ids not unique: {len(ids)} gates, {len(set(ids))} "
+                 "distinct (a gate is missing or duplicated)")
     for gate in gates:
         metals = [l for l in gate["levels"] if l["layer"] in ERC_METALS]
         names = [l["layer"] for l in metals]
@@ -218,10 +222,18 @@ def erc_antenna_problems(erc):
     cov = erc.get("coverage", {})
     if not cov.get("checked"):
         v.append("no checked antenna levels")
-    checked = set()
+    checked = []
     for c in cov.get("checked", []):
         cid = c["id"] if isinstance(c, dict) else c
-        checked.add(tuple(json.loads(cid.split(":", 1)[1])))
+        checked.append(tuple(json.loads(cid.split(":", 1)[1])))
+    if len(checked) != len(set(checked)):
+        v.append(f"coverage.checked holds duplicate gate/metal records "
+                 f"({len(checked)} records, {len(set(checked))} distinct)")
+    if len(checked) != len(gates) * len(ERC_METALS):
+        v.append(f"coverage.checked holds {len(checked)} records, want "
+                 f"exactly {len(gates) * len(ERC_METALS)} (one per "
+                 "expected gate/metal pair)")
+    checked = set(checked)
     if checked != pairs:
         v.append(f"coverage.checked holds {len(checked)} gate/metal pairs, "
                  f"the gates' levels hold {len(pairs)}")
@@ -387,6 +399,58 @@ class T1PhysicalNegativeControl(unittest.TestCase):
         self.assertTrue(any("no checked antenna levels" in x for x in bad), bad)
         self.assertTrue(any("missing_antenna_pdk" in x for x in bad), bad)
         self.assertTrue(any("not a checked verdict" in x for x in bad), bad)
+
+    def test_erc_control_missing_gate_duplicate_id_fails_coverage(self):
+        # Review of #806: with 513 declared gates, the last gate replaced by
+        # a copy of the first (512 distinct ids) and its five checked
+        # entries removed (2560 pairs) used to pass, because the check
+        # compared sets. Duplicate ids and a record count off the expected
+        # gate x metal total must each be rejected.
+        erc = copy.deepcopy(load("wavetable_core", "erc.report.json"))
+        self.assertEqual(erc_antenna_problems(erc), [])
+        last = erc["gates"][-1]["gate_id"]
+        erc["gates"][-1] = copy.deepcopy(erc["gates"][0])
+        erc["coverage"]["checked"] = [
+            c for c in erc["coverage"]["checked"]
+            if not (c["id"] if isinstance(c, dict) else c).startswith(
+                f'antenna:["{last}",')]
+        self.assertEqual(len(erc["gates"]), erc["gate_count"])
+        bad = erc_antenna_problems(erc)
+        self.assertTrue(any("not unique" in x for x in bad), bad)
+        self.assertTrue(any("want exactly" in x for x in bad), bad)
+
+    def test_regen_every_erc_path_uses_the_shared_092_invocation(self):
+        # Review of #806: `check_group` (full flow and --checks-only) ran
+        # `klt erc` under the 0.8.0 flow pin without --pdk, losing every
+        # antenna level. All four ERC paths must go through `run_erc`.
+        import ast
+        src = (BASE / "regen.py").read_text()
+        tree = ast.parse(src)
+        fns = {n.name: n for n in tree.body if isinstance(n, ast.FunctionDef)}
+        for name in ("check_group", "erc_only", "erc_control"):
+            calls = {c.func.id for c in ast.walk(fns[name])
+                     if isinstance(c, ast.Call) and isinstance(c.func, ast.Name)}
+            self.assertIn("run_erc", calls, name)
+        for name, fn in fns.items():
+            if name == "run_erc":
+                continue
+            for c in ast.walk(fn):
+                if (isinstance(c, ast.Call) and isinstance(c.func, ast.Name)
+                        and c.func.id == "klt" and c.args
+                        and getattr(c.args[0], "value", None) == "erc"):
+                    self.fail(f"{name} calls klt erc directly")
+        run = ast.get_source_segment(src, fns["run_erc"])
+        self.assertIn('"--pdk", "gf180mcu"', run)
+        self.assertIn("version=ERC_KLT", run)
+
+    def test_erc_control_duplicate_checked_record_fails_coverage(self):
+        # One gate/metal record replaced by a duplicate of another keeps the
+        # set and the length-per-gate view plausible; it must still fail.
+        erc = copy.deepcopy(load("wavetable_core", "erc.report.json"))
+        erc["coverage"]["checked"][-1] = copy.deepcopy(
+            erc["coverage"]["checked"][0])
+        bad = erc_antenna_problems(erc)
+        self.assertTrue(any("duplicate" in x for x in bad), bad)
 
 
 # #679 -- committed open-pin probe records: `signoff/t1-physical/<g>/

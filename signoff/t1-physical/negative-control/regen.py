@@ -72,7 +72,10 @@ def mutated_netlist():
 def main():
     NC.mkdir(exist_ok=True)
     (NC / "mutation.json").write_text(json.dumps(MUTATION, indent=2) + "\n")
-    status = {}
+    # Merge into the existing record: the ERC control (`../regen.py
+    # --erc-control`) owns the `erc` field; either order reproduces it.
+    es = NC / "exit_status.json"
+    status = json.loads(es.read_text()) if es.exists() else {}
 
     p = uvx("python", "-c", BUILD_GDS)
     assert p.returncode == 0, p.stderr

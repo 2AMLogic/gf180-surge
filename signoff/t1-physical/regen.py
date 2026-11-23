@@ -72,6 +72,50 @@ def klt(*args, version=None):
     return p
 
 
+def run_erc(gds, spec, top):
+    """The one ERC invocation (#803): `ERC_KLT` with `--pdk gf180mcu`, shared
+    by the full flow, `--checks-only`, `--erc-only` and the control, so no
+    path can fall back to the flow pin and lose the antenna table. Returns
+    (returncode, stdout) only for a usable tool report -- a parseable JSON
+    report written by `ERC_KLT` -- and exits nonzero on an infrastructure
+    failure (no report, wrong version) so a caller never replaces committed
+    evidence with it. Valid nonzero ERC findings (exit 4) are returned."""
+    p = klt("erc", gds, spec, "--top", top, "--pdk", "gf180mcu",
+            "--format", "json", version=ERC_KLT)
+    try:
+        rep = json.loads(p.stdout)
+        ok = (rep["provenance"]["klt_version"] == ERC_KLT.split("==")[1]
+              and "coverage" in rep)
+    except (ValueError, KeyError, TypeError):
+        ok = False
+    if not ok:
+        sys.exit(f"{top}: ERC under {ERC_KLT} produced no usable report "
+                 f"(exit {p.returncode}); nothing written.\n{p.stderr[-2000:]}")
+    return p.returncode, p.stdout
+
+
+class unpacked_stream:
+    """Context manager: `<top>.gds` for the duration of a refresh, restoring
+    whatever was there before (bytes, or absence) on exit, success or not."""
+
+    def __init__(self, top):
+        self.d = BASE / top
+        self.path = self.d / f"{top}.gds"
+        self.packed = self.d / f"{top}.gds.gz"
+
+    def __enter__(self):
+        self.prior = self.path.read_bytes() if self.path.exists() else None
+        self.path.write_bytes(gzip.decompress(self.packed.read_bytes()))
+        return self.path
+
+    def __exit__(self, *exc):
+        if self.prior is None:
+            self.path.unlink(missing_ok=True)
+        else:
+            self.path.write_bytes(self.prior)
+        return False
+
+
 def write_json(path, obj):
     path.write_text(json.dumps(obj, indent=2) + "\n")
 
@@ -174,9 +218,8 @@ def check_group(top, status, reuse_drc=False):
     (d / "lvs.report.json").write_text(p.stdout)
 
     spec = (BASE / "erc-supply-spec.json").relative_to(ROOT)
-    p = klt("erc", gds, spec, "--top", top, "--format", "json")
-    status["erc"] = p.returncode
-    (d / "erc.report.json").write_text(p.stdout)
+    status["erc"], out = run_erc(gds, spec, top)
+    (d / "erc.report.json").write_text(out)
 
     write_json(d / "exit_status.json", status)
     pack(d)
@@ -186,28 +229,22 @@ def check_group(top, status, reuse_drc=False):
 def erc_only(top):
     """ERC refresh under `ERC_KLT` on the *committed* stream (#803).
 
-    Unpacks `<top>.gds.gz` (the reports bind the uncompressed stream), runs
-    `klt erc --pdk gf180mcu` against `erc-supply-spec.json`, rewrites only
-    `erc.report.json` and the `erc` field of `exit_status.json`, and restores
-    the compressed stream from its original bytes -- every other committed
-    artifact (P&R/DRC/LVS reports, stream) stays byte-identical.
+    Unpacks `<top>.gds.gz` (the reports bind the uncompressed stream) to
+    `<top>.gds`, runs `run_erc` against `erc-supply-spec.json`, and only after
+    a usable report rewrites `erc.report.json.gz` and the `erc` field of
+    `exit_status.json`. Every other committed artifact stays byte-identical,
+    and a pre-existing unpacked stream is restored, not removed.
     """
     d = BASE / top
-    packed_gds = d / f"{top}.gds.gz"
-    unpacked = d / f"{top}.gds"
-    original_gz = packed_gds.read_bytes()
-    unpacked.write_bytes(gzip.decompress(original_gz))
     spec = (BASE / "erc-supply-spec.json").relative_to(ROOT)
-    p = klt("erc", unpacked.relative_to(ROOT), spec, "--top", top,
-            "--pdk", "gf180mcu", "--format", "json", version=ERC_KLT)
+    with unpacked_stream(top) as gds:
+        rc, out = run_erc(gds.relative_to(ROOT), spec, top)
     status = json.loads((d / "exit_status.json").read_text())
-    status["erc"] = p.returncode
-    (d / "erc.report.json").write_text(p.stdout)
+    status["erc"] = rc
+    (d / "erc.report.json").write_text(out)
     write_json(d / "exit_status.json", status)
     pack_erc(d)
-    packed_gds.write_bytes(original_gz)
-    unpacked.unlink()
-    print(top, "erc", p.returncode, flush=True)
+    print(top, "erc", rc, flush=True)
 
 
 def pack_erc(d):
@@ -221,25 +258,19 @@ def erc_control():
     same klt version as `erc_only`, but the retained pre-mapping spec whose
     role names miss the gf180mcu table keys. The committed report must show
     every intended metal level skipped with `missing_antenna_limit` -- the
-    coverage check in tests/test_t1_physical_flow.py rejects it."""
+    coverage check in tests/test_t1_physical_flow.py rejects it. Only the
+    `erc` field of the control's exit record is touched."""
     top = "wavetable_core"
-    d = BASE / top
     nc = BASE / "negative-control"
-    packed_gds = d / f"{top}.gds.gz"
-    unpacked = d / f"{top}.gds"
-    original_gz = packed_gds.read_bytes()
-    unpacked.write_bytes(gzip.decompress(original_gz))
     spec = (nc / "erc-supply-spec-lowercase.json").relative_to(ROOT)
-    p = klt("erc", unpacked.relative_to(ROOT), spec, "--top", top,
-            "--pdk", "gf180mcu", "--format", "json", version=ERC_KLT)
-    (nc / "erc.report.json").write_text(p.stdout)
+    with unpacked_stream(top) as gds:
+        rc, out = run_erc(gds.relative_to(ROOT), spec, top)
+    (nc / "erc.report.json").write_text(out)
     pack_erc(nc)
     status = json.loads((nc / "exit_status.json").read_text())
-    status["erc"] = p.returncode
+    status["erc"] = rc
     write_json(nc / "exit_status.json", status)
-    packed_gds.write_bytes(original_gz)
-    unpacked.unlink()
-    print("negative-control erc", p.returncode, flush=True)
+    print("negative-control erc", rc, flush=True)
 
 
 if __name__ == "__main__":
