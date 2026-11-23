@@ -15,8 +15,8 @@
 // v*lpinv + (float)(t*lp)), mirroring model Lag.process; the streamed lag
 // targets are already on the float32 grid.
 //
-// Delay channel lines (2^18+12 x Q10.21) live in external-memory
-// modules (fx_line_ext) with transaction counters and an additive hash.
+// Delay channel lines (2^18+12 x Q10.21): inline arrays line_mem0..line_mem3
+// (task line_access) with transaction counters and an additive hash.
 //
 // Wiring (plusarg PCONFIG):
 //   1 = metallic : ains=[delay] sends=[delay]

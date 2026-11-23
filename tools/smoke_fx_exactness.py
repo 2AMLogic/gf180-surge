@@ -152,15 +152,13 @@ def _run(args, wd, iverilog):
                 f"+SINC={os.path.join(REPO, 'rtl/effects/sinc_q29.hex')}"]
     t0 = time.time()
     if args.sim == "iverilog":
-        subprocess.run([iverilog, "-g2012", "-o", vvp,
-                        args.tb, os.path.join(REPO, "rtl/effects/fx_line_ext.sv")],
+        subprocess.run([iverilog, "-g2012", "-o", vvp, args.tb],
                        check=True)
         subprocess.run(["vvp", vvp] + plusargs,
                        check=True, stdout=subprocess.DEVNULL)
     else:
         subprocess.run(["verilator", "--binary", "--timing", "-Wno-fatal",
                         "--top-module", "tb_fx", args.tb,
-                        os.path.join(REPO, "rtl/effects/fx_line_ext.sv"),
                         "-o", "simverilator", "--Mdir", os.path.join(wd, "obj_dir")],
                        check=True)
         subprocess.run([os.path.join(wd, "obj_dir", "simverilator")] + plusargs,
