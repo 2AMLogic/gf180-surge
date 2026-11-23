@@ -4,7 +4,9 @@
 For each synthesized product group (netlist from signoff/t1-item1/): runs
 `klt place-and-route`, then `klt drc`, `klt lvs` and `klt erc` on the routed
 stream, with the pinned `klayout-tools` (signoff/requirements.txt) through
-`uvx`. Sequential and single-threaded. Keeps only the commit-safe artifacts
+`uvx`, except ERC which runs under the per-check `ERC_KLT` override (0.9.2,
+the first release with the gf180mcu antenna table; #803). Sequential and
+single-threaded. Keeps only the commit-safe artifacts
 (requests, reports, the routed stream and as-built netlist) and removes the
 `.klt/` scratch directory.
 
@@ -25,6 +27,11 @@ CELL_LIBRARY = "gf180mcu_fd_sc_mcu9t5v0"
 SITE = "GF018hv5v_green_sc9"
 PDK = "gf180mcuD"
 PIN = (ROOT / "signoff" / "requirements.txt").read_text().strip()
+# ERC alone runs under the newer klt that has the gf180mcu antenna table
+# (#803; 2AMLogic/klayout-tools#4003, in v0.9.2, absent from v0.8.0). A
+# per-check override only: the flow pin stays 0.8.0 for P&R/DRC/LVS, and
+# regenerating those under a moved pin is deliberately out of scope.
+ERC_KLT = "klayout-tools==0.9.2"
 # Square die edge (um): sized for the top-level pin count (PPL-0024) and a
 # routable utilization. Block-level, pin-limited; not a floorplan proposal.
 DIE_UM = {"wavetable_core": 500, "control_top": 1000, "ext_mem_instr": 1100}
@@ -58,11 +65,55 @@ POWER = {
 }
 
 
-def klt(*args):
-    cmd = ["uvx", "--from", PIN, "klt", *map(str, args)]
+def klt(*args, version=None):
+    cmd = ["uvx", "--from", version or PIN, "klt", *map(str, args)]
     p = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True,
                        env={**__import__("os").environ, "PDK": PDK})
     return p
+
+
+def run_erc(gds, spec, top):
+    """The one ERC invocation (#803): `ERC_KLT` with `--pdk gf180mcu`, shared
+    by the full flow, `--checks-only`, `--erc-only` and the control, so no
+    path can fall back to the flow pin and lose the antenna table. Returns
+    (returncode, stdout) only for a usable tool report -- a parseable JSON
+    report written by `ERC_KLT` -- and exits nonzero on an infrastructure
+    failure (no report, wrong version) so a caller never replaces committed
+    evidence with it. Valid nonzero ERC findings (exit 4) are returned."""
+    p = klt("erc", gds, spec, "--top", top, "--pdk", "gf180mcu",
+            "--format", "json", version=ERC_KLT)
+    try:
+        rep = json.loads(p.stdout)
+        ok = (rep["provenance"]["klt_version"] == ERC_KLT.split("==")[1]
+              and "coverage" in rep)
+    except (ValueError, KeyError, TypeError):
+        ok = False
+    if not ok:
+        sys.exit(f"{top}: ERC under {ERC_KLT} produced no usable report "
+                 f"(exit {p.returncode}); nothing written.\n{p.stderr[-2000:]}")
+    return p.returncode, p.stdout
+
+
+class unpacked_stream:
+    """Context manager: `<top>.gds` for the duration of a refresh, restoring
+    whatever was there before (bytes, or absence) on exit, success or not."""
+
+    def __init__(self, top):
+        self.d = BASE / top
+        self.path = self.d / f"{top}.gds"
+        self.packed = self.d / f"{top}.gds.gz"
+
+    def __enter__(self):
+        self.prior = self.path.read_bytes() if self.path.exists() else None
+        self.path.write_bytes(gzip.decompress(self.packed.read_bytes()))
+        return self.path
+
+    def __exit__(self, *exc):
+        if self.prior is None:
+            self.path.unlink(missing_ok=True)
+        else:
+            self.path.write_bytes(self.prior)
+        return False
 
 
 def write_json(path, obj):
@@ -167,26 +218,80 @@ def check_group(top, status, reuse_drc=False):
     (d / "lvs.report.json").write_text(p.stdout)
 
     spec = (BASE / "erc-supply-spec.json").relative_to(ROOT)
-    p = klt("erc", gds, spec, "--top", top, "--format", "json")
-    status["erc"] = p.returncode
-    (d / "erc.report.json").write_text(p.stdout)
+    status["erc"], out = run_erc(gds, spec, top)
+    (d / "erc.report.json").write_text(out)
 
     write_json(d / "exit_status.json", status)
     pack(d)
     print(top, status, flush=True)
 
 
+def erc_only(top):
+    """ERC refresh under `ERC_KLT` on the *committed* stream (#803).
+
+    Unpacks `<top>.gds.gz` (the reports bind the uncompressed stream) to
+    `<top>.gds`, runs `run_erc` against `erc-supply-spec.json`, and only after
+    a usable report rewrites `erc.report.json.gz` and the `erc` field of
+    `exit_status.json`. Every other committed artifact stays byte-identical,
+    and a pre-existing unpacked stream is restored, not removed.
+    """
+    d = BASE / top
+    spec = (BASE / "erc-supply-spec.json").relative_to(ROOT)
+    with unpacked_stream(top) as gds:
+        rc, out = run_erc(gds.relative_to(ROOT), spec, top)
+    status = json.loads((d / "exit_status.json").read_text())
+    status["erc"] = rc
+    (d / "erc.report.json").write_text(out)
+    write_json(d / "exit_status.json", status)
+    pack_erc(d)
+    print(top, "erc", rc, flush=True)
+
+
+def pack_erc(d):
+    (d / "erc.report.json.gz").write_bytes(
+        gzip.compress((d / "erc.report.json").read_bytes(), 9, mtime=0))
+    (d / "erc.report.json").unlink()
+
+
+def erc_control():
+    """The lowercase supply-spec control (#803): same wavetable_core stream,
+    same klt version as `erc_only`, but the retained pre-mapping spec whose
+    role names miss the gf180mcu table keys. The committed report must show
+    every intended metal level skipped with `missing_antenna_limit` -- the
+    coverage check in tests/test_t1_physical_flow.py rejects it. Only the
+    `erc` field of the control's exit record is touched."""
+    top = "wavetable_core"
+    nc = BASE / "negative-control"
+    spec = (nc / "erc-supply-spec-lowercase.json").relative_to(ROOT)
+    with unpacked_stream(top) as gds:
+        rc, out = run_erc(gds.relative_to(ROOT), spec, top)
+    (nc / "erc.report.json").write_text(out)
+    pack_erc(nc)
+    status = json.loads((nc / "exit_status.json").read_text())
+    status["erc"] = rc
+    write_json(nc / "exit_status.json", status)
+    print("negative-control erc", rc, flush=True)
+
+
 if __name__ == "__main__":
     # `--checks-only` resumes after place-and-route: reuses the unpacked
     # `<g>.gds` and `pnr.report.json` left by an interrupted run;
-    # `--reuse-drc` also keeps the unpacked `drc.report.json`.
+    # `--reuse-drc` also keeps the unpacked `drc.report.json`. `--erc-only`
+    # (#803) refreshes only the ERC reports under `ERC_KLT` on the committed
+    # streams; `--erc-control` regenerates the lowercase negative control.
     args = sys.argv[1:]
+    if "--erc-control" in args:
+        erc_control()
+        sys.exit(0)
     checks_only = "--checks-only" in args
+    erc_only_mode = "--erc-only" in args
     only = {a for a in args if not a.startswith("--")}
     for top in DIE_UM:
         if only and top not in only:
             continue
-        if checks_only:
+        if erc_only_mode:
+            erc_only(top)
+        elif checks_only:
             check_group(top, {"place-and-route": 0},
                         reuse_drc="--reuse-drc" in args)
         else:

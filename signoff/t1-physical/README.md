@@ -13,13 +13,24 @@ netlist `<g>.v`, `lvs.request.json`, and `pnr` / `drc` / `lvs` / `erc` reports
 deterministically; the content hashes inside the reports bind the
 **uncompressed** stream. ERC uses `erc-supply-spec.json`, which declares `ties[]`.
 
+Tool versions: P&R, DRC and LVS reports are pinned `klayout-tools==0.8.0`
+(`signoff/requirements.txt` via `uvx`). ERC alone is regenerated under
+`klayout-tools==0.9.2` (#803), the first release with the gf180mcu
+antenna-ratio table (2AMLogic/klayout-tools#4003): a per-check override in
+`regen.py` (`ERC_KLT`), not a pin move — `signoff/requirements.txt` stays
+0.8.0 and the DRC/LVS/P&R artifacts are unchanged 0.8.0 reports. Refresh only
+the ERC reports with `python3 signoff/t1-physical/regen.py --erc-only`
+(re-reads each committed `<g>.gds.gz`, rewrites only `erc.report.json.gz` and
+the `erc` field of `exit_status.json`); the lowercase failure control with
+`--erc-control`.
+
 ## Recorded outcomes (as the tools reported them, nothing waived)
 
-| group | P&R | DRC | LVS | ERC |
+| group | P&R | DRC | LVS | ERC (klt 0.9.2, `--pdk gf180mcu`) |
 |---|---|---|---|---|
-| control_top | ok (route) | clean (was 94045) | match | not_checked |
-| ext_mem_instr | ok (route) | clean (was 107856) | **mismatch** | not_checked |
-| wavetable_core | ok (route) | clean (was 19850) | match | not_checked |
+| control_top | ok (route) | clean (was 94045) | match | clean, exit 0; 25884 gates x 5 metals = 129420 levels checked, 0 skipped, all `pass` |
+| ext_mem_instr | ok (route) | clean (was 107856) | **mismatch** | clean, exit 0; 17556 gates x 5 metals = 87780 levels checked, 0 skipped, all `pass` |
+| wavetable_core | ok (route) | clean (was 19850) | match | clean, exit 0; 513 gates x 5 metals = 2565 levels checked, 0 skipped, all `pass` |
 
 "Clean" is the curated `gf180mcu` deck's verdict (`klt drc`, 0 violations,
 nothing skipped); it is not full foundry DRC signoff.
@@ -104,12 +115,50 @@ re-extracting.
 The Metal1/Via1 geometry observation above remains ad hoc and is NOT
 committed by that probe; it needs its own measurement.
 
-### ERC: `not_checked` is a tool gap, not a missing input
-Every gate reports `antenna_verdict: unchecked` with reason
-`missing_antenna_pdk` and `"pdk": null`. klt 0.8.0 `erc --pdk` has no gf180mcu
-antenna table to load, so supplying the supply spec (which already declares
-`ties[]`) cannot change this. Item 11 therefore has no `met` ERC verdict; this
-is reported as not_checked, never as a pass.
+### ERC: re-run under klt 0.9.2 with the gf180mcu antenna table (#803)
+
+The Phase-A `not_checked` was a tool gap, not a missing input: klt 0.8.0 had
+no gf180mcu antenna table, so every gate reported `unchecked` with reason
+`missing_antenna_pdk` and `"pdk": null`. klt 0.9.2 ships one
+(2AMLogic/klayout-tools#4003), and the three committed streams were re-run
+(`regen.py --erc-only`, same streams, `--pdk gf180mcu`):
+
+- `erc-supply-spec.json` stackup role names are now the case-sensitive table
+  keys `Metal1`..`Metal5` (was `metal1`..`metal5`); the mapping applies to the
+  `vias[].between` endpoints and both `ties[].connect_to` values. Layer/
+  datatype pairs, label layers, stack order, the `poly` gate role, via
+  geometry and the supply/tap declarations are unchanged. The pre-mapping
+  lowercase spec is retained as the failure control
+  `negative-control/erc-supply-spec-lowercase.json`.
+- Recorded outcome (as the tool reports it): all three groups `clean`, exit
+  0, `erc_finding_count` 0. Every gate carries exactly one graded level for
+  each of `Metal1`..`Metal5` with a table limit (400.0, w/o-diode, from
+  gf180mcu-pdk `antenna.rb` rules `ANT.16_i_ANT.2`..`.6` at f6eeac7) and a
+  rule source; `coverage.checked` reconciles to exactly the gate/metal pairs
+  and `coverage.skipped` is empty. Per metal, checked == gate count (e.g.
+  wavetable_core: 513 per metal, 2565 total). The gate role `poly` is
+  inapplicable and stays ungraded, as klt intends for stackup[0].
+- Antenna-ratio model caveat, inherited from the klt table (not a claim this
+  repo can upgrade): the limit compares cumulative connected **area** / gate
+  area, while the foundry deck's own ANT rules measure perimeter x
+  thickness / gate area; klt does not model protection diodes. A `clean`
+  here is the tool's verdict under that approximation.
+- `provenance.label_layers` record per-metal label counts; `Metal4` carries
+  0 label texts in all three tops (observation, recorded, unexplained --
+  klt warns about it on stderr, which the committed JSON does not capture).
+- The lowercase control on the same wavetable_core stream and the same klt
+  0.9.2 misses every table key: exit 4, `not_checked`, 0 checked, all 2565
+  intended metal levels skipped with reason `missing_antenna_limit`
+  (committed as `negative-control/erc.report.json.gz` +
+  `exit_status.json:erc = 4`). The lookup is by role name verbatim; this is
+  the reproducible failure `tests/test_t1_physical_flow.py`'s coverage check
+  rejects, alongside a stale 0.8.0-shape `missing_antenna_pdk` report.
+
+DRC/LVS/P&R reports are still 0.8.0 artifacts; the pin did not move (#803
+records why: moving it re-attests the item 9 / item 10 envelopes and
+regenerates DRC/LVS -- filed separately if wanted). Item 11 remains
+`unmet`/`no_evidence` at the manifest level: this is 3 of 11 groups, and the
+all-11-groups citation rule in `tests/test_t1_physical_flow.py` is unchanged.
 
 ### Reproducibility
 Cheap `--check` (re-hash stream, deck and reference against the recorded
@@ -128,12 +177,40 @@ record `reference.form`, so the gate-level Verilog is re-read as SPICE and
 fails to parse (klt's own message says to use cheap mode). Only
 `wavetable_core` was checked; report both upstream rather than waiving them.
 
+**`--rerun` re-test under klt 0.9.2 (#803, wavetable_core, from copies of the
+committed reports and a fresh 0.9.2 pair, 2026-11-21).** Both observations
+re-checked; the tracking issue is #803 (an issue, not a PR); measured outputs are summarized below, and the upstream DRC filing 2AMLogic/klayout-tools#6986 currently carries only a command with a `<gds>` placeholder and the drift excerpt -- the exact request/input and a fresh report are **not yet attached** there (open item, not claimed done):
+
+- **DRC: still reproduces.** On a *fresh* 0.9.2 DRC report (clean, PDK
+  resolved, exit 0), `klt drc --check --rerun` still exits 3 with the only
+  drift `provenance.pdk` `fresh: null` -- `--pdk`/`--pdk-root`/`$PDK` on the
+  rerun are still ignored. Filed upstream:
+  2AMLogic/klayout-tools#6986. Re-running the *committed 0.8.0* report under
+  0.9.2 additionally and expectedly drifts on curated-deck content
+  (`coverage.deck_layers/deck_scope/inapplicable/rules_skipped/
+  unmodeled_rules`, `provenance.deck.content_hash`) and records
+  `provenance.klayout_version_mismatch` (0.30.13 resolved vs 0.30.12 tested);
+  no verdict-bearing field drifts.
+- **LVS: fixed upstream for 0.9.2-generated reports.** klt 0.9.2 echoes a
+  `reference_conversion` block (2AMLogic/klayout-tools#4353, PR #4356) and
+  `--check --rerun` of a fresh 0.9.2 LVS report now replays the gate-level
+  Verilog (measured: `match`, and the rerun agrees on every verdict-bearing
+  field). The *committed 0.8.0* reports predate the echo and still exit 1 on
+  the SPICE parse (klt's message says so); cheap `--check` remains their
+  verification route. Residual on fresh reports: the rerun still exits 3 on
+  `provenance.pin_order_sources.0.path` (`$PDK_ROOT`-neutral committed vs
+  absolute-home fresh) -- already upstream as
+  2AMLogic/klayout-tools#5812.
+
 ### Negative control
 `negative-control/` holds a one-sliver layout that `klt drc` fails on
-`metal2.width.1`, and a netlist mutation of `wavetable_core` that `klt lvs`
+`metal2.width.1`, a netlist mutation of `wavetable_core` that `klt lvs`
 reports as `mismatch` against the committed stream (`regen.py` there rebuilds
-both). `tests/test_t1_physical_flow.py` asserts each fails its targeted check
-while the unmutated group stays clean/matching.
+both), and the lowercase ERC supply spec (pre-role-mapping) whose 0.9.2
+report skips every intended metal level with `missing_antenna_limit`
+(`signoff/t1-physical/regen.py --erc-control` rebuilds it).
+`tests/test_t1_physical_flow.py` asserts each fails its targeted check
+while the unmutated group stays clean/matching/fully covered.
 
 ## What this does not establish
 

@@ -1,0 +1,25 @@
+{
+  "stackup": [
+    {"name": "poly", "layer": "30/0", "role": "gate", "active_layer": "22/0"},
+    {"name": "metal1", "layer": "34/0", "label_layer": "34/10"},
+    {"name": "metal2", "layer": "36/0", "label_layer": "36/10"},
+    {"name": "metal3", "layer": "42/0", "label_layer": "42/10"},
+    {"name": "metal4", "layer": "46/0", "label_layer": "46/10"},
+    {"name": "metal5", "layer": "81/0", "label_layer": "81/10"}
+  ],
+  "vias": [
+    {"name": "contact", "layer": "33/0", "between": ["poly", "metal1"]},
+    {"name": "via1", "layer": "35/0", "between": ["metal1", "metal2"]},
+    {"name": "via2", "layer": "38/0", "between": ["metal2", "metal3"]},
+    {"name": "via3", "layer": "40/0", "between": ["metal3", "metal4"]},
+    {"name": "via4", "layer": "41/0", "between": ["metal4", "metal5"]}
+  ],
+  "nets": [
+    {"name": "VDD", "kind": "supply"},
+    {"name": "VSS", "kind": "supply"}
+  ],
+  "ties": [
+    {"name": "nwell_tap", "well_layer": "21/0", "tap_layer": "22/0", "tap_requires": ["32/0"], "connect_to": "metal1", "net": "VDD"},
+    {"name": "psub_tap", "well_layer": null, "well_complement_of": ["21/0"], "tap_layer": "22/0", "tap_requires": ["31/0"], "connect_to": "metal1", "net": "VSS"}
+  ]
+}
