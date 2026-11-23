@@ -251,9 +251,9 @@ KLT='uvx --from klayout-tools==0.9.2 klt' \
                                      rf_global34_core rf_send34_core
 ```
 
-Run at most two groups concurrently on a shared fleet host, one `regen.py`
-invocation per job (it is sequential within a process). Each timed-out group
-costs the full 1800 s budget.
+Run at most two groups concurrently on a shared fleet host. For concurrent
+measurements, launch each group in its own background `regen.py <group>` job
+and save its PID (`$!`) alongside the group name. Each timeout costs 1800 s.
 
 **klt leaves the `yosys-abc` child alive when it kills Yosys on a timeout.**
 Observed on every one of the five 2026-11-14 runs and again on all six #802
@@ -263,9 +263,46 @@ is reparented. In the six #802 guarded re-runs, the paired in-run readings
 wall second — across each group's sampled live ABC window (the earlier
 2026-11-14 runs have no in-run CPU readings, and the earlier "keeps burning a
 core" wording was a post-kill `ps` elapsed-time observation, not a CPU
-reading). Check for and kill orphans after a timed-out run
-(`ps -eo pid,comm | awk '$2=="yosys-abc"'`); leaving them is what the
-long-running-compute rule forbids.
+reading).
+
+**Cleanup on a Linux measurement host**
+
+1. During the ABC pass, follow the saved job's children with
+   `ps --ppid "$run_pid" -o pid,ppid,lstart,args`, repeating for each launcher down
+   to the Yosys command for this group's script. Set `yosys_pid` to that PID
+   and `abc_pid` to its direct `yosys-abc` child's PID.
+2. While both are alive, start a Python 3.9+ session for this pair with
+   `python3 -i -c '' "$yosys_pid" "$abc_pid"` and keep it open. Pin both
+   processes so PID reuse cannot redirect a later signal.
+
+   ```python
+   import os, select, signal, subprocess, sys
+   yosys_pid, abc_pid = map(int, sys.argv[1:])
+   yosys_fd = os.pidfd_open(yosys_pid)
+   abc_fd = os.pidfd_open(abc_pid)
+   ```
+
+   In the sampling shell, record the group name and
+   `ps -p "$yosys_pid,$abc_pid" -o pid,ppid,lstart,etime,time,comm` with
+   the CPU readings. Check both start times and names against the group's
+   process tree and confirm ABC's PPID equals `yosys_pid`. If the pair
+   cannot be verified, stop cleanup for that group.
+3. After klt reports **this group's** 1800 s timeout, use the same Python
+   session. An exited parent's pidfd is readable. A surviving child's pidfd
+   is still unreadable, and its PPID has changed.
+
+   ```python
+   exited, _, _ = select.select([yosys_fd, abc_fd], [], [], 0)
+   if exited == [yosys_fd]:
+       ppid = subprocess.check_output(["ps", "-p", str(abc_pid), "-o", "ppid="])
+       if int(ppid) != yosys_pid:
+           signal.pidfd_send_signal(abc_fd, signal.SIGTERM)
+   ```
+
+   Verify exit with `select.select([abc_fd], [], [], 5)[0] == [abc_fd]`
+   before recording cleanup. If the child already exited, its pidfd is
+   readable and cleanup is complete. A failed identity check or a child
+   that survives the signal needs investigation for that group.
 
 `regen.py` passes the #802 handshake guard itself (`COLUMNS=1000`, and a
 private per-invocation short `TMPDIR` under `/tmp` when the ambient one is 36

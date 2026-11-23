@@ -20,7 +20,7 @@ area or fidelity claim.
 | klt (run) | **`0.9.2`** (tagged), throwaway `uvx --from klayout-tools==0.9.2 klt`; host klt untouched |
 | Yosys | `0.67+post` (`b8e7da6f40ae8f…`, host-provisioned `~/.cache/yosys-0.67/bin/yosys`) — same sha1 as every committed record |
 | yosys-abc | UC Berkeley ABC 1.01, compiled Nov 19 2026 20:03:50, linked `libreadline.so.8` (the upstream #5780 fix is `klayout-tools#5975` in klt's Python launcher, absent from klt `0.9.2`) |
-| Guard exported | `TMPDIR=/tmp/s1` (8 chars), `COLUMNS=1000` |
+| Guard exported | `TMPDIR=/tmp/s1` (7 chars), `COLUMNS=1000` |
 | Yosys budget | 1800.0 s (unchanged) |
 
 ## In-run CPU readings (60 s apart, `ps -o pid,etime,time`)
