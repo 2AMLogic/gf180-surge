@@ -8,6 +8,8 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-11-23
 
+- **PR #806**: feat(signoff): check t1-physical antenna ERC under klt 0.9.2 (T1 item 11 ERC re-run)
+- **Issue #803** (closed): T1 item 11: re-run ERC for the three routed groups under klt 0.9.2, which has the gf180mcu antenna table (0.8.0 pin reports not_checked)
 - **Issue #802** (closed): T1 item 1: re-measure the six NO_VERDICT synthesis groups with the yosys-abc handshake wedge excluded (every log stops at the wedge's signature line; no in-run CPU reading exists)
 - **PR #808**: signoff(t1-item1): measure the six NO_VERDICT groups computing in-run; guard regen.py against the yosys-abc wedge
 
