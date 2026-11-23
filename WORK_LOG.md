@@ -8,6 +8,7 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-11-23
 
+- **PR #817**: docs(t1-physical): record klayout-tools#6986 close in DRC --rerun evidence
 - **PR #814**: refactor: remove never-instantiated fx_line_ext.sv, fix bench docs
 - **Issue #635** (closed): Remove never-instantiated fx_line_ext.sv: the SXT-023 'external-memory model' is dead and has drifted from the inline arrays the bench uses
 - **PR #806**: feat(signoff): check t1-physical antenna ERC under klt 0.9.2 (T1 item 11 ERC re-run)
