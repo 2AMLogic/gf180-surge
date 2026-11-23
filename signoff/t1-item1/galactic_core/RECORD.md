@@ -291,16 +291,30 @@ frontend instead of by `memory_map`), not datapath growth.
 This file records synthesizability progress only. It establishes nothing
 about P&R, timing, area, RTL-vs-netlist equivalence, or fidelity.
 
+Reproduce the historical #579/#641/#657 runs (unreleased klt rev pin
+`d9bc3681`, never the host klt):
+
+```
+KLT='uvx --from "git+https://github.com/2AMLogic/klayout-tools.git@d9bc36811ddd11fcf9c60d3a9275858296db8b44" klt' \
+  python3 signoff/t1-item1/regen.py galactic_core
+```
+
+The probe is a hand-run diagnostic: it is not a `klt synthesize` verdict and
+does not replace one; every item-1 verdict still comes from `regen.py`
+under the pinned klt.
+
 ## #802 guarded re-measurement (2026-11-21): computing, not wedged
 
-Verdict: **NO_VERDICT — computing at the budget** (outcome unchanged;
-the missing CPU measurement now exists). #802 re-ran this group at the same
-1800 s budget with the yosys-abc handshake guard exported
-(`TMPDIR=/tmp/s1`, `COLUMNS=1000`) under klt **`0.9.2`** (tagged, throwaway
-`uvx --from klayout-tools==0.9.2`; the ambient environment was `TMPDIR`
-length 29, `COLUMNS` unset — see `../rf_global2_core/RECORD.md` for the full
-as-found table, including the `yosys-abc` ABC 1.01 build dated 2026-11-19
-that already postdates the klayout-tools#5780 fix).
+Verdict: **NO_VERDICT — computing at the budget (guarded re-run)** (outcome
+unchanged; #802 adds in-run paired CPU readings for this guarded re-run,
+whereas the historical #579/#641/#657 runs carry no in-run CPU readings).
+#802 re-ran this group at the same 1800 s budget with the yosys-abc handshake
+guard exported (`TMPDIR=/tmp/s1`, `COLUMNS=1000`) under tagged klt **`0.9.2`**
+(throwaway `uvx --from klayout-tools==0.9.2`; the ambient environment was
+`TMPDIR` length 29, `COLUMNS` unset — see `../rf_global2_core/RECORD.md` for
+the full as-found table, including the `yosys-abc` ABC 1.01 build dated
+2026-11-19; the upstream #5780 fix is `klayout-tools#5975` in klt's Python
+launcher, absent from klt `0.9.2`).
 
 In-run CPU readings (60 s apart; yosys pid 917753, `yosys-abc` pid 934614):
 
@@ -312,11 +326,14 @@ In-run CPU readings (60 s apart; yosys pid 917753, `yosys-abc` pid 934614):
 | 04:58:36 (last live snap) | 00:00:27 (28:58) | 00:28:30 (28:37) |
 | ~04:59:35 (budget) | killed | killed |
 
-`yosys-abc` consumed ≈1.0 CPU-second per wall second from ~23 s after Yosys
-start to the 1800 s kill; `yosys` was flat at 27 CPU s after the blif
-extraction. Flat CPU on both processes is the wedge's signature; this run is
-the opposite — the generic ABC pass computes for the whole budget over the
-~270k-cell post-#641/#657 netlist.
+Across the sampled paired live interval (`04:32:35`–`04:58:36`,
+`02:37`–`28:37` ABC elapsed / `02:57`–`28:58` Yosys elapsed), `yosys-abc`
+advanced from 00:02:37 to 00:28:30 CPU (+25:53 CPU over 26:00 elapsed, ≈1.0
+CPU-second per wall second), while `yosys` stayed flat at `00:00:27`
+cumulative process CPU (covering all pre-ABC passes through BLIF extraction;
+no pass-entry reading was taken to isolate extraction alone). Flat CPU on
+both processes is the wedge's signature; this guarded re-run is the opposite
+over the ~270k-cell post-#641/#657 netlist.
 
 Outcome: exit 1, same last line `4.22.1 Extracting gate netlist …`
 (`timeout-progress.txt`, byte-identical to the committed record); the
@@ -327,13 +344,10 @@ killed after the run; none left on the host. The follow-up stays where
 #657 left it: an upstream/tool-pin question on generic ABC over ~2.7e5 cells
 of arithmetic, not a budget change and not a wedge.
 
-Reproduce (never the host klt):
+Reproduce the #802 guarded re-run (tagged klt `0.9.2`, never the host klt;
+distinct from the historical `d9bc3681` command above):
 
 ```
-KLT='uvx --from "git+https://github.com/2AMLogic/klayout-tools.git@d9bc36811ddd11fcf9c60d3a9275858296db8b44" klt' \
+KLT='uvx --from klayout-tools==0.9.2 klt' \
   python3 signoff/t1-item1/regen.py galactic_core
 ```
-
-The probe is a hand-run diagnostic: it is not a `klt synthesize` verdict and
-does not replace one; every item-1 verdict still comes from `regen.py`
-under the pinned klt.
