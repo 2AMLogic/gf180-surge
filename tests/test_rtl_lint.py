@@ -85,7 +85,8 @@ def test_committed_manifest_matches_tracked_files():
     groups, cls = lint.validate_manifest(_load(MANIFEST),
                                          lint.tracked_sv(REPO))
     assert len(groups) == 11
-    assert sorted(set(cls.values())) == sorted(lint.CLASSES)
+    assert set(cls.values()) <= set(lint.CLASSES)
+    assert set(cls.values()) == {"product", "testbench", "mutant_control"}
     assert sum(1 for v in cls.values() if v == "product") == 11
 
 

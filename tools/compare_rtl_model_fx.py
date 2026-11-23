@@ -36,8 +36,7 @@ VLR = os.environ.get("VERILATOR", "verilator")
 def run_sim(sim, tb, vvp_path, workdir, plusargs):
     """Compile+run the tb with iverilog/vvp (canonical) or Verilator."""
     if sim == "iverilog":
-        subprocess.run([IV, "-g2012", "-o", vvp_path, tb,
-                        os.path.join(REPO, "rtl", "effects", "fx_line_ext.sv")],
+        subprocess.run([IV, "-g2012", "-o", vvp_path, tb],
                        check=True)
         subprocess.run([VVP, vvp_path] + plusargs, check=True,
                        stdout=subprocess.DEVNULL)
@@ -45,7 +44,6 @@ def run_sim(sim, tb, vvp_path, workdir, plusargs):
     os.makedirs(workdir, exist_ok=True)
     subprocess.run([VLR, "--binary", "--timing", "-Wno-fatal",
                     "--top-module", "tb_fx", tb,
-                    os.path.join(REPO, "rtl", "effects", "fx_line_ext.sv"),
                     "-o", "simverilator", "--Mdir", os.path.join(workdir, "obj_dir")],
                    check=True)
     subprocess.run([os.path.join(workdir, "obj_dir", "simverilator")] + plusargs,

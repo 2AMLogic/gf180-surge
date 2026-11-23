@@ -35,10 +35,6 @@
    "class": "testbench"
   },
   {
-   "path": "rtl/effects/fx_line_ext.sv",
-   "class": "sim_model"
-  },
-  {
    "path": "rtl/effects/reverb1/reverb1_broken_mutant.sv",
    "class": "mutant_control"
   },

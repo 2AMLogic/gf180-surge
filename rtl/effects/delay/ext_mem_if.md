@@ -17,8 +17,8 @@ are NOT edited; agreement/divergence is recorded here).
 | `delay_mod_margin_semitones` (SXT-015 placeholder 12.0) | **REPLACED by the pinned mechanism**: the line is fully allocated at 2^18 regardless of parameters; the modulation sweep rides ON TOP of the nominal time and is CLAMPED per sample to `[32, 2^18−13]` (`Delay.h:347-355`). The sweep span is `LFOval` ≈ `inc·min(100, half-period_blocks)` with `inc = (2^(depth/12) − 1)·32` samples/block: ≈ 392 samples at depth 2.0, ≈ 3,202 at extended depth 12.0 — i.e. the modulation margin is a SAMPLE-DOMAIN LFO excursion (≤ 3,208 samples ≈ 1.2% of the line), not a semitone doubling of the allocation | **DIVERGES** from the SXT-015 semitone-margin model (which implied a 2× allocation for parameters > 0); SXT-015's estimate was conservative (over-allocated); no committed SXT-015/016 file is edited — this pin supersedes for SXT-023 scope |
 | per-sample time clamp | `max(32, min((int)v, 2^18 − 13))` | NEW pin (`Delay.h:348-349`) |
 
-## Interface (behavioral model: `rtl/effects/fx_line_ext.sv` + the inline
-arrays in `rtl/effects/tb_fx.sv` — identical semantics)
+## Interface (behavioral model: the inline arrays `line_mem0`..`line_mem3` in
+`rtl/effects/tb_fx.sv`, accessed through its `line_access` task)
 
 Per delay instance: TWO independent channel lines (stereo), each
 262,156 × 32-bit words. Word = Q10.21 sample. No read latency in the
