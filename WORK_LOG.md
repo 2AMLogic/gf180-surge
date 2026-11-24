@@ -6,6 +6,11 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 - [2026-09](work_log/WORK_LOG_2026-09.md)
 
+### 2026-11-24
+
+- **Issue #819** (closed): Run the SXT-019 provenance self-test once across its ten baseline output checks
+- **PR #822**: test: share one baseline --negative-control run across ten SXT-019 consumers
+
 ### 2026-11-23
 
 - **Issue #816** (closed): signoff/t1-physical README records klayout-tools#6986 as an open upstream gap; it closed COMPLETED on 2026-11-23
