@@ -8,6 +8,8 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-11-24
 
+- **PR #826**: fix: run trial geometry probe with cwd=trial dir and relative argv
+- **Issue #815** (closed): Trial evidence records carry absolute agent-worktree paths (signoff/t1-physical/trials/)
 - **PR #813**: Retain the bounded M4 routing trial with directly auditable OpenROAD logs
 - **Issue #819** (closed): Run the SXT-019 provenance self-test once across its ten baseline output checks
 - **PR #822**: test: share one baseline --negative-control run across ten SXT-019 consumers
