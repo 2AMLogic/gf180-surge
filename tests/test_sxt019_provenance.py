@@ -116,6 +116,16 @@ def run_tool(*args):
     return proc
 
 
+@pytest.fixture(scope="module")
+def negative_control_proc():
+    """One real `--negative-control` execution shared by the baseline tests.
+
+    Each consumer still asserts on the captured stdout/exit status itself. The
+    mutation tests do NOT use this: they need a fresh execution per mutation.
+    """
+    return run_tool("--negative-control")
+
+
 # --- the committed tree -------------------------------------------------------
 
 
@@ -168,8 +178,8 @@ def test_decision_record_index_lists_every_record():
 # --- the audit's own failure detection ---------------------------------------
 
 
-def test_negative_control_every_rule_fires():
-    proc = run_tool("--negative-control")
+def test_negative_control_every_rule_fires(negative_control_proc):
+    proc = negative_control_proc
     assert proc.returncode == 0, proc.stdout + proc.stderr
     assert "FAIL" not in proc.stdout, proc.stdout
     assert f"all {len(cp.RULES)} rules fired" in proc.stdout, proc.stdout
@@ -934,14 +944,14 @@ def test_own_holder_test_reads_the_whole_holder_side():
     assert not cp.own_copyright_holder("| The gf180-surge Authors — Some Upstream Author", 1)
 
 
-def test_masking_controls_run_in_the_self_test(tmp_path):
+def test_masking_controls_run_in_the_self_test(tmp_path, negative_control_proc):
     """The controls must be wired into `--negative-control`, not merely defined.
 
     Without this, deleting the masking list from the runner would keep the
     tests above green while CI stopped exercising them.
     """
     assert cpc._masking_controls(), "the masking controls must not be empty"
-    proc = run_tool("--negative-control")
+    proc = negative_control_proc
     assert proc.returncode == 0, proc.stdout + proc.stderr
     for case in cpc._masking_controls():
         label = case[0]
@@ -1299,10 +1309,10 @@ def test_payload_scan_modes_are_reported_for_the_real_tree():
     assert stats["payload_scans_truncated"] == [], stats
 
 
-def test_payload_controls_run_in_the_self_test():
+def test_payload_controls_run_in_the_self_test(negative_control_proc):
     """Wired into `--negative-control`, not merely defined."""
     assert cpc._payload_controls(), "the payload controls must not be empty"
-    proc = run_tool("--negative-control")
+    proc = negative_control_proc
     assert proc.returncode == 0, proc.stdout + proc.stderr
     for case in cpc._payload_controls():
         assert case[0] in proc.stdout, f"{case[0]} not exercised by --negative-control"
@@ -1555,10 +1565,10 @@ def test_real_tree_gzip_streams_are_all_single_member():
     assert multi == [], multi
 
 
-def test_wrapper_name_controls_run_in_the_self_test():
+def test_wrapper_name_controls_run_in_the_self_test(negative_control_proc):
     """Wired into `--negative-control`, not merely defined."""
     assert cpc._wrapper_name_controls(), "the wrapper controls must not be empty"
-    proc = run_tool("--negative-control")
+    proc = negative_control_proc
     assert proc.returncode == 0, proc.stdout + proc.stderr
     for case in cpc._wrapper_name_controls():
         assert case[0] in proc.stdout, f"{case[0]} not exercised by --negative-control"
@@ -1958,10 +1968,10 @@ def test_by_reference_rules_require_the_by_reference_class(tmp_path):
     assert not cp.audit(root)[0], [f.as_dict() for f in cp.audit(root)[0]]
 
 
-def test_discovery_controls_run_in_the_self_test():
+def test_discovery_controls_run_in_the_self_test(negative_control_proc):
     """Wired into `--negative-control`, not merely defined."""
     assert cpc._discovery_controls(), "the discovery controls must not be empty"
-    proc = run_tool("--negative-control")
+    proc = negative_control_proc
     assert proc.returncode == 0, proc.stdout + proc.stderr
     for case in cpc._discovery_controls():
         assert case[0] in proc.stdout, f"{case[0]} not exercised by --negative-control"
@@ -2112,11 +2122,11 @@ def test_index_boundary_is_declared_in_limits():
     assert "entries_present_but_not_in_the_index" in proc.stdout
 
 
-def test_coverage_controls_run_in_the_self_test():
+def test_coverage_controls_run_in_the_self_test(negative_control_proc):
     """Wired into `--negative-control`, not merely defined."""
     cases = cpc._coverage_controls() + cpc._coverage_include_untracked_controls()
     assert cases, "the index-boundary coverage controls must not be empty"
-    proc = run_tool("--negative-control")
+    proc = negative_control_proc
     assert proc.returncode == 0, proc.stdout + proc.stderr
     for case in cases:
         assert case[0] in proc.stdout, f"{case[0]} not exercised by --negative-control"
@@ -2430,11 +2440,11 @@ def test_staged_content_boundary_is_declared_in_limits():
     assert "staged_entries_absent_from_the_working_tree" in proc.stdout
 
 
-def test_staged_controls_run_in_the_self_test():
+def test_staged_controls_run_in_the_self_test(negative_control_proc):
     """Wired into `--negative-control`, not merely defined."""
     cases = cpc._staged_controls()
     assert cases, "the staged-content controls must not be empty"
-    proc = run_tool("--negative-control")
+    proc = negative_control_proc
     assert proc.returncode == 0, proc.stdout + proc.stderr
     for case in cases:
         assert case[0] in proc.stdout, f"{case[0]} not exercised by --negative-control"
@@ -2770,11 +2780,11 @@ def test_committed_answer_set_is_declared_in_limits():
     assert "committed_answer_set_findings" in proc.stdout
 
 
-def test_committed_bookkeeping_controls_run_in_the_self_test():
+def test_committed_bookkeeping_controls_run_in_the_self_test(negative_control_proc):
     """Wired into `--negative-control`, not merely defined."""
     cases = cpc._committed_bookkeeping_controls()
     assert cases, "the committed-answer-set controls must not be empty"
-    proc = run_tool("--negative-control")
+    proc = negative_control_proc
     assert proc.returncode == 0, proc.stdout + proc.stderr
     for case in cases:
         assert case[0] in proc.stdout, f"{case[0]} not exercised by --negative-control"
@@ -3007,11 +3017,11 @@ def test_committable_evidence_boundary_is_declared_in_limits():
     assert "staged_views_read_as_bookkeeping_evidence" in proc.stdout
 
 
-def test_committable_evidence_controls_run_in_the_self_test():
+def test_committable_evidence_controls_run_in_the_self_test(negative_control_proc):
     """Wired into `--negative-control`, not merely defined."""
     cases = cpc._committable_evidence_controls()
     assert cases, "the committable-evidence controls must not be empty"
-    proc = run_tool("--negative-control")
+    proc = negative_control_proc
     assert proc.returncode == 0, proc.stdout + proc.stderr
     for case in cases:
         assert case[0] in proc.stdout, f"{case[0]} not exercised by --negative-control"
@@ -3254,11 +3264,11 @@ def test_history_boundaries_are_declared_in_limits():
         assert line in proc.stdout, "missing from --limits: " + line
 
 
-def test_history_controls_run_in_the_self_test():
+def test_history_controls_run_in_the_self_test(negative_control_proc):
     """Wired into `--negative-control`, not merely defined."""
     cases = cpc._history_controls()
     assert cases, "the history controls must not be empty"
-    proc = run_tool("--negative-control")
+    proc = negative_control_proc
     assert proc.returncode == 0, proc.stdout + proc.stderr
     for case in cases:
         assert case[0] in proc.stdout, f"{case[0]} not exercised by --negative-control"
