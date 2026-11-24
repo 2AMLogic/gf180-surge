@@ -183,12 +183,15 @@ def main():
                     f"--rerun-geometry: {need} missing; nothing to re-run "
                     "against")
         t0 = time.monotonic()
+        # cwd = the trial directory and bare names, mirroring
+        # open_pin_probe.klt(): the probe records argv as given, so
+        # relative argv keeps host paths out of the retained record.
         gp = subprocess.run(
             [sys.executable, str(HERE / "pin_geometry_probe.py"), group,
-             "--stream", str(tdir / f"{group}.gds.gz"), "--out",
-             str(tdir / "pin_geometry_probe.json"), "--conn",
-             str(tdir / "open_pin_probe.json")],
-            cwd=ROOT, capture_output=True, text=True, env=os.environ)
+             "--stream", f"{group}.gds.gz", "--out",
+             "pin_geometry_probe.json", "--conn",
+             "open_pin_probe.json"],
+            cwd=tdir, capture_output=True, text=True, env=os.environ)
         dt = round(time.monotonic() - t0, 1)
         print(f"[trial] pin-geometry-probe (rerun): exit {gp.returncode} "
               f"in {dt}s", flush=True)
@@ -351,12 +354,15 @@ def main():
     }
 
     t0 = time.monotonic()
+    # cwd = the trial directory and bare names, mirroring
+    # open_pin_probe.klt(): the probe records argv as given, so
+    # relative argv keeps host paths out of the retained record.
     gp = subprocess.run(
         [sys.executable, str(HERE / "pin_geometry_probe.py"), group,
-         "--stream", str(tdir / f"{group}.gds.gz"), "--out",
-         str(tdir / "pin_geometry_probe.json"), "--conn",
-         str(tdir / "open_pin_probe.json")],
-        cwd=ROOT, capture_output=True, text=True, env=os.environ)
+         "--stream", f"{group}.gds.gz", "--out",
+         "pin_geometry_probe.json", "--conn",
+         "open_pin_probe.json"],
+        cwd=tdir, capture_output=True, text=True, env=os.environ)
     run["commands"].append({"step": "pin-geometry-probe", "exit":
                             gp.returncode,
                             "seconds": round(time.monotonic() - t0, 1)})
