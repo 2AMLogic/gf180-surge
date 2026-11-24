@@ -165,27 +165,21 @@ run at a time; the second and third each consumed a slot):
    (`clkinv_12_0`, `inv_12_0`, `inv_8_0`, same 21090 inputs examined),
    LVS got worse (31 errors: 24 topology, 7 net.split; the unmatched
    layout instances now also name eight `buf_4` cells), DRC stays clean.
-   Read as evidence, not a cause claim: the M4 strap phase locally
-   perturbs WHICH inputs the router leaves open without removing any --
-   consistent with the geometry record (opens land where the access via
-   lands on the unlabelled LEF rect), and ruling out "an M4 strap over
-   the pin is the cause" as stated. `regen.py` is unchanged (offset
-   stays 22.4); the failing-check record above is retained.
+   This offset changed which inputs were open and reduced their count
+   from four to three. It did not satisfy the zero-open, LVS-match criterion.
 3. `m5-strap-offset-0p0` -- `power.straps[2].offset_um` 44.8 -> 0.0 (one
    leaf; the Metal5 `add_pdn_stripe ... -offset {0.0}` line in the
    archived floorplan TCL is the knob reaching pdngen). Complete run,
    P&R exit 0 in 40 min, geometry probe exit 0 first try (the packed-
-   stream fix #826 added). **Not a fix.** The outcome is the baseline
-   reproduced exactly: the same four inputs open (`clkinv_12_0`,
-   `clkinv_12_1`, `clkinv_16_0`, `inv_8_0`; same 21090 inputs examined),
-   14 LVS errors (the baseline count and kinds), DRC clean. Read as
-   evidence, not a cause claim: a full half-pitch Metal5 phase change
-   leaves the open set untouched, so the M5 PDN strap phase is inert
-   for this defect and "an M5 strap over the pin is the cause" is ruled
-   out as stated; combined with the m4 result (M4 phase permutes the
-   set) the mechanism stays where the geometry record puts it -- the
-   router's access via landing on the unlabelled LEF rect. `regen.py`
-   is unchanged (offset stays 44.8). 
+   stream fix #826 added). The probe found the same four open inputs as
+   the baseline among 21,090 examined. LVS reported 14 errors (8 topology,
+   6 net.split) and DRC reported zero violations. The trial stream retained
+   all 24 baseline horizontal M5 strap centres and added one at y = 10.08 µm.
+   The baseline and trial geometry records give the same distance to the
+   nearest centre at each open input, respectively 14.78, 0.90, 12.54 and
+   2.432 µm for `clkinv_12_0`, `clkinv_12_1`, `clkinv_16_0` and `inv_8_0`.
+   Only `clkinv_12_1` and `inv_8_0` overlap an M5 strap in either stream.
+   This comparison leaves the local M5 overlap hypothesis untested.
 
 Also preserved: the m4 trial's own first attempt (`interrupted-attempt/`),
 killed by a builder-step exit after its route stage completed (its
@@ -198,21 +192,20 @@ aborted first launch of the re-run with a mis-set `PDK_ROOT`
 (`aborted-first-launch-pnr.failure.txt`), superseded by the successful
 run minutes later.
 
-Bounded finding (two of three slots spent, stopping at exhaustion of
-supported, evidence-backed settings): both PDN strap-offset candidates
-the geometry measurement named are ruled out -- the Metal4 offset
-permutes which inputs open without removing any, the Metal5 offset
-changes nothing at all -- and no further evidence-backed setting is
-expressible in the pinned 0.8.0 request surface: placement density is a
-module constant (request field only in 0.9.x, klayout-tools #4716),
-`set_dont_use` is generated from the per-library `_ABC_DONT_USE_GLOBS`
-table with no request field (issue #804's diagnostic-only candidate
-anyway), and a die-area change is a congestion diagnostic the
-measurement does not motivate (the m5 phase invariance argues against a
-global-congestion cause). The placement-density knob stays unavailable
-until the pinned tool moves (klayout-tools #4716). The m4 and m5 run
-records are attached to klayout-tools #6905. Item 4 stays `unmet`:
-`ext_mem_instr` LVS stays a recorded failing check.
+**Bounded finding.** Both tested 0.0 µm offsets failed to clear all open
+inputs. With M4, two baseline opens cleared, one new input opened and three
+were open in total. With M5, the same four remained open with the same local
+strap overlap. The baseline geometry distinguishes the M2 dead-end at
+`clkinv_12_0` from access on the unlabelled LEF rect at the other three pins.
+
+One of the three #804 trial slots remains. Before using it for the M5
+hypothesis, identify a candidate offset whose generated straps change the
+measured overlap at a named target pin. The pinned 0.8.0 request also limits
+the other candidates. Placement density is a module constant (request field
+in 0.9.x, klayout-tools #4716), and `set_dont_use` comes from the per-library
+`_ABC_DONT_USE_GLOBS` table. A die-area trial would test congestion
+separately. The M4 and M5 run records are attached to klayout-tools #6905.
+Item 4 remains `unmet` and the committed `ext_mem_instr` LVS result is FAIL.
 
 ### ERC: re-run under klt 0.9.2 with the gf180mcu antenna table (#803)
 
