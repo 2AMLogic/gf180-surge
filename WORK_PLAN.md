@@ -3,7 +3,7 @@
 This is a forge workflow snapshot. Issue closure and labels establish no fidelity, preset-quality, or hardware qualification claim.
 
 <!-- guide:plan-body:start -->
-_Generated: 2026-11-23T09:41:29Z (snapshot; compare against live labels)_
+_Generated: 2026-11-24T15:09:29Z (snapshot; compare against live labels)_
 ## Operator Attention: Merge-Risk-Hold Pileup
 
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
@@ -27,7 +27,7 @@ _None._
 
 Human-approved issues (`loom:issue`) ready for implementation — excluding held (`loom:blocked`/`loom:operator`/`loom:frozen`), `loom:building`, and issues closed by an open `loom:pr` PR (listed under Approved).
 
-_None._
+- **#804**: T1 item 4: close the ext_mem_instr LVS mismatch (four input pins the router left open) with a bounded P&R iteration
 
 ## In Progress
 
@@ -35,8 +35,7 @@ Issues currently being built (`loom:building`).
 
 - **#372**: Settle-boundary audit: input-only effect tap so Delay/EQ, Chorus and Reverb 2 get a verdict (split from #318)
 - **#634**: Remove the five copy-pasted per-leaf RTL harness-reporting test files: fold onto one table-parametrized battery
-- **#803**: T1 item 11: re-run ERC for the three routed groups under klt 0.9.2, which has the gf180mcu antenna table (0.8.0 pin reports not_checked)
-- **#804**: T1 item 4: close the ext_mem_instr LVS mismatch (four input pins the router left open) with a bounded P&R iteration
+- **#815**: Trial evidence records carry absolute agent-worktree paths (signoff/t1-physical/trials/)
 
 ## PRs Awaiting Review
 
@@ -78,7 +77,6 @@ Issues carrying `loom:curated`.
 - **#565**: Rebuild the DR-0006 tap-patched oracle builds (sxt028a-tap, sxt028c-tap) from source with a recorded identity *(curated)* *(held)*
 - **#580**: T1 item 1: logical4_core and rf_* cores expose only block_done, so synthesis removes the datapath *(curated)* *(held)*
 - **#635**: Remove never-instantiated fx_line_ext.sv: the SXT-023 'external-memory model' is dead and has drifted from the inline arrays the bench uses *(curated)*
-- **#803**: T1 item 11: re-run ERC for the three routed groups under klt 0.9.2, which has the gf180mcu antenna table (0.8.0 pin reports not_checked) *(curated)*
 - **#804**: T1 item 4: close the ext_mem_instr LVS mismatch (four input pins the router left open) with a bounded P&R iteration *(curated)*
 
 ## Proposed (Architect / Hermit)
@@ -99,11 +97,11 @@ Issues carrying `loom:curated`.
 | Operator merge-risk holds | 0 |
 | Very important | 1 |
 | Important | 2 |
-| Ready (`loom:issue`, net of holds/building/merge-pending) | 0 |
-| In Progress (`loom:building`) | 4 |
+| Ready (`loom:issue`, net of holds/building/merge-pending) | 1 |
+| In Progress (`loom:building`) | 3 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
-| Curated | 26 |
+| Curated | 25 |
 | Architect / Hermit proposals | 1 |
 | Active epics | 4 |
 <!-- guide:plan-body:end -->
