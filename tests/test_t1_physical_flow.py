@@ -15,6 +15,7 @@ tools reported them), timing, corners, "gf180mcu implementation", or fidelity;
 explain why the open pins are open or attribute them to the router.
 Coverage (groups with a stream / all product groups) is reported separately.
 """
+import ast
 import copy
 import gzip
 import hashlib
@@ -992,6 +993,152 @@ class T1PhysicalPNRTrials(unittest.TestCase):
         self.assertEqual(
             geo["summary"]["masters_with_isolated_inputs"],
             ["clkinv_12", "inv_12", "inv_8"])
+
+
+# #827 -- the relative-argv convention #826 established for the two
+# `pin_geometry_probe.py` calls in `trial.py`: the probe records its argv as
+# given, so running from the trial directory (`cwd=tdir`) under bare names
+# keeps absolute host paths out of a produced record's `provenance.argv`.
+TRIAL_PY = BASE / "trial.py"
+PROBE_SCRIPT = "pin_geometry_probe.py"
+PROBE_PATH_FLAGS = ("--stream", "--out", "--conn")
+PROBE_CALL_SITES = 2  # the full flow and --rerun-geometry
+# One call site of trial.py as of 32e7c566, before #826 made both relative.
+PRE_826_PROBE_CALL = '''
+gp = subprocess.run(
+    [sys.executable, str(HERE / "pin_geometry_probe.py"), group,
+     "--stream", str(tdir / f"{group}.gds.gz"), "--out",
+     str(tdir / "pin_geometry_probe.json"), "--conn",
+     str(tdir / "open_pin_probe.json")],
+    cwd=ROOT, capture_output=True, text=True, env=os.environ)
+'''
+
+
+def _argv_list(call):
+    """The call's argv when it is a list literal (positional or `args=`)."""
+    if call.args and isinstance(call.args[0], ast.List):
+        return call.args[0]
+    return next((k.value for k in call.keywords
+                 if k.arg == "args" and isinstance(k.value, ast.List)), None)
+
+
+def probe_calls(tree):
+    """Every call in `tree`, in source order, whose argv list literal names
+    the probe script."""
+    found = [c for c in ast.walk(tree) if isinstance(c, ast.Call)
+             and _argv_list(c) is not None and any(
+                 PROBE_SCRIPT in ast.unparse(e) for e in _argv_list(c).elts)]
+    return sorted(found, key=lambda c: (c.lineno, c.col_offset))
+
+
+def _name_problem(node):
+    """Why `node` is not a bare relative file name, or None when it is one:
+    a string constant or an f-string of constants and bare names, neither
+    rooted at `/`."""
+    if isinstance(node, ast.Constant) and isinstance(node.value, str):
+        return "is an absolute path" if node.value.startswith("/") else None
+    if isinstance(node, ast.JoinedStr):
+        first = node.values[0]
+        if isinstance(first, ast.Constant) and first.value.startswith("/"):
+            return "is an absolute path"
+        for part in node.values:
+            if (isinstance(part, ast.FormattedValue)
+                    and not isinstance(part.value, ast.Name)):
+                return "is an f-string of something other than a bare name"
+        return None
+    if isinstance(node, ast.Call) and ast.unparse(node.func) == "str":
+        return "is a str(...) path expression"
+    return "is not a string constant or f-string"
+
+
+def probe_argv_problems(source):
+    """(#827) Every way the `pin_geometry_probe.py` calls in
+    `signoff/t1-physical/trial.py` depart from the relative-argv convention
+    (#826), as a list of strings -- so the live negative controls re-audit the
+    pre-#826 shape with the same code the positive test runs. Exactly
+    PROBE_CALL_SITES calls whose argv list names the probe; each runs with
+    `cwd=tdir`, and the value after each of --stream, --out and --conn is a
+    bare relative name. A call whose argv is not a list literal is invisible
+    here and shows only if it displaces a visible one (the count drops).
+    Proves the invocation shape only, never that a produced record is
+    host-neutral."""
+    v = []
+    sites = probe_calls(ast.parse(source))
+    if len(sites) != PROBE_CALL_SITES:
+        v.append(f"found {len(sites)} {PROBE_SCRIPT} call sites, want "
+                 f"{PROBE_CALL_SITES}")
+    for call in sites:
+        where = f"line {call.lineno}"
+        cwd = {k.arg: k.value for k in call.keywords if k.arg}.get("cwd")
+        if not isinstance(cwd, ast.Name) or cwd.id != "tdir":
+            shown = "absent" if cwd is None else ast.unparse(cwd)
+            v.append(f"{where}: cwd={shown}, want cwd=tdir")
+        elts = _argv_list(call).elts
+        for flag in PROBE_PATH_FLAGS:
+            hits = [i for i, e in enumerate(elts)
+                    if isinstance(e, ast.Constant) and e.value == flag]
+            if not hits:
+                v.append(f"{where}: no {flag} argument")
+            for i in hits:
+                if i + 1 == len(elts):
+                    v.append(f"{where}: {flag} has no value")
+                    continue
+                problem = _name_problem(elts[i + 1])
+                if problem:
+                    v.append(f"{where}: {flag} value "
+                             f"{ast.unparse(elts[i + 1])} {problem}")
+    return v
+
+
+class T1PhysicalTrialProbeArgv(unittest.TestCase):
+    """#827: `trial.py` invokes `pin_geometry_probe.py` under relative
+    argv from the trial directory (#826), checked live at the source level."""
+
+    def test_probe_calls_run_from_trial_dir_under_relative_names(self):
+        """Proves only the *invocation shape* of the two
+        `pin_geometry_probe.py` calls in `signoff/t1-physical/trial.py`
+        (#815 AC1, promoted from a one-shot grep): `cwd=tdir` and bare
+        `--stream` / `--out` / `--conn` names. It proves only that shape --
+        never that a produced record is host-neutral, which needs a real
+        trial. Static: no OpenROAD, PDK, klt or network."""
+        self.assertEqual(probe_argv_problems(TRIAL_PY.read_text()), [])
+
+    def test_negative_control_pre826_absolute_argv_is_rejected(self):
+        # Both call sites as of 32e7c566, before #826: cwd=ROOT and
+        # str(tdir / ...) values. The checker must name every defect.
+        bad = probe_argv_problems(PRE_826_PROBE_CALL * 2)
+        self.assertEqual(len(bad), 8, bad)
+        self.assertEqual(sum("cwd=ROOT, want cwd=tdir" in x for x in bad), 2)
+        for flag in PROBE_PATH_FLAGS:
+            self.assertEqual(
+                sum(f"{flag} value str(tdir / " in x for x in bad), 2, bad)
+
+    def test_negative_control_added_call_site_fails_the_count(self):
+        # A third, well-formed call site changes nothing but the count.
+        src = TRIAL_PY.read_text()
+        site = ast.get_source_segment(src, probe_calls(ast.parse(src))[0])
+        self.assertEqual(
+            probe_argv_problems(src + "\n" + site + "\n"),
+            [f"found 3 {PROBE_SCRIPT} call sites, want {PROBE_CALL_SITES}"])
+
+    def test_negative_control_each_non_relative_form_is_rejected(self):
+        # One known-good call site, twice, with one defect introduced at a
+        # time: each form is rejected, and only for its own defect.
+        src = TRIAL_PY.read_text()
+        good = ast.get_source_segment(src, probe_calls(ast.parse(src))[0])
+        self.assertEqual(probe_argv_problems(good + "\n" + good), [])
+        for old, new, want in (
+                ('f"{group}.gds.gz"', '"/home/ubuntu/trial/x.gds.gz"',
+                 "is an absolute path"),
+                ('"pin_geometry_probe.json"',
+                 'tdir / "pin_geometry_probe.json"',
+                 "is not a string constant or f-string"),
+                ('f"{group}.gds.gz"', 'f"{tdir / group}.gds.gz"',
+                 "is an f-string of something other than a bare name"),
+                ('"--conn"', '"--input"', "no --conn argument")):
+            bad = probe_argv_problems((good + "\n" + good).replace(old, new))
+            self.assertEqual(len(bad), 2, (new, bad))
+            self.assertTrue(all(want in x for x in bad), (new, bad))
 
 
 if __name__ == "__main__":
