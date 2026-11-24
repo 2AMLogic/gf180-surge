@@ -1,0 +1,1045 @@
+OpenROAD 26Q3-1510-g6cb3f2b704 
+Features included (+) or not (-): +GPU +GUI +Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+Found 0 macro blocks.
+Using 2 tracks default min distance between IO pins.
+[INFO PPL-0001] Number of available slots 3920
+[INFO PPL-0002] Number of I/O             204
+[INFO PPL-0003] Number of I/O w/sink      204
+[INFO PPL-0004] Number of I/O w/o sink    0
+[INFO PPL-0005] Slots per section         200
+[INFO PPL-0008] Successfully assigned pins to sections.
+[INFO PPL-0012] I/O nets HPWL: 123514.88 um.
+[INFO GPL-0001] ---- Initialize GPL Main Data Structures
+[INFO GPL-0002] DBU: 2000
+[INFO GPL-0003] SiteSize: (  0.560  5.040 ) um
+[INFO GPL-0004] CoreBBox: ( 10.080 10.080 ) ( 1089.760 1088.640 ) um
+[INFO GPL-0016] Core area:                  1164499.661 um^2
+[INFO GPL-0036] Movable instances area:     257391.590 um^2
+[INFO GPL-0037] Total instances area:       279349.862 um^2
+[INFO GPL-0035] Pin density area adjust:     32544.344 um^2
+[INFO GPL-0032] ---- Initialize Region: Top-level
+[INFO GPL-0006] Number of instances:             12746
+[INFO GPL-0007] Movable instances:                8856
+[INFO GPL-0008] Fixed instances:                  3890
+[INFO GPL-0009] Dummy instances:                     0
+[INFO GPL-0010] Number of nets:                   8932
+[INFO GPL-0011] Number of pins:                  30065
+[INFO GPL-0012] Die BBox:       (  0.000  0.000 ) ( 1100.000 1100.000 ) um
+[INFO GPL-0013] Placement BBox: ( 10.080 10.080 ) ( 1089.760 1088.640 ) um
+[INFO GPL-0014] Region name: top-level.
+[INFO GPL-0015] Region area:                1164499.661 um^2
+[INFO GPL-0017] Fixed instances area:        21958.272 um^2
+[INFO GPL-0018] Movable instances area:     289935.935 um^2
+[INFO GPL-0019] Utilization:                    25.376 %
+[INFO GPL-0020] Standard cells area:        289935.935 um^2
+[INFO GPL-0021] Large instances area:            0.000 um^2
+[INFO GPL-0005] ---- Execute Conjugate Gradient Initial Placement.
+[INFO GPL-0051] Source of initial instance position counters:
+	Odb location = 0	Core center = 8856	Region center = 0
+[InitialPlace]  Iter: 1 conjugate gradient residual: 0.00219426 HPWL: 470453360
+[InitialPlace]  Iter: 2 conjugate gradient residual: 0.00735341 HPWL: 463955379
+[InitialPlace]  Iter: 3 conjugate gradient residual: 0.00401300 HPWL: 340448796
+[InitialPlace]  Iter: 4 conjugate gradient residual: 0.00007851 HPWL: 281190494
+[InitialPlace]  Iter: 5 conjugate gradient residual: 0.00007772 HPWL: 281644154
+[InitialPlace]  Iter: 6 conjugate gradient residual: 0.00001742 HPWL: 281945952
+[InitialPlace]  Iter: 7 conjugate gradient residual: 0.00000680 HPWL: 282119634
+[INFO GPL-0033] ---- Initialize Nesterov Region: Top-level
+[INFO GPL-0023] Placement target density:       0.6000
+[INFO GPL-0024] Movable insts average area:     32.739 um^2
+[INFO GPL-0025] Ideal bin area:                 54.565 um^2
+[INFO GPL-0026] Ideal bin count:                 21341
+[INFO GPL-0027] Total bin area:             1164499.661 um^2
+[INFO GPL-0028] Bin count (X, Y):         128 ,    128
+[INFO GPL-0029] Bin size (W * H):       8.435 *  8.426 um
+[INFO GPL-0030] Number of bins:                  16384
+[INFO GPL-0084] ---- Execute Nesterov Global Placement.
+[INFO GPL-0031] HPWL: Half-Perimeter Wirelength
+Iteration | Overflow |     HPWL (um) |  HPWL(%) |   Penalty | Group
+---------------------------------------------------------------
+        0 |   0.9958 |  4.182568e+04 |   +0.00% |  5.49e-18 |      
+       10 |   0.9895 |  5.303481e+04 |  +26.80% |  8.91e-18 |      
+       20 |   0.9893 |  5.399850e+04 |   +1.82% |  1.45e-17 |      
+       30 |   0.9891 |  5.425523e+04 |   +0.48% |  2.36e-17 |      
+       40 |   0.9889 |  5.456033e+04 |   +0.56% |  3.85e-17 |      
+       50 |   0.9888 |  5.493208e+04 |   +0.68% |  6.27e-17 |      
+       60 |   0.9886 |  5.518170e+04 |   +0.45% |  1.02e-16 |      
+       70 |   0.9886 |  5.525593e+04 |   +0.13% |  1.66e-16 |      
+       80 |   0.9887 |  5.518866e+04 |   -0.12% |  2.71e-16 |      
+       90 |   0.9888 |  5.505721e+04 |   -0.24% |  4.41e-16 |      
+      100 |   0.9889 |  5.495108e+04 |   -0.19% |  7.19e-16 |      
+      110 |   0.9888 |  5.493188e+04 |   -0.03% |  1.17e-15 |      
+      120 |   0.9888 |  5.503990e+04 |   +0.20% |  1.91e-15 |      
+      130 |   0.9887 |  5.532069e+04 |   +0.51% |  3.11e-15 |      
+      140 |   0.9886 |  5.579007e+04 |   +0.85% |  5.06e-15 |      
+      150 |   0.9881 |  5.651234e+04 |   +1.29% |  8.24e-15 |      
+      160 |   0.9876 |  5.764408e+04 |   +2.00% |  1.34e-14 |      
+      170 |   0.9869 |  5.948990e+04 |   +3.20% |  2.19e-14 |      
+      180 |   0.9854 |  6.256347e+04 |   +5.17% |  3.56e-14 |      
+      190 |   0.9832 |  6.733388e+04 |   +7.62% |  5.79e-14 |      
+      200 |   0.9792 |  7.471995e+04 |  +10.97% |  9.41e-14 |      
+      210 |   0.9730 |  8.512993e+04 |  +13.93% |  1.53e-13 |      
+      220 |   0.9643 |  9.887604e+04 |  +16.15% |  2.49e-13 |      
+      230 |   0.9524 |  1.160803e+05 |  +17.40% |  4.03e-13 |      
+      240 |   0.9372 |  1.367524e+05 |  +17.81% |  6.54e-13 |      
+      250 |   0.9192 |  1.598022e+05 |  +16.86% |  1.06e-12 |      
+      260 |   0.8995 |  1.820868e+05 |  +13.95% |  1.72e-12 |      
+      270 |   0.8755 |  2.040967e+05 |  +12.09% |  2.79e-12 |      
+      280 |   0.8470 |  2.312160e+05 |  +13.29% |  4.51e-12 |      
+      290 |   0.8143 |  2.624938e+05 |  +13.53% |  7.30e-12 |      
+      300 |   0.7827 |  2.807977e+05 |   +6.97% |  1.18e-11 |      
+      310 |   0.7425 |  3.078113e+05 |   +9.62% |  1.92e-11 |      
+      320 |   0.7059 |  3.274019e+05 |   +6.36% |  3.11e-11 |      
+      330 |   0.6617 |  3.517820e+05 |   +7.45% |  5.04e-11 |      
+[INFO GPL-0100] Timing-driven iteration 1/2, virtual: false.
+[INFO GPL-0101]    Iter: 338, overflow: 0.633, keep resizer changes at: 1, HPWL: 715549015
+Iteration |   Area    | Resized | Buffers | Nets repaired | Remaining
+---------------------------------------------------------------------
+        0 |     +0.0% |       0 |       0 |             0 |      8932
+    final |     +0.0% |       0 |       0 |             0 |         0
+---------------------------------------------------------------------
+   Iter   |    Area   | Removed | Inserted |   Pins
+          |           | Buffers | Buffers  | Remaining
+-------------------------------------------------------
+        0 |     +0.0% |       0 |        0 |      8464
+      840 |     +0.4% |      16 |       12 |      7624
+     1680 |     +0.5% |      20 |       16 |      6784
+     2520 |     +0.7% |      28 |       22 |      5944
+     3360 |     +0.8% |      38 |       26 |      5104
+     4200 |     +0.9% |      45 |       31 |      4264
+     5040 |     +1.0% |      77 |       39 |      3424
+     5880 |     +1.4% |     107 |       52 |      2584
+     6720 |     +1.8% |     161 |       73 |      1744
+     7560 |     +3.1% |     192 |      112 |       904
+     8400 |     +4.6% |     275 |      164 |        64
+    final |     +4.5% |     293 |      166 |         0
+-------------------------------------------------------
+[INFO GPL-0106] Timing-driven: worst slack -3.2547703e-08
+[INFO GPL-0107] Timing-driven: repair_design delta area: 12819.341 um^2 (+4.42%)
+[INFO GPL-0108] Timing-driven: repair_design, gpl delta gcells: -127 (-1.43%)
+[INFO GPL-0109] Timing-driven: repair_design, gcells created: 166, deleted: 293
+[INFO GPL-0110] Timing-driven: new target density: 0.61122006
+Iteration | Overflow |     HPWL (um) |  HPWL(%) |   Penalty | Group
+---------------------------------------------------------------
+      340 |   0.6170 |  3.378008e+05 |   -3.97% |  8.18e-11 |      
+[INFO GPL-0038] Routability snapshot saved at iter = 344
+      343 |   0.5970 |  3.451707e+05 |          |           |      
+      350 |   0.5537 |  3.529189e+05 |   +4.48% |  1.33e-10 |      
+      360 |   0.5166 |  3.611011e+05 |   +2.32% |  2.16e-10 |      
+      370 |   0.4694 |  3.787053e+05 |   +4.88% |  3.50e-10 |      
+      380 |   0.4179 |  3.834197e+05 |   +1.24% |  5.70e-10 |      
+      390 |   0.3837 |  3.860046e+05 |   +0.67% |  9.28e-10 |      
+      400 |   0.3430 |  3.916086e+05 |   +1.45% |  1.49e-09 |      
+      410 |   0.3151 |  3.974024e+05 |   +1.48% |  2.20e-09 |      
+[INFO GPL-0040] Routability iteration: 1
+[INFO GPL-0041] Total routing overflow: 0.0000
+[INFO GPL-0042] Number of overflowed tiles: 0 (0.00%)
+[INFO GPL-0043] Average top 0.5% routing congestion: 0.7774
+[INFO GPL-0044] Average top 1.0% routing congestion: 0.7351
+[INFO GPL-0045] Average top 2.0% routing congestion: 0.6851
+[INFO GPL-0046] Average top 5.0% routing congestion: 0.6110
+[INFO GPL-0047] Routability iteration weighted routing congestion: 0.7563
+[INFO GPL-0050] Weighted routing congestion is lower than target routing congestion(1.0100), end routability optimization.
+[INFO GPL-0090] Routability finished. Target routing congestion achieved succesfully.
+Iteration | Overflow |     HPWL (um) |  HPWL(%) |   Penalty | Group
+---------------------------------------------------------------
+      420 |   0.2883 |  3.982048e+05 |   +0.20% |  3.24e-09 |      
+      430 |   0.2622 |  3.989309e+05 |   +0.18% |  4.77e-09 |      
+      440 |   0.2342 |  4.016391e+05 |   +0.68% |  7.03e-09 |      
+      450 |   0.2096 |  4.019609e+05 |   +0.08% |  1.04e-08 |      
+[INFO GPL-0100] Timing-driven iteration 2/2, virtual: false.
+[INFO GPL-0101]    Iter: 457, overflow: 0.193, keep resizer changes at: 1, HPWL: 805205131
+Iteration |   Area    | Resized | Buffers | Nets repaired | Remaining
+---------------------------------------------------------------------
+        0 |     +0.0% |       0 |       0 |             0 |      8805
+    final |     +0.0% |       2 |       1 |             2 |         0
+---------------------------------------------------------------------
+[INFO RSZ-0034] Found 2 slew violations.
+[INFO RSZ-0039] Resized 2 instances.
+[INFO RSZ-0038] Inserted 1 buffers in 2 nets.
+   Iter   |    Area   | Removed | Inserted |   Pins
+          |           | Buffers | Buffers  | Remaining
+-------------------------------------------------------
+        0 |     +0.0% |       0 |        0 |      8464
+      840 |     +0.1% |      12 |       16 |      7624
+     1680 |     +0.2% |      16 |       21 |      6784
+     2520 |     +0.2% |      22 |       27 |      5944
+     3360 |     +0.1% |      26 |       30 |      5104
+     4200 |     +0.2% |      31 |       36 |      4264
+     5040 |     +0.2% |      39 |       45 |      3424
+     5880 |     +0.5% |      52 |       65 |      2584
+     6720 |     +0.9% |      73 |       97 |      1744
+     7560 |     +1.1% |     113 |      142 |       904
+     8400 |     +1.7% |     165 |      210 |        64
+    final |     +1.6% |     167 |      211 |         0
+-------------------------------------------------------
+[INFO GPL-0106] Timing-driven: worst slack -3.1397335e-08
+[INFO GPL-0107] Timing-driven: repair_design delta area: 4840.303 um^2 (+1.60%)
+[INFO GPL-0108] Timing-driven: repair_design, gpl delta gcells: 45 (+0.52%)
+[INFO GPL-0109] Timing-driven: repair_design, gcells created: 212, deleted: 167
+[INFO GPL-0110] Timing-driven: new target density: 0.61545646
+Iteration | Overflow |     HPWL (um) |  HPWL(%) |   Penalty | Group
+---------------------------------------------------------------
+      460 |   0.1783 |  4.139492e+05 |   +2.98% |  1.52e-08 |      
+      470 |   0.1646 |  4.081150e+05 |   -1.41% |  2.24e-08 |      
+      480 |   0.1446 |  4.083546e+05 |   +0.06% |  3.30e-08 |      
+      490 |   0.1257 |  4.083015e+05 |   -0.01% |  4.86e-08 |      
+      500 |   0.1086 |  4.087736e+05 |   +0.12% |  7.16e-08 |      
+      506 |   0.0989 |  4.090790e+05 |          |  9.39e-08 |      
+---------------------------------------------------------------
+[INFO GPL-1001] Global placement finished at iteration 506
+[INFO GPL-1017] Routability mode iteration count: 73
+[INFO GPL-1005] Routability final weighted congestion: 0.7413
+[INFO GPL-1002] Placed Cell Area            307595.5787
+[INFO GPL-1003] Available Free Area         1142541.3888
+[INFO GPL-1004] Minimum Feasible Density        0.2600 (cell_area / free_area)
+[INFO GPL-1006]   Suggested Target Densities:
+[INFO GPL-1007]     - For 90% usage of free space: 0.2991
+[INFO GPL-1008]     - For 80% usage of free space: 0.3365
+[INFO GPL-1009]     - For 50% usage of free space: 0.5384
+[INFO GPL-1011] Original area (um^2): 289935.93
+[INFO GPL-1012] Total routability artificial inflation: 0.00 (+0.00%)
+[INFO GPL-1013] Total timing-driven delta area: 17659.64 (+6.09%)
+[INFO GPL-1014] Final placement area: 307595.58 (+6.09%)
+Iteration |   Area    | Resized | Buffers | Nets repaired | Remaining
+---------------------------------------------------------------------
+        0 |     +0.0% |       0 |       0 |             0 |      8850
+    final |     +0.0% |       0 |       0 |             0 |         0
+---------------------------------------------------------------------
+[INFO RSZ-0504] Runtime: 1.12s
+[INFO RSZ-0100] Repair move sequence: UnbufferMove SizeUpMove SwapPinsMove BufferMove CloneMove SplitLoadMove 
+[INFO RSZ-0094] Found 784 endpoints with setup violations.
+[INFO RSZ-0099] Repairing 784 out of 784 (100.00%) violating endpoints...
+   Iter   | Removed | Resized | Inserted | Cloned |  Pin  |   Area   |    WNS   |   StTNS    |   EnTNS    |  Viol  |  Worst  
+          | Buffers |  Gates  | Buffers  |  Gates | Swaps |          |          |            |            | Endpts | St/EnPt 
+------------------------------------------------------------------------------------------------------------------------------
+       0* |       0 |       0 |        0 |      0 |     0 |    +0.0% |  -31.220 |    -7149.6 |   -10170.4 |    784 | _16043_/D
+    2100* |       1 |     472 |        8 |      7 |   240 |    +2.5% |  -26.262 |    -5936.3 |    -7953.8 |    784 | _16045_/D
+    2100+ |       1 |     472 |        8 |      7 |   240 |    +2.5% |  -26.262 |    -5936.3 |    -7953.8 |    774 | _16045_/D
+    final |       1 |     532 |        8 |      7 |   244 |    +2.7% |  -26.262 |    -5100.8 |    -6396.8 |    774 | _16045_/D
+------------------------------------------------------------------------------------------------------------------------------
+[INFO RSZ-0059] Removed 1 buffers.
+[INFO RSZ-0045] Inserted 8 buffers, 1 to split loads.
+[INFO RSZ-0051] Resized 532 instances: 532 up, 0 up match, 0 down, 0 VT
+[INFO RSZ-0043] Swapped pins on 244 instances.
+[INFO RSZ-0049] Cloned 7 instances.
+[WARNING RSZ-0062] Unable to repair all setup violations.
+[INFO RSZ-0505] Runtime: 72.69s
+[INFO RSZ-0033] No hold violations found.
+[INFO RSZ-0506] Runtime: 0.01s
+[INFO DPL-0006] Core area: 1164499.66 um^2
+[INFO DPL-0007] Movable instances area: 283177.04 um^2
+[INFO DPL-0008] Fixed instances area within core: 24374.25 um^2
+[INFO DPL-0009] Utilization: 26.4%
+[INFO DPL-0005] Diamond search max displacement: +/- 500 sites horizontally, +/- 100 rows vertically.
+[INFO DPL-1102] Legalizing using negotiation legalizer.
+[INFO DPL-1103] Negotiation base search window: +/-20 sites horizontally, +/-5 rows vertically 
+	Automatic search window extension enabled.
+	Search window extendable up to the max displacement cap of +/-500 sites, +/-100 rows near walls.
+[INFO DPL-1104] NegotiationLegalizer DRC penalty: 5.
+[INFO DPL-0392] Negotiation cell height distribution (1 unique row-count(s)):
+[INFO DPL-0393]   height 1 row(s): 13106 cells
+          |      Total |  Illegal |  Illegal
+Iteration | Violations |    Cells |    Sites
+---------------------------------------------
+        0 |        570 |        98 |       472
+        1 |         10 |         2 |         8
+        2 |          0 |         0 |         0
+Negotiation phase 1 converged at iteration 2.
+[INFO DPL-0500] Runtime: 0.21s
+Placement Analysis
+---------------------------------
+total displacement      51836.2 u
+average displacement        4.0 u
+max displacement           37.0 u
+original HPWL          413302.9 u
+legalized HPWL         462243.0 u
+delta HPWL                   12 %
+
+===KLT_SETUP_VIOLATIONS_BEGIN===
+max_delay/setup group clk
+
+                                     Required  Actual
+Endpoint                               Delay   Delay   Slack
+------------------------------------------------------------
+_16045_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.29   45.55  -26.26 (VIOLATED)
+_16046_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.14   45.14  -26.00 (VIOLATED)
+_16044_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   44.82  -25.98 (VIOLATED)
+_16043_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   43.57  -24.71 (VIOLATED)
+_16041_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   43.74  -24.70 (VIOLATED)
+_16038_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.04   43.67  -24.64 (VIOLATED)
+_16042_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.04   43.51  -24.47 (VIOLATED)
+_16040_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.86   42.78  -23.92 (VIOLATED)
+_16035_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.95   42.59  -23.64 (VIOLATED)
+_16037_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.97   41.81  -22.83 (VIOLATED)
+_16036_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.95   41.51  -22.56 (VIOLATED)
+_16053_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.95   41.27  -22.33 (VIOLATED)
+_16039_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.22   41.16  -21.94 (VIOLATED)
+_16034_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   39.43  -20.59 (VIOLATED)
+_16051_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.96   38.65  -19.70 (VIOLATED)
+_16052_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.07   38.58  -19.51 (VIOLATED)
+_16049_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.96   37.86  -18.89 (VIOLATED)
+_16050_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.96   37.68  -18.72 (VIOLATED)
+_16032_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   37.32  -18.28 (VIOLATED)
+_16419_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.99   37.02  -18.02 (VIOLATED)
+_16493_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.00   36.83  -17.84 (VIOLATED)
+_16492_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.26   37.06  -17.80 (VIOLATED)
+_16030_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.94   36.62  -17.68 (VIOLATED)
+_16033_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.94   36.62  -17.68 (VIOLATED)
+_16048_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.06   36.70  -17.64 (VIOLATED)
+_16047_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.08   36.36  -17.29 (VIOLATED)
+_16460_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.14   36.43  -17.29 (VIOLATED)
+_16491_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.93   36.01  -17.08 (VIOLATED)
+_16027_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.98   35.95  -16.97 (VIOLATED)
+_16025_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.96   35.92  -16.96 (VIOLATED)
+_16418_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.03   35.93  -16.89 (VIOLATED)
+_16461_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.11   35.97  -16.85 (VIOLATED)
+_16023_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.97   35.81  -16.84 (VIOLATED)
+_16031_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.82   35.66  -16.84 (VIOLATED)
+_16021_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.98   35.70  -16.72 (VIOLATED)
+_16014_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.96   35.68  -16.71 (VIOLATED)
+_16022_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.98   35.68  -16.71 (VIOLATED)
+_16024_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.96   35.66  -16.70 (VIOLATED)
+_16019_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.98   35.65  -16.67 (VIOLATED)
+_16018_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.98   35.65  -16.67 (VIOLATED)
+_16020_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.98   35.63  -16.65 (VIOLATED)
+_16026_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.98   35.62  -16.64 (VIOLATED)
+_16017_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.96   35.61  -16.64 (VIOLATED)
+_16016_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.96   35.60  -16.64 (VIOLATED)
+_16015_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.97   35.58  -16.62 (VIOLATED)
+_16489_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.04   35.55  -16.52 (VIOLATED)
+_16417_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   35.36  -16.51 (VIOLATED)
+_16028_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.95   35.30  -16.35 (VIOLATED)
+_16459_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.80   34.79  -15.99 (VIOLATED)
+_16490_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.03   34.93  -15.90 (VIOLATED)
+_16583_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.93   34.80  -15.87 (VIOLATED)
+_16488_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.92   34.66  -15.74 (VIOLATED)
+_16352_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.92   34.09  -15.17 (VIOLATED)
+_16013_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.93   34.10  -15.17 (VIOLATED)
+_16486_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.04   34.20  -15.16 (VIOLATED)
+_16458_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.25   34.38  -15.13 (VIOLATED)
+_16190_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.90   33.96  -15.06 (VIOLATED)
+_16189_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.99   33.89  -14.90 (VIOLATED)
+_16416_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.27   34.16  -14.90 (VIOLATED)
+_16420_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.91   33.63  -14.72 (VIOLATED)
+_16585_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   33.57  -14.72 (VIOLATED)
+_16584_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.99   33.55  -14.56 (VIOLATED)
+_16485_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.91   33.43  -14.52 (VIOLATED)
+_16582_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.24   33.73  -14.49 (VIOLATED)
+_16354_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.16   33.31  -14.16 (VIOLATED)
+_16487_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.04   33.10  -14.06 (VIOLATED)
+_16581_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.26   33.29  -14.03 (VIOLATED)
+_16580_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.07   33.10  -14.02 (VIOLATED)
+_16353_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.91   32.93  -14.02 (VIOLATED)
+_16351_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.08   33.02  -13.94 (VIOLATED)
+_16457_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.25   33.18  -13.93 (VIOLATED)
+_16188_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   32.96  -13.91 (VIOLATED)
+_16483_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   32.92  -13.90 (VIOLATED)
+_16415_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.26   32.95  -13.69 (VIOLATED)
+_16414_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   32.54  -13.69 (VIOLATED)
+_16350_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.26   32.87  -13.61 (VIOLATED)
+_16011_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_2)   19.06   32.56  -13.50 (VIOLATED)
+_16054_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.12   32.55  -13.43 (VIOLATED)
+_16579_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   32.44  -13.40 (VIOLATED)
+_16482_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.93   32.27  -13.34 (VIOLATED)
+_16012_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_2)   18.77   32.09  -13.31 (VIOLATED)
+_16163_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   32.09  -13.25 (VIOLATED)
+_16055_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.83   32.04  -13.21 (VIOLATED)
+_16187_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   31.96  -12.91 (VIOLATED)
+_16456_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.25   32.04  -12.79 (VIOLATED)
+_16389_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.96   31.64  -12.68 (VIOLATED)
+_16480_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   31.68  -12.63 (VIOLATED)
+_16349_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.09   31.61  -12.52 (VIOLATED)
+_15971_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.45  -12.42 (VIOLATED)
+_15958_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.43  -12.41 (VIOLATED)
+_15962_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.42  -12.40 (VIOLATED)
+_15779_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.01   31.38  -12.36 (VIOLATED)
+_15798_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.36  -12.34 (VIOLATED)
+_15843_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.36  -12.34 (VIOLATED)
+_15811_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.35  -12.33 (VIOLATED)
+_15830_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.35  -12.33 (VIOLATED)
+_15766_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.35  -12.33 (VIOLATED)
+_15770_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.34  -12.32 (VIOLATED)
+_16578_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.04   31.36  -12.32 (VIOLATED)
+_15802_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.33  -12.31 (VIOLATED)
+_15834_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.33  -12.31 (VIOLATED)
+_16484_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.01   31.29  -12.28 (VIOLATED)
+_16479_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.92   31.18  -12.27 (VIOLATED)
+_15955_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.03   31.29  -12.26 (VIOLATED)
+_15950_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.24  -12.22 (VIOLATED)
+_15956_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.24  -12.22 (VIOLATED)
+_16477_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.16   31.38  -12.22 (VIOLATED)
+_15974_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.23  -12.21 (VIOLATED)
+_15968_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.23  -12.21 (VIOLATED)
+_15763_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.22  -12.20 (VIOLATED)
+_15965_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.22  -12.20 (VIOLATED)
+_15795_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.21  -12.19 (VIOLATED)
+_15827_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.21  -12.19 (VIOLATED)
+_15828_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.17  -12.15 (VIOLATED)
+_15964_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.17  -12.14 (VIOLATED)
+_15764_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.16  -12.14 (VIOLATED)
+_15796_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.16  -12.13 (VIOLATED)
+_15782_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.15  -12.13 (VIOLATED)
+_15822_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.15  -12.13 (VIOLATED)
+_15814_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.15  -12.13 (VIOLATED)
+_15790_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.15  -12.13 (VIOLATED)
+_15846_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.15  -12.13 (VIOLATED)
+_15776_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.14  -12.12 (VIOLATED)
+_15808_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.14  -12.12 (VIOLATED)
+_15758_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.14  -12.12 (VIOLATED)
+_15840_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.14  -12.12 (VIOLATED)
+_15837_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.13  -12.11 (VIOLATED)
+_15773_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.13  -12.10 (VIOLATED)
+_15805_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.12  -12.10 (VIOLATED)
+_16413_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.26   31.35  -12.09 (VIOLATED)
+_15772_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.09  -12.07 (VIOLATED)
+_15836_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.09  -12.07 (VIOLATED)
+_15804_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.08  -12.06 (VIOLATED)
+_15949_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.05  -12.02 (VIOLATED)
+_15952_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.04  -12.02 (VIOLATED)
+_15951_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   31.04  -12.02 (VIOLATED)
+_16186_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   31.05  -12.00 (VIOLATED)
+_15967_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.99  -11.97 (VIOLATED)
+_15824_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.97  -11.95 (VIOLATED)
+_15757_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.96  -11.94 (VIOLATED)
+_15760_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.96  -11.94 (VIOLATED)
+_15792_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.96  -11.94 (VIOLATED)
+_15789_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.96  -11.93 (VIOLATED)
+_15791_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.95  -11.93 (VIOLATED)
+_15821_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.96  -11.93 (VIOLATED)
+_15759_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.95  -11.92 (VIOLATED)
+_15823_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.94  -11.92 (VIOLATED)
+_15948_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.92  -11.89 (VIOLATED)
+_15961_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.91  -11.89 (VIOLATED)
+_16162_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.88   30.76  -11.89 (VIOLATED)
+_15810_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.00   30.88  -11.89 (VIOLATED)
+_15775_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.90  -11.88 (VIOLATED)
+_15807_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.90  -11.88 (VIOLATED)
+_15839_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.90  -11.88 (VIOLATED)
+_15973_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.90  -11.88 (VIOLATED)
+_15959_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.88  -11.86 (VIOLATED)
+_15970_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.01   30.86  -11.85 (VIOLATED)
+_15778_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.01   30.85  -11.84 (VIOLATED)
+_15947_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.86  -11.84 (VIOLATED)
+_15957_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.12   30.94  -11.82 (VIOLATED)
+_15975_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.12   30.93  -11.81 (VIOLATED)
+_15954_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   30.94  -11.81 (VIOLATED)
+_15820_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.83  -11.81 (VIOLATED)
+_15972_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   30.94  -11.81 (VIOLATED)
+_15969_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.12   30.93  -11.81 (VIOLATED)
+_15966_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   30.94  -11.81 (VIOLATED)
+_15801_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.83  -11.81 (VIOLATED)
+_15756_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.83  -11.81 (VIOLATED)
+_15788_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.83  -11.80 (VIOLATED)
+_15842_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.82  -11.80 (VIOLATED)
+_15813_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.82  -11.80 (VIOLATED)
+_15963_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   30.93  -11.80 (VIOLATED)
+_16185_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.90   30.70  -11.80 (VIOLATED)
+_15953_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   30.92  -11.80 (VIOLATED)
+_15781_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.82  -11.80 (VIOLATED)
+_15769_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.82  -11.79 (VIOLATED)
+_15833_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.82  -11.79 (VIOLATED)
+_15845_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.81  -11.79 (VIOLATED)
+_15799_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.79  -11.77 (VIOLATED)
+_15831_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.79  -11.76 (VIOLATED)
+_15767_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.78  -11.76 (VIOLATED)
+_15755_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.78  -11.76 (VIOLATED)
+_15787_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.77  -11.75 (VIOLATED)
+_15819_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   30.76  -11.74 (VIOLATED)
+_16577_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.93   30.63  -11.71 (VIOLATED)
+_15835_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.14   30.80  -11.66 (VIOLATED)
+_15774_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   30.77  -11.62 (VIOLATED)
+_15815_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   30.76  -11.61 (VIOLATED)
+_15847_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   30.76  -11.61 (VIOLATED)
+_15794_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   30.76  -11.61 (VIOLATED)
+_15812_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   30.75  -11.60 (VIOLATED)
+_15765_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   30.74  -11.59 (VIOLATED)
+_15838_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   30.75  -11.59 (VIOLATED)
+_15844_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   30.74  -11.59 (VIOLATED)
+_15783_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   30.74  -11.58 (VIOLATED)
+_15797_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   30.73  -11.58 (VIOLATED)
+_15761_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   30.73  -11.58 (VIOLATED)
+_15806_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.16   30.74  -11.58 (VIOLATED)
+_15825_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   30.73  -11.58 (VIOLATED)
+_15771_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   30.73  -11.58 (VIOLATED)
+_15841_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   30.73  -11.58 (VIOLATED)
+_15762_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   30.73  -11.58 (VIOLATED)
+_15829_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   30.73  -11.58 (VIOLATED)
+_15777_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   30.73  -11.58 (VIOLATED)
+_15826_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.16   30.73  -11.58 (VIOLATED)
+_15803_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.16   30.73  -11.57 (VIOLATED)
+_15780_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.16   30.73  -11.57 (VIOLATED)
+_15793_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   30.72  -11.57 (VIOLATED)
+_15809_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.16   30.71  -11.56 (VIOLATED)
+_16388_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.99   30.52  -11.53 (VIOLATED)
+_15960_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   30.53  -11.41 (VIOLATED)
+_15976_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   30.52  -11.39 (VIOLATED)
+_15832_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.14   30.40  -11.26 (VIOLATED)
+_15784_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   30.35  -11.20 (VIOLATED)
+_15848_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   30.33  -11.18 (VIOLATED)
+_15800_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.16   30.33  -11.18 (VIOLATED)
+_15768_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.16   30.33  -11.17 (VIOLATED)
+_15816_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.16   30.32  -11.16 (VIOLATED)
+_16348_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.09   30.05  -10.97 (VIOLATED)
+_16476_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.93   29.88  -10.96 (VIOLATED)
+_16411_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.86   29.73  -10.87 (VIOLATED)
+_16412_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.27   30.14  -10.87 (VIOLATED)
+_16184_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.04   29.89  -10.84 (VIOLATED)
+_16589_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   29.88  -10.83 (VIOLATED)
+_16455_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.78   29.57  -10.78 (VIOLATED)
+_16159_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   29.62  -10.77 (VIOLATED)
+_16161_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.90   29.53  -10.64 (VIOLATED)
+_16576_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.92   29.41  -10.49 (VIOLATED)
+_16387_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.04   29.48  -10.43 (VIOLATED)
+_16525_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   29.47  -10.42 (VIOLATED)
+_16665_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.82   29.24  -10.42 (VIOLATED)
+_16655_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.83   29.24  -10.41 (VIOLATED)
+_16657_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   29.24  -10.40 (VIOLATED)
+_16661_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.83   29.23  -10.40 (VIOLATED)
+_16669_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.83   29.23  -10.40 (VIOLATED)
+_16659_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.83   29.22  -10.39 (VIOLATED)
+_16660_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.83   29.22  -10.39 (VIOLATED)
+_16475_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_2)   19.09   29.48  -10.39 (VIOLATED)
+_16663_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.83   29.22  -10.39 (VIOLATED)
+_16481_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.01   29.40  -10.39 (VIOLATED)
+_16664_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.83   29.20  -10.37 (VIOLATED)
+_16666_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   29.22  -10.37 (VIOLATED)
+_16668_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   29.22  -10.37 (VIOLATED)
+_16654_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   29.21  -10.37 (VIOLATED)
+_16658_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   29.21  -10.37 (VIOLATED)
+_16662_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.83   29.20  -10.37 (VIOLATED)
+_16656_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   29.20  -10.36 (VIOLATED)
+_16667_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   29.20  -10.35 (VIOLATED)
+_15850_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   29.29  -10.27 (VIOLATED)
+_15818_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   29.29  -10.27 (VIOLATED)
+_15786_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   29.29  -10.27 (VIOLATED)
+_15978_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   29.29  -10.27 (VIOLATED)
+_16158_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.26   29.47  -10.21 (VIOLATED)
+_16182_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.04   29.25  -10.21 (VIOLATED)
+_15977_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.14   29.33  -10.19 (VIOLATED)
+_15817_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.14   29.18  -10.05 (VIOLATED)
+_15849_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.14   29.18  -10.04 (VIOLATED)
+_15785_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.14   29.18  -10.04 (VIOLATED)
+_16588_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.00   28.98   -9.98 (VIOLATED)
+_16183_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   28.97   -9.92 (VIOLATED)
+_16675_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.83   28.65   -9.83 (VIOLATED)
+_16539_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   28.66   -9.82 (VIOLATED)
+_16677_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.83   28.64   -9.81 (VIOLATED)
+_16474_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   28.86   -9.81 (VIOLATED)
+_16684_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   28.64   -9.81 (VIOLATED)
+_16672_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   28.64   -9.80 (VIOLATED)
+_16671_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   28.64   -9.80 (VIOLATED)
+_16676_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   28.63   -9.79 (VIOLATED)
+_16673_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   28.62   -9.78 (VIOLATED)
+_16670_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   28.62   -9.78 (VIOLATED)
+_16454_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.22   28.99   -9.76 (VIOLATED)
+_16679_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   28.61   -9.76 (VIOLATED)
+_16678_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   28.61   -9.76 (VIOLATED)
+_16685_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.83   28.59   -9.76 (VIOLATED)
+_16683_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   28.61   -9.76 (VIOLATED)
+_16674_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   28.61   -9.76 (VIOLATED)
+_16680_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   28.60   -9.76 (VIOLATED)
+_16681_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   28.60   -9.75 (VIOLATED)
+_16682_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   28.59   -9.75 (VIOLATED)
+_16329_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   28.54   -9.70 (VIOLATED)
+_15992_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.12   28.79   -9.67 (VIOLATED)
+_16473_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.93   28.59   -9.66 (VIOLATED)
+_15998_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.12   28.77   -9.65 (VIOLATED)
+_16001_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.12   28.76   -9.64 (VIOLATED)
+_16181_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.89   28.51   -9.63 (VIOLATED)
+_16347_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.08   28.71   -9.62 (VIOLATED)
+_16004_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.12   28.72   -9.60 (VIOLATED)
+_15995_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.12   28.72   -9.60 (VIOLATED)
+_16007_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.12   28.71   -9.59 (VIOLATED)
+_15986_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.12   28.69   -9.57 (VIOLATED)
+_16575_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   28.58   -9.53 (VIOLATED)
+_16541_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.23   28.74   -9.51 (VIOLATED)
+_15993_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.51   -9.49 (VIOLATED)
+_16005_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.50   -9.48 (VIOLATED)
+_15991_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.49   -9.47 (VIOLATED)
+_15928_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   28.59   -9.46 (VIOLATED)
+_16540_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   28.31   -9.46 (VIOLATED)
+_15896_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   28.59   -9.46 (VIOLATED)
+_15905_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.12   28.58   -9.46 (VIOLATED)
+_15864_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   28.59   -9.46 (VIOLATED)
+_16002_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.47   -9.45 (VIOLATED)
+_15902_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   28.58   -9.45 (VIOLATED)
+_15870_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   28.57   -9.45 (VIOLATED)
+_15934_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   28.57   -9.44 (VIOLATED)
+_15897_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.01   28.45   -9.43 (VIOLATED)
+_15929_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.01   28.45   -9.43 (VIOLATED)
+_15937_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   28.55   -9.42 (VIOLATED)
+_16472_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.77   28.18   -9.42 (VIOLATED)
+_16643_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   28.70   -9.42 (VIOLATED)
+_15927_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.43   -9.41 (VIOLATED)
+_15865_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.43   -9.41 (VIOLATED)
+_15873_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   28.54   -9.41 (VIOLATED)
+_15863_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.43   -9.41 (VIOLATED)
+_15867_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   28.54   -9.41 (VIOLATED)
+_16386_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   28.46   -9.41 (VIOLATED)
+_15895_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.43   -9.41 (VIOLATED)
+_15877_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.42   -9.40 (VIOLATED)
+_15940_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   28.53   -9.40 (VIOLATED)
+_15909_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.41   -9.40 (VIOLATED)
+_15899_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   28.52   -9.39 (VIOLATED)
+_16640_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   28.67   -9.39 (VIOLATED)
+_16638_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   28.67   -9.39 (VIOLATED)
+_16641_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   28.67   -9.39 (VIOLATED)
+_15890_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   28.52   -9.39 (VIOLATED)
+_16649_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   28.67   -9.39 (VIOLATED)
+_15908_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   28.52   -9.39 (VIOLATED)
+_15941_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.41   -9.39 (VIOLATED)
+_16646_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   28.67   -9.39 (VIOLATED)
+_16647_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   28.67   -9.39 (VIOLATED)
+_16642_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   28.67   -9.39 (VIOLATED)
+_16651_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   28.67   -9.38 (VIOLATED)
+_16644_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   28.67   -9.38 (VIOLATED)
+_16645_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   28.67   -9.38 (VIOLATED)
+_16652_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   28.67   -9.38 (VIOLATED)
+_15876_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   28.51   -9.38 (VIOLATED)
+_16650_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   28.66   -9.38 (VIOLATED)
+_16653_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   28.66   -9.38 (VIOLATED)
+_16648_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   28.66   -9.38 (VIOLATED)
+_16639_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   28.66   -9.38 (VIOLATED)
+_15931_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   28.51   -9.38 (VIOLATED)
+_15943_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   28.51   -9.38 (VIOLATED)
+_15874_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.39   -9.37 (VIOLATED)
+_15938_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.39   -9.37 (VIOLATED)
+_15906_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.39   -9.37 (VIOLATED)
+_15879_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   28.49   -9.36 (VIOLATED)
+_15911_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   28.49   -9.36 (VIOLATED)
+_15858_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   28.49   -9.36 (VIOLATED)
+_15922_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   28.48   -9.35 (VIOLATED)
+_15984_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.36   -9.34 (VIOLATED)
+_15983_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.35   -9.34 (VIOLATED)
+_15982_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.35   -9.33 (VIOLATED)
+_15990_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.35   -9.33 (VIOLATED)
+_15981_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.35   -9.33 (VIOLATED)
+_16160_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.10   28.43   -9.33 (VIOLATED)
+_15997_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.35   -9.32 (VIOLATED)
+_15854_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.00   28.32   -9.32 (VIOLATED)
+_16006_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.34   -9.32 (VIOLATED)
+_16336_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.91   28.22   -9.32 (VIOLATED)
+_16008_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.33   -9.31 (VIOLATED)
+_16339_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.90   28.21   -9.31 (VIOLATED)
+_15994_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.33   -9.30 (VIOLATED)
+_15988_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.32   -9.30 (VIOLATED)
+_16003_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.32   -9.30 (VIOLATED)
+_16000_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.31   -9.29 (VIOLATED)
+_16410_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.27   28.55   -9.28 (VIOLATED)
+_15920_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.01   28.29   -9.28 (VIOLATED)
+_15886_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.01   28.28   -9.27 (VIOLATED)
+_15856_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.28   -9.27 (VIOLATED)
+_15887_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.27   -9.26 (VIOLATED)
+_15901_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.27   -9.25 (VIOLATED)
+_15919_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.27   -9.25 (VIOLATED)
+_15926_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.27   -9.25 (VIOLATED)
+_15888_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.27   -9.25 (VIOLATED)
+_15979_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.26   -9.25 (VIOLATED)
+_15996_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.27   -9.24 (VIOLATED)
+_15918_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.26   -9.24 (VIOLATED)
+_15885_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.26   -9.24 (VIOLATED)
+_15933_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.26   -9.24 (VIOLATED)
+_15853_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.26   -9.24 (VIOLATED)
+_15869_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.26   -9.24 (VIOLATED)
+_15862_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.26   -9.24 (VIOLATED)
+_15855_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.26   -9.24 (VIOLATED)
+_15910_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.26   -9.24 (VIOLATED)
+_15894_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.26   -9.24 (VIOLATED)
+_15942_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.25   -9.23 (VIOLATED)
+_15917_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.25   -9.23 (VIOLATED)
+_15898_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.25   -9.23 (VIOLATED)
+_15878_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.25   -9.23 (VIOLATED)
+_15907_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.25   -9.23 (VIOLATED)
+_15912_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.24   -9.22 (VIOLATED)
+_15939_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.24   -9.22 (VIOLATED)
+_15880_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.24   -9.22 (VIOLATED)
+_16524_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.98   28.20   -9.22 (VIOLATED)
+_15944_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.24   -9.22 (VIOLATED)
+_15930_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.24   -9.22 (VIOLATED)
+_15866_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.24   -9.21 (VIOLATED)
+_15872_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.23   -9.21 (VIOLATED)
+_15875_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.23   -9.21 (VIOLATED)
+_15904_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.23   -9.21 (VIOLATED)
+_15892_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.23   -9.21 (VIOLATED)
+_15860_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.23   -9.20 (VIOLATED)
+_15936_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.23   -9.20 (VIOLATED)
+_15980_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.22   -9.20 (VIOLATED)
+_15924_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.22   -9.20 (VIOLATED)
+_15987_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.22   -9.19 (VIOLATED)
+_16346_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.26   28.45   -9.19 (VIOLATED)
+_15999_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.21   -9.19 (VIOLATED)
+_15900_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.19   -9.17 (VIOLATED)
+_15883_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.01   28.19   -9.17 (VIOLATED)
+_15868_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.18   -9.16 (VIOLATED)
+_15932_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.18   -9.16 (VIOLATED)
+_15851_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.17   -9.15 (VIOLATED)
+_15915_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.17   -9.14 (VIOLATED)
+_15916_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.14   -9.11 (VIOLATED)
+_15884_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.14   -9.11 (VIOLATED)
+_15859_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.13   -9.11 (VIOLATED)
+_15852_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.13   -9.11 (VIOLATED)
+_16469_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_2)   18.68   27.79   -9.11 (VIOLATED)
+_15935_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.12   -9.10 (VIOLATED)
+_15891_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.13   -9.10 (VIOLATED)
+_15903_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.12   -9.10 (VIOLATED)
+_15923_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.12   -9.10 (VIOLATED)
+_15871_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   28.12   -9.09 (VIOLATED)
+_16157_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.10   28.18   -9.08 (VIOLATED)
+_16538_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   27.98   -8.84 (VIOLATED)
+_16227_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   27.64   -8.79 (VIOLATED)
+_16088_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.83   27.58   -8.74 (VIOLATED)
+_16587_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   27.78   -8.74 (VIOLATED)
+_15985_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   27.85   -8.72 (VIOLATED)
+_15989_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   27.85   -8.72 (VIOLATED)
+_16344_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.92   27.55   -8.63 (VIOLATED)
+_16478_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   27.59   -8.57 (VIOLATED)
+_16144_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   27.59   -8.54 (VIOLATED)
+_16180_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.89   27.42   -8.54 (VIOLATED)
+_15861_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   27.67   -8.52 (VIOLATED)
+_16141_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.04   27.56   -8.51 (VIOLATED)
+_15921_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   27.66   -8.51 (VIOLATED)
+_15889_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   27.66   -8.51 (VIOLATED)
+_16072_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   27.35   -8.51 (VIOLATED)
+_15925_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   27.65   -8.50 (VIOLATED)
+_16385_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   27.54   -8.49 (VIOLATED)
+_15857_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.16   27.64   -8.49 (VIOLATED)
+_15893_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.16   27.64   -8.49 (VIOLATED)
+_16558_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.83   27.31   -8.48 (VIOLATED)
+_16453_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.21   27.68   -8.47 (VIOLATED)
+_16009_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.14   27.60   -8.46 (VIOLATED)
+_16574_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   27.45   -8.40 (VIOLATED)
+_16523_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   27.40   -8.35 (VIOLATED)
+_15945_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   27.47   -8.34 (VIOLATED)
+_15913_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.14   27.47   -8.33 (VIOLATED)
+_15881_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.14   27.47   -8.33 (VIOLATED)
+_16226_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.99   27.28   -8.29 (VIOLATED)
+_16328_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.03   27.28   -8.25 (VIOLATED)
+_16470_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   27.09   -8.25 (VIOLATED)
+_16338_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.04   27.27   -8.23 (VIOLATED)
+_16335_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   27.27   -8.23 (VIOLATED)
+_16537_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.04   27.21   -8.17 (VIOLATED)
+_16562_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   27.19   -8.14 (VIOLATED)
+_16331_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.90   27.03   -8.13 (VIOLATED)
+_16561_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   27.17   -8.12 (VIOLATED)
+_16559_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   27.17   -8.12 (VIOLATED)
+_16408_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.86   26.97   -8.12 (VIOLATED)
+_16333_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   26.95   -8.10 (VIOLATED)
+_16560_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   27.15   -8.10 (VIOLATED)
+_16345_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.09   27.18   -8.09 (VIOLATED)
+_16468_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_4)   18.89   26.98   -8.09 (VIOLATED)
+_16569_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.09   27.18   -8.09 (VIOLATED)
+_16571_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.09   27.17   -8.08 (VIOLATED)
+_16409_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.26   27.34   -8.08 (VIOLATED)
+_16565_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.09   27.16   -8.07 (VIOLATED)
+_16566_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.09   27.16   -8.07 (VIOLATED)
+_16567_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.09   27.16   -8.07 (VIOLATED)
+_16568_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.09   27.16   -8.07 (VIOLATED)
+_16563_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.09   27.15   -8.06 (VIOLATED)
+_16586_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.86   26.92   -8.06 (VIOLATED)
+_16564_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.09   27.15   -8.05 (VIOLATED)
+_16570_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.09   27.14   -8.05 (VIOLATED)
+_16179_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.89   26.79   -7.90 (VIOLATED)
+_16327_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.89   26.79   -7.90 (VIOLATED)
+_16334_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.91   26.62   -7.71 (VIOLATED)
+_16147_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   26.75   -7.70 (VIOLATED)
+_16330_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.89   26.58   -7.69 (VIOLATED)
+_16384_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.03   26.66   -7.63 (VIOLATED)
+_16225_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.91   26.53   -7.62 (VIOLATED)
+_16452_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.78   26.37   -7.58 (VIOLATED)
+_16156_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.10   26.68   -7.58 (VIOLATED)
+_16143_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   26.56   -7.55 (VIOLATED)
+_16522_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.04   26.54   -7.50 (VIOLATED)
+_16467_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_4)   18.83   26.26   -7.43 (VIOLATED)
+_16140_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   26.45   -7.41 (VIOLATED)
+_16151_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   26.19   -7.35 (VIOLATED)
+_16343_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.12   26.44   -7.32 (VIOLATED)
+_16178_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   26.33   -7.28 (VIOLATED)
+_15914_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.00   26.24   -7.24 (VIOLATED)
+_16466_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_2)   18.69   25.93   -7.24 (VIOLATED)
+_15882_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.01   26.20   -7.19 (VIOLATED)
+_16010_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.01   26.20   -7.19 (VIOLATED)
+_16573_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.04   26.23   -7.19 (VIOLATED)
+_15946_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   26.19   -7.18 (VIOLATED)
+_16087_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.10   26.27   -7.17 (VIOLATED)
+_16337_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.04   26.19   -7.16 (VIOLATED)
+_16355_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   25.93   -7.08 (VIOLATED)
+_16152_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   25.88   -7.04 (VIOLATED)
+_16071_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.10   26.06   -6.96 (VIOLATED)
+_16342_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   26.06   -6.91 (VIOLATED)
+_16536_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   25.89   -6.84 (VIOLATED)
+_16326_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.04   25.85   -6.82 (VIOLATED)
+_16145_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   25.59   -6.74 (VIOLATED)
+_16332_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   25.76   -6.71 (VIOLATED)
+_16383_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   25.72   -6.68 (VIOLATED)
+_16521_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.04   25.71   -6.67 (VIOLATED)
+_16148_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   25.47   -6.62 (VIOLATED)
+_16135_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   25.43   -6.59 (VIOLATED)
+_16146_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.26   25.81   -6.55 (VIOLATED)
+_16176_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.10   25.62   -6.52 (VIOLATED)
+_16407_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.26   25.71   -6.44 (VIOLATED)
+_16224_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.99   25.43   -6.44 (VIOLATED)
+_16451_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.26   25.61   -6.35 (VIOLATED)
+_16142_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   25.35   -6.33 (VIOLATED)
+_16572_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.17   25.49   -6.33 (VIOLATED)
+_16155_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   25.35   -6.33 (VIOLATED)
+_16471_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.04   25.35   -6.30 (VIOLATED)
+_16266_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.93   25.20   -6.27 (VIOLATED)
+_16267_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.92   25.19   -6.26 (VIOLATED)
+_16139_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.27   25.52   -6.25 (VIOLATED)
+_16271_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.98   25.22   -6.24 (VIOLATED)
+_16535_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.93   25.12   -6.20 (VIOLATED)
+_16279_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.98   25.18   -6.20 (VIOLATED)
+_16286_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.98   25.17   -6.19 (VIOLATED)
+_16291_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.98   25.17   -6.19 (VIOLATED)
+_16290_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.98   25.17   -6.19 (VIOLATED)
+_16284_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.98   25.16   -6.19 (VIOLATED)
+_16289_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.98   25.17   -6.18 (VIOLATED)
+_16283_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.98   25.16   -6.18 (VIOLATED)
+_16281_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.98   25.16   -6.18 (VIOLATED)
+_16465_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_2)   18.77   24.94   -6.17 (VIOLATED)
+_16264_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   25.43   -6.15 (VIOLATED)
+_16270_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   25.43   -6.14 (VIOLATED)
+_16273_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   25.42   -6.14 (VIOLATED)
+_16269_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   25.42   -6.14 (VIOLATED)
+_16278_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   25.42   -6.14 (VIOLATED)
+_16272_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   25.42   -6.14 (VIOLATED)
+_16276_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   25.42   -6.14 (VIOLATED)
+_16265_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   25.42   -6.13 (VIOLATED)
+_16285_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   25.42   -6.13 (VIOLATED)
+_16288_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   25.41   -6.13 (VIOLATED)
+_16287_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   25.41   -6.13 (VIOLATED)
+_16268_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   25.41   -6.12 (VIOLATED)
+_16280_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   25.41   -6.12 (VIOLATED)
+_16282_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   25.41   -6.12 (VIOLATED)
+_16262_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   25.40   -6.12 (VIOLATED)
+_16263_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   25.40   -6.12 (VIOLATED)
+_16277_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   25.40   -6.12 (VIOLATED)
+_16341_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.90   24.93   -6.03 (VIOLATED)
+_16172_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.27   25.24   -5.98 (VIOLATED)
+_16169_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.27   25.21   -5.95 (VIOLATED)
+_16464_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_4)   18.88   24.77   -5.89 (VIOLATED)
+_16557_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   24.93   -5.88 (VIOLATED)
+_16175_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   24.92   -5.87 (VIOLATED)
+_16520_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   24.87   -5.82 (VIOLATED)
+_16154_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.26   25.06   -5.80 (VIOLATED)
+_16177_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.89   24.68   -5.79 (VIOLATED)
+_16382_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   24.80   -5.75 (VIOLATED)
+_16086_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   24.50   -5.65 (VIOLATED)
+_16192_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   24.41   -5.57 (VIOLATED)
+_16168_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_2)   19.00   24.54   -5.54 (VIOLATED)
+_16171_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   24.55   -5.50 (VIOLATED)
+_16138_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.83   24.33   -5.50 (VIOLATED)
+_16070_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   24.28   -5.42 (VIOLATED)
+_16223_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   24.44   -5.39 (VIOLATED)
+_16406_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.04   24.41   -5.37 (VIOLATED)
+_16150_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.25   24.58   -5.33 (VIOLATED)
+_16193_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.12   24.41   -5.29 (VIOLATED)
+_16463_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_4)   18.81   24.03   -5.23 (VIOLATED)
+_16405_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   24.04   -5.19 (VIOLATED)
+_16450_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.22   24.39   -5.17 (VIOLATED)
+_16174_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.04   24.03   -4.99 (VIOLATED)
+_16292_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.98   23.95   -4.98 (VIOLATED)
+_16519_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   24.02   -4.97 (VIOLATED)
+_16134_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.04   23.99   -4.95 (VIOLATED)
+_16274_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   24.22   -4.93 (VIOLATED)
+_16275_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   24.21   -4.93 (VIOLATED)
+_16293_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   24.20   -4.91 (VIOLATED)
+_16356_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.26   24.17   -4.91 (VIOLATED)
+_16462_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_2)   19.21   24.09   -4.88 (VIOLATED)
+_16534_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   23.71   -4.87 (VIOLATED)
+_16381_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   23.88   -4.83 (VIOLATED)
+_16153_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.01   23.81   -4.80 (VIOLATED)
+_16357_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.95   23.69   -4.74 (VIOLATED)
+_16340_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.11   23.84   -4.73 (VIOLATED)
+_16556_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.99   23.64   -4.66 (VIOLATED)
+_16401_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   23.47   -4.62 (VIOLATED)
+_16191_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   23.61   -4.56 (VIOLATED)
+_16029_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_4)   19.00   23.48   -4.48 (VIOLATED)
+_16170_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.04   23.47   -4.43 (VIOLATED)
+_16167_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   23.45   -4.41 (VIOLATED)
+_16402_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.82   23.09   -4.27 (VIOLATED)
+_16069_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   23.03   -4.18 (VIOLATED)
+_16533_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   23.19   -4.15 (VIOLATED)
+_16518_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   23.16   -4.12 (VIOLATED)
+_16173_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   23.10   -4.05 (VIOLATED)
+_16222_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   23.05   -4.01 (VIOLATED)
+_16164_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.26   23.24   -3.97 (VIOLATED)
+_16085_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.01   22.92   -3.92 (VIOLATED)
+_16165_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.95   22.86   -3.91 (VIOLATED)
+_16380_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   22.96   -3.91 (VIOLATED)
+_16194_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.01   22.91   -3.90 (VIOLATED)
+_16137_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.97   22.86   -3.89 (VIOLATED)
+_16449_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.92   22.79   -3.87 (VIOLATED)
+_16404_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.27   22.73   -3.46 (VIOLATED)
+_16555_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.23   22.61   -3.38 (VIOLATED)
+_16403_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.04   22.42   -3.38 (VIOLATED)
+_16532_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.93   22.28   -3.35 (VIOLATED)
+_16517_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   22.33   -3.28 (VIOLATED)
+_16166_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   22.29   -3.24 (VIOLATED)
+_16197_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.92   21.95   -3.04 (VIOLATED)
+_16400_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   22.04   -3.02 (VIOLATED)
+_16195_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.01   22.01   -3.00 (VIOLATED)
+_16379_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   22.05   -3.00 (VIOLATED)
+_16542_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.91   21.91   -2.99 (VIOLATED)
+_16220_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.90   21.83   -2.93 (VIOLATED)
+_16068_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   21.66   -2.81 (VIOLATED)
+_16084_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   21.56   -2.72 (VIOLATED)
+_16149_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   21.56   -2.71 (VIOLATED)
+_16448_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.93   21.56   -2.63 (VIOLATED)
+_16550_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.99   21.59   -2.60 (VIOLATED)
+_16544_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   21.55   -2.50 (VIOLATED)
+_16516_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   21.50   -2.46 (VIOLATED)
+_16219_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   21.30   -2.26 (VIOLATED)
+_16554_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.02   21.27   -2.25 (VIOLATED)
+_16196_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.11   21.35   -2.24 (VIOLATED)
+_16378_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   21.12   -2.07 (VIOLATED)
+_16228_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.27   21.24   -1.98 (VIOLATED)
+_16531_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.16   21.11   -1.95 (VIOLATED)
+_16447_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.77   20.65   -1.87 (VIOLATED)
+_16229_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.95   20.78   -1.83 (VIOLATED)
+_16398_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   20.85   -1.72 (VIOLATED)
+_16067_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.86   20.52   -1.66 (VIOLATED)
+_16549_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.98   20.63   -1.65 (VIOLATED)
+_16515_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   20.67   -1.62 (VIOLATED)
+_16083_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   20.42   -1.57 (VIOLATED)
+_16543_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.24   20.76   -1.52 (VIOLATED)
+_16221_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.90   20.36   -1.46 (VIOLATED)
+_16553_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.28   20.62   -1.34 (VIOLATED)
+_16530_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   20.37   -1.32 (VIOLATED)
+_16446_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.14   20.46   -1.32 (VIOLATED)
+_16377_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   20.20   -1.15 (VIOLATED)
+_16218_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.04   20.19   -1.15 (VIOLATED)
+_16397_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.26   20.40   -1.14 (VIOLATED)
+_16239_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   19.88   -1.05 (VIOLATED)
+_16245_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   19.86   -1.02 (VIOLATED)
+_16244_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   19.86   -1.02 (VIOLATED)
+_16251_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   19.85   -1.01 (VIOLATED)
+_16242_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.87   -1.01 (VIOLATED)
+_16233_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   19.85   -1.01 (VIOLATED)
+_16248_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   19.85   -1.01 (VIOLATED)
+_16236_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   19.84   -1.01 (VIOLATED)
+_16235_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.85   -1.00 (VIOLATED)
+_16259_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.83   19.83   -1.00 (VIOLATED)
+_16238_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.85   -1.00 (VIOLATED)
+_16240_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.85   -1.00 (VIOLATED)
+_16253_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.85   -1.00 (VIOLATED)
+_16241_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.85   -1.00 (VIOLATED)
+_16230_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   19.84   -1.00 (VIOLATED)
+_16260_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.83   19.83   -1.00 (VIOLATED)
+_16232_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   19.83   -1.00 (VIOLATED)
+_16246_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.84   -1.00 (VIOLATED)
+_16243_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.83   -0.98 (VIOLATED)
+_16261_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.83   19.81   -0.98 (VIOLATED)
+_16252_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.83   -0.98 (VIOLATED)
+_16255_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.82   -0.97 (VIOLATED)
+_16257_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.82   -0.97 (VIOLATED)
+_16249_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.82   -0.97 (VIOLATED)
+_16234_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   19.81   -0.96 (VIOLATED)
+_16254_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.81   -0.96 (VIOLATED)
+_16231_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.80   -0.96 (VIOLATED)
+_16256_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.81   -0.96 (VIOLATED)
+_16247_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.81   -0.96 (VIOLATED)
+_16250_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.80   -0.95 (VIOLATED)
+_16258_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   19.79   -0.94 (VIOLATED)
+_16089_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.86   19.74   -0.88 (VIOLATED)
+_16552_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.83   19.71   -0.88 (VIOLATED)
+_16514_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.04   19.88   -0.84 (VIOLATED)
+_16527_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.92   19.61   -0.70 (VIOLATED)
+_16596_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.12   19.78   -0.66 (VIOLATED)
+_16594_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.12   19.77   -0.65 (VIOLATED)
+_16603_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.12   19.76   -0.64 (VIOLATED)
+_16601_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.12   19.76   -0.63 (VIOLATED)
+_16598_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   19.76   -0.63 (VIOLATED)
+_16593_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   19.75   -0.62 (VIOLATED)
+_16607_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   19.74   -0.62 (VIOLATED)
+_16605_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   19.74   -0.61 (VIOLATED)
+_16600_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   19.73   -0.61 (VIOLATED)
+_16606_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   19.73   -0.60 (VIOLATED)
+_16597_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   19.73   -0.60 (VIOLATED)
+_16592_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   19.73   -0.60 (VIOLATED)
+_16602_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   19.71   -0.58 (VIOLATED)
+_16436_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.14   19.70   -0.57 (VIOLATED)
+_16595_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.14   19.70   -0.57 (VIOLATED)
+_16599_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.14   19.70   -0.56 (VIOLATED)
+_16608_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   19.70   -0.56 (VIOLATED)
+_16434_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.14   19.70   -0.56 (VIOLATED)
+_16441_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.14   19.69   -0.55 (VIOLATED)
+_16432_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.14   19.69   -0.55 (VIOLATED)
+_16440_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.14   19.69   -0.55 (VIOLATED)
+_16526_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.83   19.38   -0.55 (VIOLATED)
+_16435_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.14   19.68   -0.54 (VIOLATED)
+_16604_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.14   19.67   -0.53 (VIOLATED)
+_16437_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.14   19.67   -0.53 (VIOLATED)
+_16439_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.14   19.67   -0.53 (VIOLATED)
+_16433_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.14   19.66   -0.52 (VIOLATED)
+_16297_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.83   19.30   -0.47 (VIOLATED)
+_16308_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   19.31   -0.47 (VIOLATED)
+_16295_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.83   19.28   -0.45 (VIOLATED)
+_16318_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.29   -0.45 (VIOLATED)
+_16299_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.29   -0.44 (VIOLATED)
+_16302_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.29   -0.44 (VIOLATED)
+_16324_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   19.28   -0.44 (VIOLATED)
+_16296_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   19.27   -0.44 (VIOLATED)
+_16294_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   19.27   -0.43 (VIOLATED)
+_16315_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.27   -0.43 (VIOLATED)
+_16303_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.27   -0.43 (VIOLATED)
+_16298_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   19.26   -0.42 (VIOLATED)
+_16300_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.27   -0.42 (VIOLATED)
+_16305_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.27   -0.42 (VIOLATED)
+_16317_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.27   -0.42 (VIOLATED)
+_16306_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.27   -0.42 (VIOLATED)
+_16313_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.27   -0.42 (VIOLATED)
+_16309_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.26   -0.42 (VIOLATED)
+_16319_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   19.26   -0.42 (VIOLATED)
+_16325_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.83   19.25   -0.42 (VIOLATED)
+_16301_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.26   -0.41 (VIOLATED)
+_16304_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.26   -0.41 (VIOLATED)
+_16323_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.26   -0.41 (VIOLATED)
+_16314_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.26   -0.41 (VIOLATED)
+_16310_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.26   -0.41 (VIOLATED)
+_16312_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.26   -0.40 (VIOLATED)
+_16307_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.26   -0.40 (VIOLATED)
+_16311_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.26   -0.40 (VIOLATED)
+_16320_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.25   -0.40 (VIOLATED)
+_16322_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.25   -0.40 (VIOLATED)
+_16321_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   19.24   -0.39 (VIOLATED)
+_16082_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   19.24   -0.39 (VIOLATED)
+_16316_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.86   19.24   -0.38 (VIOLATED)
+_16611_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   19.42   -0.29 (VIOLATED)
+_16396_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.97   19.23   -0.26 (VIOLATED)
+_16612_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   19.39   -0.26 (VIOLATED)
+_16376_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.05   19.29   -0.24 (VIOLATED)
+_16216_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.91   19.11   -0.20 (VIOLATED)
+_16614_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   19.33   -0.20 (VIOLATED)
+_16619_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   19.32   -0.19 (VIOLATED)
+_16618_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.13   19.32   -0.19 (VIOLATED)
+_16217_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.12   19.30   -0.18 (VIOLATED)
+_16545_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.25   19.43   -0.18 (VIOLATED)
+_16445_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.79   18.97   -0.18 (VIOLATED)
+_16551_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.25   19.43   -0.18 (VIOLATED)
+_16620_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.14   19.30   -0.17 (VIOLATED)
+_16430_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   19.31   -0.16 (VIOLATED)
+_16066_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.84   19.00   -0.16 (VIOLATED)
+_16425_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   19.31   -0.15 (VIOLATED)
+_16429_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   19.30   -0.15 (VIOLATED)
+_16617_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.14   19.29   -0.15 (VIOLATED)
+_16426_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   19.30   -0.15 (VIOLATED)
+_16427_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   19.30   -0.15 (VIOLATED)
+_16428_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   19.30   -0.15 (VIOLATED)
+_16421_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   19.30   -0.14 (VIOLATED)
+_16422_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   19.29   -0.14 (VIOLATED)
+_16424_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   19.29   -0.14 (VIOLATED)
+_16423_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.15   19.29   -0.13 (VIOLATED)
+_16590_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.20   19.32   -0.12 (VIOLATED)
+_16548_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   18.94   -0.09 (VIOLATED)
+_16546_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.85   18.91   -0.06 (VIOLATED)
+_16547_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   19.14   19.18   -0.04 (VIOLATED)
+_16443_/D (gf180mcu_fd_sc_mcu9t5v0__dffq_1)   18.98   18.99   -0.02 (VIOLATED)
+
+===KLT_SETUP_VIOLATIONS_END===
+===KLT_HOLD_VIOLATIONS_BEGIN===
+No paths found.
+
+===KLT_HOLD_VIOLATIONS_END===

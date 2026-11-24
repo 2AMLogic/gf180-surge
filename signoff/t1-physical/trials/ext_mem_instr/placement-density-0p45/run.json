@@ -1,0 +1,72 @@
+{
+  "schema": "gf180-surge.pnr-trial/1",
+  "group": "ext_mem_instr",
+  "slug": "placement-density-0p45",
+  "status": "interrupted",
+  "sets": [
+    "placement_density=0.45"
+  ],
+  "request_diff": [
+    {
+      "path": "placement_density",
+      "baseline": null,
+      "trial": 0.45
+    }
+  ],
+  "netlist_path_rewrite": {
+    "group_request": "../../t1-item1/ext_mem_instr/ext_mem_instr_synth.v",
+    "trial_request": "../../../../t1-item1/ext_mem_instr/ext_mem_instr_synth.v",
+    "reason": "trial requests live at trials/<group>/<slug>/; the referenced bytes are the same committed netlist"
+  },
+  "finding": {
+    "setting_exposed_by_pinned_tool": false,
+    "detail": "klayout-tools==0.8.0 (signoff/requirements.txt) does not read a request-level placement density: place_and_route.py defines the module constant _GLOBAL_PLACEMENT_DENSITY = 0.6 and place_and_route_script.py emits `global_placement -density 0.6` with no request override (a request field was only added upstream after 0.8.0, klayout-tools #4716, present in 0.9.x). Unknown top-level request keys are not rejected, so this trial's `placement_density: 0.45` was silently ignored: the run was a byte-equivalent baseline replica, not a trial of any setting.",
+    "proof": [
+      "trials/ext_mem_instr/placement-density-0p45/.klt/place-and-route/pnr_ext_mem_instr_place.tcl line 7: `global_placement -density 0.6 -routability_driven -timing_driven -random_seed 1` (unchanged from baseline despite placement_density=0.45 in request.json)",
+      "klayout-tools 0.8.0 place_and_route.py load_request()/run(): no `request.get(\"placement_density\")`; first appears in 0.9.x citing issue #4716"
+    ]
+  },
+  "interruption": "The driver (uvx klt place-and-route) was killed when its builder step exited at ~2026-11-21T01:2xZ, after place (00:55:08Z) and cts (00:55:31Z) and with the route stage still running; the orphaned openroad route child completed at 2026-11-21T01:56:24Z (ext_mem_instr_route_metrics.json / final DEF / as-built Verilog mtimes) but the stream-merge step that follows never ran, so no GDS was produced. Discovered by the successor builder step at 2026-11-21T02:1xZ; no klt/openroad process for this trial was alive then.",
+  "commands": [
+    {
+      "step": "place-and-route",
+      "exit": null,
+      "note": "driver killed before exit; stage artifacts show floorplan, place, cts and a completed detailed route (route_pass:0 drc_errors iter 0..4: 6436, 1834, 1685, 90, 0)"
+    }
+  ],
+  "steps": {
+    "place-and-route": {
+      "exit": null,
+      "status": "interrupted_after_route_stage",
+      "stream": "absent"
+    },
+    "drc": {
+      "status": "NOT_RUN",
+      "reason": "no stream"
+    },
+    "lvs": {
+      "status": "NOT_RUN",
+      "reason": "no stream"
+    },
+    "open-pin-probe": {
+      "status": "NOT_RUN",
+      "reason": "no stream"
+    },
+    "pin-geometry-probe": {
+      "status": "NOT_RUN",
+      "reason": "no stream"
+    }
+  },
+  "artifacts_retained": [
+    "request.json",
+    "lvs request not written",
+    ".klt/place-and-route/pnr_*.tcl (the generated flow: place line proves the placebo)",
+    ".klt/place-and-route/*_metrics.json (floorplan/place/cts/route)",
+    ".klt/place-and-route/openroad-logs/",
+    ".klt/place-and-route/*route*drc.rpt (empty: 0 detail-route DRC violations)"
+  ],
+  "artifacts_deleted": [
+    ".klt/place-and-route/*.odb (5 files, ~38 MB), *.def (3, ~18 MB), ext_mem_instr.v: stage databases whose content is summarised by the retained metrics; no verdict depends on them"
+  ],
+  "cap_accounting": "Does not consume one of the three evidence-backed trial slots (#804 step 2): it tested no setting. The compute (~63 min) was spent by an earlier builder step; recorded here so the attempt is not silent. The missing placement-density knob is already filed upstream (klayout-tools #4716; add-on to the #6905 reporting gap)."
+}

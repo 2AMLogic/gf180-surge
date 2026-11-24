@@ -20,6 +20,7 @@ import gzip
 import hashlib
 import json
 import pathlib
+import re
 import unittest
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -498,6 +499,58 @@ def probe_record(group):
     return load(group, "open_pin_probe.json")
 
 
+def geometry_record(group):
+    return load(group, "pin_geometry_probe.json")
+
+
+def geometry_violations(rec, g):
+    """Everything wrong with one pin-geometry record, as a list of strings,
+    so the live negative controls can mutate a copy and re-audit with the
+    same code the positive tests run. Anti-vacuity: zero inverter instances
+    examined fails loudly (the control group's "no isolated masters" would
+    otherwise pass vacuously). No check here reads a trace-stop layer as an
+    openness verdict: openness is the connectivity record's to say."""
+    v = []
+    prov = rec["provenance"]
+    if prov["pin"] != (ROOT / "signoff" / "requirements.txt").read_text().strip():
+        v.append(f"{g}: recorded pin differs from signoff/requirements.txt")
+    if prov["stream_content_hash"] != stream_hash(g):
+        v.append(f"{g}: stream hash differs from the committed .gds.gz")
+    pin = json.loads((ROOT / "signoff" / "t1-item1" / "pdk-pin.json").read_text())
+    if prov["lef"]["pdk_revision"] != pin["pdk"]["revision"]:
+        v.append(f"{g}: LEF pdk revision differs from "
+                 f"signoff/t1-item1/pdk-pin.json")
+    masters = rec.get("masters", [])
+    if sum(mm.get("instances_total", 0) for mm in masters) <= 0:
+        v.append(f"NO_VERDICT: {g}: zero inverter instances examined -- the "
+                 f"zero-isolated-masters check would pass vacuously")
+    for mm in masters:
+        if not mm.get("lef_irects_um"):
+            v.append(f"{g}: master {mm.get('master')} resolved no LEF I-pin "
+                     f"rects (the named pin did not resolve)")
+        if mm.get("instances_total", 0) != mm.get("connectivity_instance_count"):
+            v.append(f"{g}: master {mm.get('master')} instance count "
+                     f"{mm.get('instances_total')} != connectivity record's "
+                     f"{mm.get('connectivity_instance_count')}")
+    # The isolated-input summary must be exactly what the same stream's
+    # committed connectivity record reports, master by master.
+    conn = probe_record(g)
+    conn_masters = {f["master"].rsplit("__", 1)[-1] for f in conn["findings"]
+                    if f["direction"] == "input"}
+    geo_isolated = {mm["master"] for mm in masters
+                    if mm.get("isolated_inputs_from_connectivity")}
+    summary = set(rec["summary"]["masters_with_isolated_inputs"])
+    if geo_isolated != summary:
+        v.append(f"{g}: per-master isolated inputs differ from the summary")
+    if geo_isolated != conn_masters:
+        v.append(f"{g}: isolated inputs differ from the committed open-pin "
+                 f"findings' masters {sorted(conn_masters)}")
+    if not any("different sets" in n for n in rec.get("notes", [])):
+        v.append(f"{g}: LEF/GDS note (the two pin-rect sets differ for the "
+                 f"wide inverters) is missing from the record")
+    return v
+
+
 def probe_violations(rec):
     """Everything wrong with one open-pin probe record, as a list of strings,
     so the live negative controls can mutate a copy and re-audit with the
@@ -645,6 +698,300 @@ class T1PhysicalOpenPinProbe(unittest.TestCase):
         for g in PROBE_GROUPS:
             rec = probe_record(g)
             self.assertTrue(any("#1063" in n for n in rec["notes"]), g)
+
+
+class T1PhysicalPinGeometryProbe(unittest.TestCase):
+    """#804 step 1: the committed pin-geometry records re-bind to their
+    streams and to the connectivity record they annotate.
+
+    Binds each record's stream hash and tool pin, requires every inverter
+    master's LEF I-pin rects to have resolved, and re-derives the
+    masters-with-isolated-inputs summary from the same stream's committed
+    open_pin_probe.json findings -- the geometry record may never disagree
+    with the connectivity record it annotates. DOES NOT: read a trace-stop
+    layer as an openness verdict, make a cause or fix claim, or establish
+    anything about fidelity or hardware.
+    """
+
+    def test_records_rebind_to_streams_masters_and_connectivity(self):
+        for g in PROBE_GROUPS:
+            rec = geometry_record(g)
+            self.assertEqual(rec["group"], g)
+            self.assertEqual(geometry_violations(rec, g), [], g)
+
+    def test_negative_control_mutated_stream_hash_fails_the_binding(self):
+        rec = copy.deepcopy(geometry_record("ext_mem_instr"))
+        rec["provenance"]["stream_content_hash"] = "sha256:" + "0" * 64
+        bad = geometry_violations(rec, "ext_mem_instr")
+        self.assertTrue(any("stream hash differs" in x for x in bad), bad)
+
+    def test_negative_control_empty_pin_selection_fails_the_control(self):
+        # A geometry pass that resolved no inverter instances at all would
+        # make control_top's "zero isolated masters" pass vacuously.
+        rec = copy.deepcopy(geometry_record("control_top"))
+        for mm in rec["masters"]:
+            mm["instances_total"] = 0
+        bad = geometry_violations(rec, "control_top")
+        self.assertTrue(any("vacuously" in x for x in bad), bad)
+
+    def test_negative_control_unresolved_lef_pin_fails_the_named_pins(self):
+        rec = copy.deepcopy(geometry_record("ext_mem_instr"))
+        next(mm for mm in rec["masters"]
+             if mm["master"] == "clkinv_12")["lef_irects_um"] = []
+        bad = geometry_violations(rec, "ext_mem_instr")
+        self.assertTrue(any("resolved no LEF I-pin rects" in x for x in bad),
+                        bad)
+
+    def test_negative_control_stale_isolated_masters_break_the_cross_check(self):
+        # Simulate a geometry record re-run against a different stream
+        # without refreshing the connectivity binding: the summary must
+        # stop agreeing with the committed open-pin findings.
+        rec = copy.deepcopy(geometry_record("ext_mem_instr"))
+        rec["masters"][0]["isolated_inputs_from_connectivity"] = [
+            "gf180mcu_fd_sc_mcu9t5v0__clkinv_1_0"]
+        bad = geometry_violations(rec, "ext_mem_instr")
+        self.assertTrue(any("isolated inputs differ" in x for x in bad), bad)
+
+    def test_negative_control_dropped_lef_gds_note_hides_the_measurement(self):
+        rec = copy.deepcopy(geometry_record("ext_mem_instr"))
+        rec["notes"] = [n for n in rec["notes"] if "different sets" not in n]
+        bad = geometry_violations(rec, "ext_mem_instr")
+        self.assertTrue(any("LEF/GDS note" in x for x in bad), bad)
+
+    def test_baseline_expectation_pins_the_four_open_instances(self):
+        rec = geometry_record("ext_mem_instr")
+        self.assertEqual(
+            set(rec["summary"]["masters_with_isolated_inputs"]),
+            {"clkinv_12", "clkinv_16", "inv_8"})
+        ctl = geometry_record("control_top")
+        self.assertEqual(ctl["summary"]["masters_with_isolated_inputs"], [])
+        # control_top places inv_8 and it is NOT isolated there: the master
+        # identity alone does not decide the open, and the record says so
+        # by carrying it with an empty isolated list.
+        inv8 = next(mm for mm in ctl["masters"] if mm["master"] == "inv_8")
+        self.assertEqual(inv8["isolated_inputs_from_connectivity"], [])
+
+
+# --------------------------------------------------------------------------
+# #804 steps 2/3: the bounded P&R trials under trials/<group>/<slug>/
+# --------------------------------------------------------------------------
+TRIALS = BASE / "trials"
+
+
+def trial_run(slug, group="ext_mem_instr"):
+    return json.loads((TRIALS / group / slug / "run.json").read_text())
+
+
+def trial_dirs(group="ext_mem_instr"):
+    """Every recorded trial directory. Anti-vacuity: the two #804 trials
+    must exist, and any directory without a parseable run.json fails the
+    iteration, so a future trial cannot land silently unbound."""
+    dirs = sorted(p.name for p in (TRIALS / group).iterdir() if p.is_dir())
+    if not dirs:
+        raise AssertionError("no trial directories under trials/" + group)
+    return dirs
+
+
+def _set_leaf(obj, dotted, value):
+    """Apply one deep_diff leaf path (`key.key[i].key`) to obj."""
+    tokens = dotted.split(".")
+    for i, tok in enumerate(tokens):
+        last = i == len(tokens) - 1
+        m = re.fullmatch(r"(\w+)\[(\d+)\]", tok)
+        if m:
+            k, idx = m.group(1), int(m.group(2))
+            if last:
+                obj[k][idx] = value
+            else:
+                obj = obj[k][idx]
+        else:
+            if last:
+                obj[tok] = value
+            else:
+                obj = obj[tok]
+
+
+def trial_violations(slug, group="ext_mem_instr", run=None, geo=None,
+                     floorplan_tcl=None):
+    """Everything wrong with one recorded trial, as a list of strings.
+    A completed trial re-binds to its own bytes: the recorded request diff
+    must be exactly one leaf, must reproduce the on-disk trial request from
+    the committed baseline, that leaf must be visible in the archived
+    generated floorplan TCL (the placebo's density leaf never was), the
+    trial stream hash must bind its own probe records, and the recorded
+    outcome summary must equal what those records actually say. An
+    interrupted trial must claim no stream and no downstream verdict.
+    `run`/`geo`/`floorplan_tcl` override the on-disk record so the live
+    negative controls audit mutated copies, never write the real ones.
+    DOES NOT: read a trial as a fix claim -- a bounded finding is a valid
+    recorded outcome."""
+    d = TRIALS / group / slug
+    if run is None:
+        run = json.loads((d / "run.json").read_text())
+    v = []
+    if run.get("schema") != "gf180-surge.pnr-trial/1":
+        v.append(f"{slug}: run schema is not gf180-surge.pnr-trial/1")
+    if run.get("group") != group:
+        v.append(f"{slug}: run group is {run.get('group')!r}, not {group}")
+    if run.get("status") == "interrupted":
+        if (d / f"{group}.gds.gz").exists():
+            v.append(f"{slug}: interrupted trial claims a stream")
+        for step in ("drc", "lvs", "open-pin-probe", "pin-geometry-probe"):
+            st = run.get("steps", {}).get(step, {})
+            if st.get("status") != "NOT_RUN":
+                v.append(f"{slug}: interrupted trial records {step} as "
+                         f"{st.get('status')!r}, not NOT_RUN")
+        return v
+    base = json.loads((BASE / group / "request.json").read_text())
+    diff = run.get("request_diff", [])
+    if len(diff) != 1:
+        v.append(f"{slug}: {len(diff)} request leaves changed; the #804 "
+                 f"contract is one setting per trial")
+    want = copy.deepcopy(base)
+    for leaf in diff:
+        _set_leaf(want, leaf["path"], leaf["trial"])
+    rewrite = run.get("netlist_path_rewrite", {})
+    if rewrite.get("trial_request"):
+        want["netlist"] = rewrite["trial_request"]
+    else:
+        v.append(f"{slug}: netlist path rewrite not recorded")
+    got = json.loads((d / "request.json").read_text())
+    if got != want:
+        v.append(f"{slug}: on-disk request.json is not the baseline plus the "
+                 f"recorded diff leaves")
+    # The changed leaf must be visible in the generated flow: the archived
+    # floorplan TCL is what the pinned generator produced from that request.
+    tcl_path = d / "pnr-scripts" / f"pnr_{group}_floorplan.tcl"
+    if floorplan_tcl is None:
+        floorplan_tcl = tcl_path.read_text() if tcl_path.is_file() else None
+    if floorplan_tcl is None:
+        v.append(f"{slug}: generated floorplan TCL not archived")
+    elif diff:
+        leaf = diff[0]
+        m = re.fullmatch(r"power\.straps\[(\d+)\]\.offset_um", leaf["path"])
+        if m:
+            strap = got["power"]["straps"][int(m.group(1))]
+            line = next((l for l in floorplan_tcl.splitlines()
+                         if "add_pdn_stripe" in l
+                         and f"-layer {{{strap['layer']}}}" in l), "")
+            mo = re.search(r"-offset \{([-0-9.]+)\}", line)
+            if not mo or float(mo.group(1)) != float(leaf["trial"]):
+                v.append(f"{slug}: {strap['layer']} stripe offset in the "
+                         f"generated TCL is "
+                         f"{mo.group(1) if mo else None}, not the trial's "
+                         f"{leaf['trial']}")
+        else:
+            v.append(f"{slug}: no reached-the-flow check covers leaf "
+                     f"{leaf['path']} -- extend trial_violations first")
+    # Stream binding: both trial probe records bind the trial's own stream.
+    stream = "sha256:" + sha(gzip.decompress(
+        (d / f"{group}.gds.gz").read_bytes()))
+    if geo is None:
+        geo = json.loads((d / "pin_geometry_probe.json").read_text())
+    if geo["provenance"]["stream_content_hash"] != stream:
+        v.append(f"{slug}: geometry record hash differs from trial stream")
+    conn = json.loads((d / "open_pin_probe.json").read_text())
+    if conn["provenance"]["stream_content_hash"] != stream:
+        v.append(f"{slug}: connectivity record hash differs from trial stream")
+    # The recorded outcome summary must be what the records say.
+    inputs = sorted(f["instance"] for f in conn["findings"]
+                    if f["direction"] == "input")
+    if sorted(run["steps"]["open-pin-probe"]["open_input_pins"]) != inputs:
+        v.append(f"{slug}: run.json open inputs differ from the trial "
+                 f"connectivity findings")
+    lvs = json.loads(gzip.decompress((d / "lvs.report.json.gz").read_bytes()))
+    if run["steps"]["lvs"]["status"] != lvs.get("status"):
+        v.append(f"{slug}: run.json lvs status differs from lvs.report")
+    drc = json.loads(gzip.decompress((d / "drc.report.json.gz").read_bytes()))
+    if run["steps"]["drc"]["status"] != drc.get("status"):
+        v.append(f"{slug}: run.json drc status differs from drc.report")
+    return v
+
+
+class T1PhysicalPNRTrials(unittest.TestCase):
+    """#804 steps 2/3: every recorded P&R trial is bound to its own bytes.
+
+    Each trial's run.json must re-derive from its request.json, its archived
+    generated TCL, its stream and its probe/LVS/DRC records -- and the
+    placebo (a knob the pinned 0.8.0 tool does not read) must keep saying
+    so, so the interrupted-baseline history cannot be rewritten into a
+    trial that tested something. DOES NOT: treat a qualifying trial as an
+    adopted flow (adoption is regen.py + the committed groups, separate),
+    or make any fidelity/hardware claim.
+    """
+
+    def test_every_recorded_trial_rebinds_to_its_own_bytes(self):
+        seen = trial_dirs()
+        self.assertIn("placement-density-0p45", seen)
+        self.assertIn("m4-strap-offset-0p0", seen)
+        for slug in seen:
+            self.assertEqual(trial_violations(slug), [], slug)
+
+    def test_placebo_keeps_its_no_knob_finding(self):
+        run = trial_run("placement-density-0p45")
+        self.assertEqual(run["status"], "interrupted")
+        finding = run.get("finding", {})
+        self.assertFalse(finding.get("setting_exposed_by_pinned_tool"))
+        self.assertTrue(any("#4716" in p for p in finding.get("proof", [])),
+                        finding)
+        self.assertIn("Does not consume", run.get("cap_accounting", ""))
+        # And the generated place TCL really is the baseline density.
+        tcl = (TRIALS / "ext_mem_instr" / "placement-density-0p45"
+               / ".klt" / "place-and-route" / "pnr_ext_mem_instr_place.tcl")
+        self.assertIn("global_placement -density 0.6", tcl.read_text())
+
+    def test_negative_control_mutated_stream_hash_fails_the_binding(self):
+        d = TRIALS / "ext_mem_instr" / "m4-strap-offset-0p0"
+        geo = json.loads((d / "pin_geometry_probe.json").read_text())
+        geo["provenance"]["stream_content_hash"] = "sha256:" + "0" * 64
+        bad = trial_violations("m4-strap-offset-0p0", geo=geo)
+        self.assertTrue(any("geometry record hash differs" in x
+                            for x in bad), bad)
+
+    def test_negative_control_second_leaf_fails_the_one_setting_rule(self):
+        run = trial_run("m4-strap-offset-0p0")
+        run["request_diff"].append({"path": "floorplan.die_area_um",
+                                    "baseline": [0, 0, 1100, 1100],
+                                    "trial": [0, 0, 1200, 1200]})
+        bad = trial_violations("m4-strap-offset-0p0", run=run)
+        self.assertTrue(any("one setting" in x for x in bad), bad)
+
+    def test_negative_control_baseline_tcl_fails_the_knob_leg(self):
+        d = TRIALS / "ext_mem_instr" / "m4-strap-offset-0p0"
+        real = (d / "pnr-scripts" / "pnr_ext_mem_instr_floorplan.tcl"
+                ).read_text()
+        patched = real.replace(
+            "-layer {Metal4} -width {4.48} -spacing {0.56} -pitch {44.8} "
+            "-offset {0.0}",
+            "-layer {Metal4} -width {4.48} -spacing {0.56} -pitch {44.8} "
+            "-offset {22.4}")
+        self.assertNotEqual(patched, real)  # the control must mutate
+        bad = trial_violations("m4-strap-offset-0p0",
+                               floorplan_tcl=patched)
+        self.assertTrue(any("stripe offset" in x for x in bad), bad)
+
+    def test_m4_outcome_is_the_recorded_bounded_finding(self):
+        # The M4 offset trial did not qualify: it MOVED the opens (the
+        # baseline's clkinv_12_1 and clkinv_16_0 inputs now connect;
+        # inv_12_0, open in no baseline record, lost its input) and made
+        # LVS worse (31 errors vs the baseline 14). Pinning the recorded
+        # outcome keeps the bounded finding from drifting silently.
+        run = trial_run("m4-strap-offset-0p0")
+        self.assertEqual(run["steps"]["open-pin-probe"]["open_input_pins"], [
+            "gf180mcu_fd_sc_mcu9t5v0__clkinv_12_0",
+            "gf180mcu_fd_sc_mcu9t5v0__inv_12_0",
+            "gf180mcu_fd_sc_mcu9t5v0__inv_8_0"])
+        self.assertEqual(run["steps"]["open-pin-probe"]
+                         ["input_pins_examined"], 21090)
+        self.assertEqual(run["steps"]["lvs"]["status"], "mismatch")
+        self.assertEqual(run["steps"]["lvs"]["errors"], 31)
+        self.assertEqual(run["steps"]["drc"]["status"], "clean")
+        self.assertEqual(run["steps"]["drc"]["violations"], 0)
+        geo = json.loads((TRIALS / "ext_mem_instr" / "m4-strap-offset-0p0"
+                          / "pin_geometry_probe.json").read_text())
+        self.assertEqual(
+            geo["summary"]["masters_with_isolated_inputs"],
+            ["clkinv_12", "inv_12", "inv_8"])
 
 
 if __name__ == "__main__":

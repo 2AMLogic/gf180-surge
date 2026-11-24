@@ -1,0 +1,122 @@
+OpenROAD 26Q3-1510-g6cb3f2b704 
+Features included (+) or not (-): +GPU +GUI +Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+===KLT_MAX_TRANSITION_LIBRARY_VIOLATIONS_BEGIN===
+max slew
+
+Pin                                    Limit    Slew   Slack
+------------------------------------------------------------
+_15151_/ZN                             17.00   18.07   -1.07 (VIOLATED)
+_15164_/A2                             17.00   18.07   -1.07 (VIOLATED)
+_15186_/A2                             17.00   18.07   -1.07 (VIOLATED)
+_15207_/A2                             17.00   18.07   -1.07 (VIOLATED)
+_15210_/A1                             17.00   18.07   -1.07 (VIOLATED)
+_15215_/A1                             17.00   18.07   -1.07 (VIOLATED)
+_15257_/A2                             17.00   18.07   -1.07 (VIOLATED)
+_15260_/A2                             17.00   18.07   -1.07 (VIOLATED)
+_09905_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09909_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09912_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09918_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09921_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09930_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09935_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09915_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09927_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09924_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09899_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09938_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09942_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09945_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09951_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09954_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09968_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09960_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09963_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09948_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09957_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_15328_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09897_/Z                              17.00   17.40   -0.40 (VIOLATED)
+_09971_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09975_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09978_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09981_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09987_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09990_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09993_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09996_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09999_/A2                             17.00   17.40   -0.40 (VIOLATED)
+
+===KLT_MAX_TRANSITION_LIBRARY_VIOLATIONS_END===
+===KLT_MAX_CAPACITANCE_LIBRARY_VIOLATIONS_BEGIN===
+max capacitance
+
+Pin                                    Limit     Cap   Slack
+------------------------------------------------------------
+_09897_/Z                               0.20    0.21   -0.01 (VIOLATED)
+
+_15151_/ZN                              0.06    0.06   -0.00 (VIOLATED)
+
+_08149_/ZN                              0.09    0.10   -0.00 (VIOLATED)
+
+===KLT_MAX_CAPACITANCE_LIBRARY_VIOLATIONS_END===
+===KLT_MAX_TRANSITION_VIOLATIONS_BEGIN===
+max slew
+
+Pin                                    Limit    Slew   Slack
+------------------------------------------------------------
+_15151_/ZN                             17.00   18.07   -1.07 (VIOLATED)
+_15164_/A2                             17.00   18.07   -1.07 (VIOLATED)
+_15186_/A2                             17.00   18.07   -1.07 (VIOLATED)
+_15207_/A2                             17.00   18.07   -1.07 (VIOLATED)
+_15210_/A1                             17.00   18.07   -1.07 (VIOLATED)
+_15215_/A1                             17.00   18.07   -1.07 (VIOLATED)
+_15257_/A2                             17.00   18.07   -1.07 (VIOLATED)
+_15260_/A2                             17.00   18.07   -1.07 (VIOLATED)
+_09905_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09909_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09912_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09918_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09921_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09930_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09935_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09915_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09927_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09924_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09899_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09938_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09942_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09945_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09951_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09954_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09968_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09960_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09963_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09948_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09957_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_15328_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09897_/Z                              17.00   17.40   -0.40 (VIOLATED)
+_09971_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09975_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09978_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09981_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09987_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09990_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09993_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09996_/A2                             17.00   17.40   -0.40 (VIOLATED)
+_09999_/A2                             17.00   17.40   -0.40 (VIOLATED)
+
+===KLT_MAX_TRANSITION_VIOLATIONS_END===
+===KLT_MAX_CAPACITANCE_VIOLATIONS_BEGIN===
+max capacitance
+
+Pin                                    Limit     Cap   Slack
+------------------------------------------------------------
+_09897_/Z                               0.20    0.21   -0.01 (VIOLATED)
+
+_15151_/ZN                              0.06    0.06   -0.00 (VIOLATED)
+
+_08149_/ZN                              0.09    0.10   -0.00 (VIOLATED)
+
+===KLT_MAX_CAPACITANCE_VIOLATIONS_END===
