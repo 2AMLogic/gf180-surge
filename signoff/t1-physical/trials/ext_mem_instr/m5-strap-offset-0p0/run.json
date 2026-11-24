@@ -1,0 +1,85 @@
+{
+  "schema": "gf180-surge.pnr-trial/1",
+  "group": "ext_mem_instr",
+  "slug": "m5-strap-offset-0p0",
+  "sets": [
+    "power.straps.2.offset_um=0.0"
+  ],
+  "commands": [
+    {
+      "step": "place-and-route",
+      "exit": 0,
+      "seconds": 2392.0
+    },
+    {
+      "step": "drc",
+      "exit": 0,
+      "seconds": 372.3
+    },
+    {
+      "step": "lvs",
+      "exit": 3,
+      "seconds": 1052.1
+    },
+    {
+      "step": "open-pin-probe",
+      "exit": 0,
+      "seconds": 1045.2
+    },
+    {
+      "step": "pin-geometry-probe",
+      "exit": 0,
+      "seconds": 16.4
+    }
+  ],
+  "steps": {
+    "place-and-route": {
+      "exit": 0
+    },
+    "drc": {
+      "exit": 0,
+      "status": "clean",
+      "violations": 0
+    },
+    "lvs": {
+      "exit": 3,
+      "status": "mismatch",
+      "errors": 14
+    },
+    "open-pin-probe": {
+      "exit": 0,
+      "single_pin_nets": 119,
+      "open_input_pins": [
+        "gf180mcu_fd_sc_mcu9t5v0__clkinv_12_0",
+        "gf180mcu_fd_sc_mcu9t5v0__clkinv_12_1",
+        "gf180mcu_fd_sc_mcu9t5v0__clkinv_16_0",
+        "gf180mcu_fd_sc_mcu9t5v0__inv_8_0"
+      ],
+      "input_pins_examined": 21090
+    },
+    "pin-geometry-probe": {
+      "exit": 0,
+      "isolated_input_masters": [
+        "clkinv_12",
+        "clkinv_16",
+        "inv_8"
+      ]
+    }
+  },
+  "request_diff": [
+    {
+      "path": "power.straps[2].offset_um",
+      "baseline": 44.8,
+      "trial": 0.0
+    }
+  ],
+  "netlist_path_rewrite": {
+    "group_request": "../../t1-item1/ext_mem_instr/ext_mem_instr_synth.v",
+    "trial_request": "../../../../t1-item1/ext_mem_instr/ext_mem_instr_synth.v",
+    "reason": "trial requests live at trials/<group>/<slug>/; the referenced bytes are the same committed netlist"
+  },
+  "erc": {
+    "status": "NOT_RUN",
+    "reason": "erc is not_changed by a routing trial and stays not_checked (missing antenna PDK) for the committed groups; not part of this trial's acceptance"
+  }
+}

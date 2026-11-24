@@ -925,6 +925,7 @@ class T1PhysicalPNRTrials(unittest.TestCase):
         seen = trial_dirs()
         self.assertIn("placement-density-0p45", seen)
         self.assertIn("m4-strap-offset-0p0", seen)
+        self.assertIn("m5-strap-offset-0p0", seen)
         for slug in seen:
             self.assertEqual(trial_violations(slug), [], slug)
 
@@ -993,6 +994,31 @@ class T1PhysicalPNRTrials(unittest.TestCase):
         self.assertEqual(
             geo["summary"]["masters_with_isolated_inputs"],
             ["clkinv_12", "inv_12", "inv_8"])
+
+    def test_m5_outcome_is_the_recorded_bounded_finding(self):
+        # The M5 offset trial did not qualify either: it reproduced the
+        # baseline exactly (the same four inputs open as the committed
+        # baseline record, the baseline's 14 LVS errors, clean DRC), so a
+        # full half-pitch Metal5 phase change is inert for this defect.
+        # Pinning the recorded outcome keeps the bounded finding from
+        # drifting silently.
+        run = trial_run("m5-strap-offset-0p0")
+        self.assertEqual(run["steps"]["open-pin-probe"]["open_input_pins"], [
+            "gf180mcu_fd_sc_mcu9t5v0__clkinv_12_0",
+            "gf180mcu_fd_sc_mcu9t5v0__clkinv_12_1",
+            "gf180mcu_fd_sc_mcu9t5v0__clkinv_16_0",
+            "gf180mcu_fd_sc_mcu9t5v0__inv_8_0"])
+        self.assertEqual(run["steps"]["open-pin-probe"]
+                         ["input_pins_examined"], 21090)
+        self.assertEqual(run["steps"]["lvs"]["status"], "mismatch")
+        self.assertEqual(run["steps"]["lvs"]["errors"], 14)
+        self.assertEqual(run["steps"]["drc"]["status"], "clean")
+        self.assertEqual(run["steps"]["drc"]["violations"], 0)
+        geo = json.loads((TRIALS / "ext_mem_instr" / "m5-strap-offset-0p0"
+                          / "pin_geometry_probe.json").read_text())
+        self.assertEqual(
+            geo["summary"]["masters_with_isolated_inputs"],
+            ["clkinv_12", "clkinv_16", "inv_8"])
 
 
 # #827 -- the relative-argv convention #826 established for the two

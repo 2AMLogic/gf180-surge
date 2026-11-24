@@ -146,8 +146,8 @@ generated flow -- the first trial's leaf never did. The tests in
 `tests/test_t1_physical_flow.py` re-bind every recorded trial to its own
 bytes and pin each recorded outcome.
 
-Two trial records exist (cap: three evidence-backed, one ~40-70 minute
-run at a time; only the second consumed a slot):
+Three trial records exist (cap: three evidence-backed, one ~40-70 minute
+run at a time; the second and third each consumed a slot):
 
 1. `placement-density-0p45` -- **invalid placebo, no slot consumed**:
    klayout-tools 0.8.0 has no request-level placement density (the
@@ -171,6 +171,21 @@ run at a time; only the second consumed a slot):
    lands on the unlabelled LEF rect), and ruling out "an M4 strap over
    the pin is the cause" as stated. `regen.py` is unchanged (offset
    stays 22.4); the failing-check record above is retained.
+3. `m5-strap-offset-0p0` -- `power.straps[2].offset_um` 44.8 -> 0.0 (one
+   leaf; the Metal5 `add_pdn_stripe ... -offset {0.0}` line in the
+   archived floorplan TCL is the knob reaching pdngen). Complete run,
+   P&R exit 0 in 40 min, geometry probe exit 0 first try (the packed-
+   stream fix #826 added). **Not a fix.** The outcome is the baseline
+   reproduced exactly: the same four inputs open (`clkinv_12_0`,
+   `clkinv_12_1`, `clkinv_16_0`, `inv_8_0`; same 21090 inputs examined),
+   14 LVS errors (the baseline count and kinds), DRC clean. Read as
+   evidence, not a cause claim: a full half-pitch Metal5 phase change
+   leaves the open set untouched, so the M5 PDN strap phase is inert
+   for this defect and "an M5 strap over the pin is the cause" is ruled
+   out as stated; combined with the m4 result (M4 phase permutes the
+   set) the mechanism stays where the geometry record puts it -- the
+   router's access via landing on the unlabelled LEF rect. `regen.py`
+   is unchanged (offset stays 44.8). 
 
 Also preserved: the m4 trial's own first attempt (`interrupted-attempt/`),
 killed by a builder-step exit after its route stage completed (its
@@ -181,13 +196,23 @@ invocation's metadata, stdout and stderr as individual files under
 directly. These include one floorplan invocation that exited 1 during an
 aborted first launch of the re-run with a mis-set `PDK_ROOT`
 (`aborted-first-launch-pnr.failure.txt`), superseded by the successful
-run minutes later. One more evidence-backed trial
-remains unspent in this pass (builder-step compute budget); the next
-candidate from the same measurement family is the Metal5 strap offset
-(`power.straps[2].offset_um` 44.8 -> 0.0). The placement-density knob
-stays unavailable until the pinned tool moves (klayout-tools #4716).
-Both trials' run records are attached to klayout-tools #6905. Item 4
-stays `unmet`: `ext_mem_instr` LVS stays a recorded failing check.
+run minutes later.
+
+Bounded finding (two of three slots spent, stopping at exhaustion of
+supported, evidence-backed settings): both PDN strap-offset candidates
+the geometry measurement named are ruled out -- the Metal4 offset
+permutes which inputs open without removing any, the Metal5 offset
+changes nothing at all -- and no further evidence-backed setting is
+expressible in the pinned 0.8.0 request surface: placement density is a
+module constant (request field only in 0.9.x, klayout-tools #4716),
+`set_dont_use` is generated from the per-library `_ABC_DONT_USE_GLOBS`
+table with no request field (issue #804's diagnostic-only candidate
+anyway), and a die-area change is a congestion diagnostic the
+measurement does not motivate (the m5 phase invariance argues against a
+global-congestion cause). The placement-density knob stays unavailable
+until the pinned tool moves (klayout-tools #4716). The m4 and m5 run
+records are attached to klayout-tools #6905. Item 4 stays `unmet`:
+`ext_mem_instr` LVS stays a recorded failing check.
 
 ### ERC: re-run under klt 0.9.2 with the gf180mcu antenna table (#803)
 
