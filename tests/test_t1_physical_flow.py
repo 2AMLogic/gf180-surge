@@ -784,7 +784,7 @@ def trial_run(slug, group="ext_mem_instr"):
 
 
 def trial_dirs(group="ext_mem_instr"):
-    """Every recorded trial directory. Anti-vacuity: the two #804 trials
+    """Every recorded trial directory. Anti-vacuity: the named #804 trials
     must exist, and any directory without a parseable run.json fails the
     iteration, so a future trial cannot land silently unbound."""
     dirs = sorted(p.name for p in (TRIALS / group).iterdir() if p.is_dir())
@@ -812,18 +812,18 @@ def _set_leaf(obj, dotted, value):
                 obj = obj[tok]
 
 
-def trial_violations(slug, group="ext_mem_instr", run=None, geo=None,
-                     floorplan_tcl=None):
+def trial_violations(slug, group="ext_mem_instr", run=None, floorplan_tcl=None,
+                     records=None):
     """Everything wrong with one recorded trial, as a list of strings.
     A completed trial re-binds to its own bytes: the recorded request diff
     must be exactly one leaf, must reproduce the on-disk trial request from
     the committed baseline, that leaf must be visible in the archived
     generated floorplan TCL (the placebo's density leaf never was), the
-    trial stream hash must bind its own probe records, and the recorded
+    trial stream hash must bind its probe and signoff reports, and the recorded
     outcome summary must equal what those records actually say. An
     interrupted trial must claim no stream and no downstream verdict.
-    `run`/`geo`/`floorplan_tcl` override the on-disk record so the live
-    negative controls audit mutated copies, never write the real ones.
+    Negative controls can override the run, floorplan TCL, or individual
+    records (by filename) in memory.
     DOES NOT: read a trial as a fix claim -- a bounded finding is a valid
     recorded outcome."""
     d = TRIALS / group / slug
@@ -884,28 +884,49 @@ def trial_violations(slug, group="ext_mem_instr", run=None, geo=None,
         else:
             v.append(f"{slug}: no reached-the-flow check covers leaf "
                      f"{leaf['path']} -- extend trial_violations first")
-    # Stream binding: both trial probe records bind the trial's own stream.
-    stream = "sha256:" + sha(gzip.decompress(
-        (d / f"{group}.gds.gz").read_bytes()))
-    if geo is None:
-        geo = json.loads((d / "pin_geometry_probe.json").read_text())
+
+    def record(name, opener=open):
+        if records is not None and name in records:
+            return records[name]
+        with opener(d / name, "rb") as source:
+            return json.load(source)
+
+    stream = "sha256:" + sha(gzip.decompress((d / f"{group}.gds.gz").read_bytes()))
+    geo = record("pin_geometry_probe.json")
     if geo["provenance"]["stream_content_hash"] != stream:
         v.append(f"{slug}: geometry record hash differs from trial stream")
-    conn = json.loads((d / "open_pin_probe.json").read_text())
+    conn = record("open_pin_probe.json")
     if conn["provenance"]["stream_content_hash"] != stream:
         v.append(f"{slug}: connectivity record hash differs from trial stream")
-    # The recorded outcome summary must be what the records say.
+    lvs = record("lvs.report.json.gz", gzip.open)
+    if "sha256:" + lvs["environment"]["layout_sha256"] != stream:
+        v.append(f"{slug}: LVS layout hash differs from trial stream")
+    drc = record("drc.report.json.gz", gzip.open)
+    if drc["provenance"]["input"]["content_hash"] != stream:
+        v.append(f"{slug}: DRC input hash differs from trial stream")
+
+    steps = run["steps"]
+    probe = steps["open-pin-probe"]
     inputs = sorted(f["instance"] for f in conn["findings"]
                     if f["direction"] == "input")
-    if sorted(run["steps"]["open-pin-probe"]["open_input_pins"]) != inputs:
+    if sorted(probe["open_input_pins"]) != inputs:
         v.append(f"{slug}: run.json open inputs differ from the trial "
                  f"connectivity findings")
-    lvs = json.loads(gzip.decompress((d / "lvs.report.json.gz").read_bytes()))
-    if run["steps"]["lvs"]["status"] != lvs.get("status"):
+    if probe["input_pins_examined"] != conn["pins_examined"]["input"]:
+        v.append(f"{slug}: run.json input coverage differs from connectivity probe")
+    if probe["single_pin_nets"] != conn["summary"]["single_pin_nets"]:
+        v.append(f"{slug}: run.json single-pin count differs from connectivity probe")
+    if (steps["pin-geometry-probe"]["isolated_input_masters"]
+            != geo["summary"]["masters_with_isolated_inputs"]):
+        v.append(f"{slug}: run.json isolated masters differ from geometry probe")
+    if steps["lvs"]["status"] != lvs["status"]:
         v.append(f"{slug}: run.json lvs status differs from lvs.report")
-    drc = json.loads(gzip.decompress((d / "drc.report.json.gz").read_bytes()))
-    if run["steps"]["drc"]["status"] != drc.get("status"):
+    if steps["lvs"]["errors"] != lvs["error_count"]:
+        v.append(f"{slug}: run.json error count differs from lvs.report")
+    if steps["drc"]["status"] != drc["status"]:
         v.append(f"{slug}: run.json drc status differs from drc.report")
+    if steps["drc"]["violations"] != drc["violation_count"]:
+        v.append(f"{slug}: run.json violation count differs from drc.report")
     return v
 
 
@@ -925,6 +946,7 @@ class T1PhysicalPNRTrials(unittest.TestCase):
         seen = trial_dirs()
         self.assertIn("placement-density-0p45", seen)
         self.assertIn("m4-strap-offset-0p0", seen)
+        self.assertIn("m5-strap-offset-0p0", seen)
         for slug in seen:
             self.assertEqual(trial_violations(slug), [], slug)
 
@@ -945,9 +967,38 @@ class T1PhysicalPNRTrials(unittest.TestCase):
         d = TRIALS / "ext_mem_instr" / "m4-strap-offset-0p0"
         geo = json.loads((d / "pin_geometry_probe.json").read_text())
         geo["provenance"]["stream_content_hash"] = "sha256:" + "0" * 64
-        bad = trial_violations("m4-strap-offset-0p0", geo=geo)
+        bad = trial_violations("m4-strap-offset-0p0",
+                               records={"pin_geometry_probe.json": geo})
         self.assertTrue(any("geometry record hash differs" in x
                             for x in bad), bad)
+
+    def test_negative_control_m4_reports_rejected_for_m5(self):
+        m4 = TRIALS / "ext_mem_instr" / "m4-strap-offset-0p0"
+        slug = "m5-strap-offset-0p0"
+        for name, problem in (("drc.report.json", "DRC input hash"),
+                              ("lvs.report.json", "LVS layout hash")):
+            with self.subTest(report=name):
+                bad = trial_violations(slug, records={name + ".gz": load(m4, name)})
+                self.assertIn(f"{slug}: {problem} differs from trial stream", bad)
+
+    def test_negative_control_stale_connectivity_coverage(self):
+        slug = "m5-strap-offset-0p0"
+        conn = probe_record(TRIALS / "ext_mem_instr" / slug)
+        conn["pins_examined"]["input"] = 0
+        bad = trial_violations(slug, records={"open_pin_probe.json": conn})
+        self.assertIn(f"{slug}: run.json input coverage differs from connectivity probe",
+                      bad)
+
+    def test_negative_control_stale_signoff_counts(self):
+        slug = "m5-strap-offset-0p0"
+        for step, field, problem in (("drc", "violations", "violation count"),
+                                     ("lvs", "errors", "error count")):
+            with self.subTest(step=step):
+                run = trial_run(slug)
+                run["steps"][step][field] += 1
+                bad = trial_violations(slug, run=run)
+                self.assertIn(f"{slug}: run.json {problem} differs from {step}.report",
+                              bad)
 
     def test_negative_control_second_leaf_fails_the_one_setting_rule(self):
         run = trial_run("m4-strap-offset-0p0")
@@ -971,28 +1022,59 @@ class T1PhysicalPNRTrials(unittest.TestCase):
                                floorplan_tcl=patched)
         self.assertTrue(any("stripe offset" in x for x in bad), bad)
 
+    def assert_recorded_outcome(self, slug, open_instances, lvs_errors,
+                                isolated_masters):
+        run = trial_run(slug)
+        self.assertEqual(trial_violations(slug, run=run), [])
+        steps = run["steps"]
+        probe = steps["open-pin-probe"]
+        self.assertEqual(sorted(probe["open_input_pins"]), sorted(open_instances))
+        self.assertEqual(probe["input_pins_examined"], 21090)
+        self.assertEqual(steps["lvs"]["status"], "mismatch")
+        self.assertEqual(steps["lvs"]["errors"], lvs_errors)
+        self.assertEqual(steps["drc"]["status"], "clean")
+        self.assertEqual(steps["drc"]["violations"], 0)
+        self.assertEqual(steps["pin-geometry-probe"]["isolated_input_masters"],
+                         isolated_masters)
+
     def test_m4_outcome_is_the_recorded_bounded_finding(self):
-        # The M4 offset trial did not qualify: it MOVED the opens (the
-        # baseline's clkinv_12_1 and clkinv_16_0 inputs now connect;
-        # inv_12_0, open in no baseline record, lost its input) and made
-        # LVS worse (31 errors vs the baseline 14). Pinning the recorded
-        # outcome keeps the bounded finding from drifting silently.
-        run = trial_run("m4-strap-offset-0p0")
-        self.assertEqual(run["steps"]["open-pin-probe"]["open_input_pins"], [
+        # Two baseline opens cleared and inv_12_0 opened. Three inputs were
+        # open in the trial and LVS reported 31 errors (baseline 14).
+        self.assert_recorded_outcome("m4-strap-offset-0p0", [
             "gf180mcu_fd_sc_mcu9t5v0__clkinv_12_0",
             "gf180mcu_fd_sc_mcu9t5v0__inv_12_0",
-            "gf180mcu_fd_sc_mcu9t5v0__inv_8_0"])
-        self.assertEqual(run["steps"]["open-pin-probe"]
-                         ["input_pins_examined"], 21090)
-        self.assertEqual(run["steps"]["lvs"]["status"], "mismatch")
-        self.assertEqual(run["steps"]["lvs"]["errors"], 31)
-        self.assertEqual(run["steps"]["drc"]["status"], "clean")
-        self.assertEqual(run["steps"]["drc"]["violations"], 0)
-        geo = json.loads((TRIALS / "ext_mem_instr" / "m4-strap-offset-0p0"
-                          / "pin_geometry_probe.json").read_text())
-        self.assertEqual(
-            geo["summary"]["masters_with_isolated_inputs"],
-            ["clkinv_12", "inv_12", "inv_8"])
+            "gf180mcu_fd_sc_mcu9t5v0__inv_8_0",
+        ], 31, ["clkinv_12", "inv_12", "inv_8"])
+
+    def test_m5_outcome_is_the_recorded_bounded_finding(self):
+        # This setting reproduced the baseline opens, LVS count and clean
+        # DRC. The four locations retained the same local M5 strap geometry.
+        self.assert_recorded_outcome("m5-strap-offset-0p0",
+                                     [name for name, _ in EXPECT_OPEN_INPUTS],
+                                     14, ["clkinv_12", "clkinv_16", "inv_8"])
+
+    def test_m5_preserved_local_strap_geometry_at_the_open_inputs(self):
+        baseline = geometry_record("ext_mem_instr")
+        trial = geometry_record(TRIALS / "ext_mem_instr" / "m5-strap-offset-0p0")
+        centers = baseline["provenance"]["pdn_strap_centers_um"]["M5"]
+        self.assertEqual(len(centers), 24)
+        self.assertEqual(trial["provenance"]["pdn_strap_centers_um"]["M5"],
+                         [10.08, *centers])
+
+        def measurements(record):
+            # Match the four physical sites by master and placed origin.
+            return {
+                (master["master"], tuple(inst["origin_um"])):
+                    (inst["over"]["nearest_m5_strap_center_um"],
+                     inst["over"]["m5_strap_overlap"])
+                for master in record["masters"]
+                if master["isolated_inputs_from_connectivity"]
+                for inst in master["instances"]
+            }
+
+        base_sites = measurements(baseline)
+        self.assertEqual(len(base_sites), 4)
+        self.assertEqual(measurements(trial), base_sites)
 
 
 # #827 -- the relative-argv convention #826 established for the two

@@ -1,0 +1,32 @@
+{
+  "invocation_id": "7921d8e3658748fdbcb9d4426566f17a",
+  "script_name": "pnr_ext_mem_instr_route.tcl",
+  "script_path": {
+    "path": "signoff/t1-physical/trials/ext_mem_instr/m5-strap-offset-0p0/.klt/place-and-route/pnr_ext_mem_instr_route.tcl",
+    "scope": "repo"
+  },
+  "script_sha256": "c66491e74f1172653343461b129f77caa0306908499f79c19d9e5fff9f75625b",
+  "metrics_path": {
+    "path": "signoff/t1-physical/trials/ext_mem_instr/m5-strap-offset-0p0/.klt/place-and-route/ext_mem_instr_route_metrics.json",
+    "scope": "repo"
+  },
+  "outcome": "exited",
+  "returncode": 0,
+  "directory": {
+    "path": "signoff/t1-physical/trials/ext_mem_instr/m5-strap-offset-0p0/.klt/place-and-route/openroad-logs/7921d8e3658748fdbcb9d4426566f17a",
+    "scope": "repo"
+  },
+  "stdout_path": {
+    "path": "signoff/t1-physical/trials/ext_mem_instr/m5-strap-offset-0p0/.klt/place-and-route/openroad-logs/7921d8e3658748fdbcb9d4426566f17a/stdout.log",
+    "scope": "repo"
+  },
+  "stderr_path": {
+    "path": "signoff/t1-physical/trials/ext_mem_instr/m5-strap-offset-0p0/.klt/place-and-route/openroad-logs/7921d8e3658748fdbcb9d4426566f17a/stderr.log",
+    "scope": "repo"
+  },
+  "metadata_path": {
+    "path": "signoff/t1-physical/trials/ext_mem_instr/m5-strap-offset-0p0/.klt/place-and-route/openroad-logs/7921d8e3658748fdbcb9d4426566f17a/invocation.json",
+    "scope": "repo"
+  },
+  "retention_errors": []
+}

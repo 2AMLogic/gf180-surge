@@ -1,0 +1,32 @@
+{
+  "invocation_id": "190be5fc756a4688bdcd0a72f8085e27",
+  "script_name": "pnr_ext_mem_instr_route_corner_ff_n40C_1v98.tcl",
+  "script_path": {
+    "path": "signoff/t1-physical/trials/ext_mem_instr/m5-strap-offset-0p0/.klt/place-and-route/pnr_ext_mem_instr_route_corner_ff_n40C_1v98.tcl",
+    "scope": "repo"
+  },
+  "script_sha256": "1fa2d6e9819f6bc3013e6d4db84fa38d13d0d5a9ffb00c1cbf55caa8762e0b97",
+  "metrics_path": {
+    "path": "signoff/t1-physical/trials/ext_mem_instr/m5-strap-offset-0p0/.klt/place-and-route/ext_mem_instr_route_corner_ff_n40C_1v98_metrics.json",
+    "scope": "repo"
+  },
+  "outcome": "exited",
+  "returncode": 0,
+  "directory": {
+    "path": "signoff/t1-physical/trials/ext_mem_instr/m5-strap-offset-0p0/.klt/place-and-route/openroad-logs/190be5fc756a4688bdcd0a72f8085e27",
+    "scope": "repo"
+  },
+  "stdout_path": {
+    "path": "signoff/t1-physical/trials/ext_mem_instr/m5-strap-offset-0p0/.klt/place-and-route/openroad-logs/190be5fc756a4688bdcd0a72f8085e27/stdout.log",
+    "scope": "repo"
+  },
+  "stderr_path": {
+    "path": "signoff/t1-physical/trials/ext_mem_instr/m5-strap-offset-0p0/.klt/place-and-route/openroad-logs/190be5fc756a4688bdcd0a72f8085e27/stderr.log",
+    "scope": "repo"
+  },
+  "metadata_path": {
+    "path": "signoff/t1-physical/trials/ext_mem_instr/m5-strap-offset-0p0/.klt/place-and-route/openroad-logs/190be5fc756a4688bdcd0a72f8085e27/invocation.json",
+    "scope": "repo"
+  },
+  "retention_errors": []
+}
