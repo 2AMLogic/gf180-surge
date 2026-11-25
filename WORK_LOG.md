@@ -6,8 +6,14 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 - [2026-09](work_log/WORK_LOG_2026-09.md)
 
+### 2026-11-25
+
+- **PR #830**: Record the M5 strap-offset trial that reproduced the four baseline opens
+
 ### 2026-11-24
 
+- **PR #828**: test: assert trial.py runs pin_geometry_probe.py under relative argv
+- **Issue #827** (closed): Add a source-level regression control for relative probe argv in trial.py
 - **PR #826**: fix: run trial geometry probe with cwd=trial dir and relative argv
 - **Issue #815** (closed): Trial evidence records carry absolute agent-worktree paths (signoff/t1-physical/trials/)
 - **PR #813**: Retain the bounded M4 routing trial with directly auditable OpenROAD logs
