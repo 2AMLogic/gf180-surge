@@ -813,7 +813,7 @@ def _set_leaf(obj, dotted, value):
 
 
 def trial_violations(slug, group="ext_mem_instr", run=None, floorplan_tcl=None,
-                     records=None):
+                     records=None, netlist=None):
     """Everything wrong with one recorded trial, as a list of strings.
     A completed trial re-binds to its own bytes: the recorded request diff
     must be exactly one leaf, must reproduce the on-disk trial request from
@@ -822,8 +822,9 @@ def trial_violations(slug, group="ext_mem_instr", run=None, floorplan_tcl=None,
     trial stream hash must bind its probe and signoff reports, and the recorded
     outcome summary must equal what those records actually say. An
     interrupted trial must claim no stream and no downstream verdict.
-    Negative controls can override the run, floorplan TCL, or individual
-    records (by filename) in memory.
+    Negative controls can override the run, floorplan TCL, individual
+    records (by filename), or the trial's netlist bytes (`netlist=`; the
+    baseline side is always read from disk) in memory.
     DOES NOT: read a trial as a fix claim -- a bounded finding is a valid
     recorded outcome."""
     d = TRIALS / group / slug
@@ -904,7 +905,8 @@ def trial_violations(slug, group="ext_mem_instr", run=None, floorplan_tcl=None,
     # The LVS reference must be this trial's own committed netlist, which
     # (one setting per trial) is also the baseline netlist. reference_sha256
     # is bare, unlike layout_sha256.
-    netlist = sha((d / f"{group}.v").read_bytes())
+    netlist = sha((d / f"{group}.v").read_bytes() if netlist is None
+                  else netlist)
     if lvs["environment"]["reference_sha256"] != netlist:
         v.append(f"{slug}: LVS reference netlist hash differs from the "
                  f"trial's committed netlist")
@@ -989,6 +991,12 @@ class T1PhysicalPNRTrials(unittest.TestCase):
             with self.subTest(report=name):
                 bad = trial_violations(slug, records={name + ".gz": load(m4, name)})
                 self.assertIn(f"{slug}: {problem} differs from trial stream", bad)
+
+    def test_negative_control_trial_netlist_must_equal_baseline(self):
+        slug = "m5-strap-offset-0p0"
+        bad = trial_violations(slug, netlist=mutated_netlist().encode())
+        self.assertIn(f"{slug}: trial netlist differs from the baseline "
+                      f"netlist", bad)
 
     def test_negative_control_lvs_reference_netlist_must_be_trial_netlist(self):
         slug = "m5-strap-offset-0p0"
