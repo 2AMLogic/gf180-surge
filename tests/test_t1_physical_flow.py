@@ -901,6 +901,15 @@ def trial_violations(slug, group="ext_mem_instr", run=None, floorplan_tcl=None,
     lvs = record("lvs.report.json.gz", gzip.open)
     if "sha256:" + lvs["environment"]["layout_sha256"] != stream:
         v.append(f"{slug}: LVS layout hash differs from trial stream")
+    # The LVS reference must be this trial's own committed netlist, which
+    # (one setting per trial) is also the baseline netlist. reference_sha256
+    # is bare, unlike layout_sha256.
+    netlist = sha((d / f"{group}.v").read_bytes())
+    if lvs["environment"]["reference_sha256"] != netlist:
+        v.append(f"{slug}: LVS reference netlist hash differs from the "
+                 f"trial's committed netlist")
+    if netlist != sha((BASE / group / f"{group}.v").read_bytes()):
+        v.append(f"{slug}: trial netlist differs from the baseline netlist")
     drc = record("drc.report.json.gz", gzip.open)
     if drc["provenance"]["input"]["content_hash"] != stream:
         v.append(f"{slug}: DRC input hash differs from trial stream")
@@ -980,6 +989,14 @@ class T1PhysicalPNRTrials(unittest.TestCase):
             with self.subTest(report=name):
                 bad = trial_violations(slug, records={name + ".gz": load(m4, name)})
                 self.assertIn(f"{slug}: {problem} differs from trial stream", bad)
+
+    def test_negative_control_lvs_reference_netlist_must_be_trial_netlist(self):
+        slug = "m5-strap-offset-0p0"
+        lvs = load(TRIALS / "ext_mem_instr" / slug, "lvs.report.json")
+        lvs["environment"]["reference_sha256"] = sha(mutated_netlist().encode())
+        bad = trial_violations(slug, records={"lvs.report.json.gz": lvs})
+        self.assertIn(f"{slug}: LVS reference netlist hash differs from the "
+                      f"trial's committed netlist", bad)
 
     def test_negative_control_stale_connectivity_coverage(self):
         slug = "m5-strap-offset-0p0"
