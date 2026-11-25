@@ -8,6 +8,10 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 
 ### 2026-11-25
 
+- **PR #835**: test(t1-physical): add live control for trial-vs-baseline netlist check
+- **Issue #834** (closed): Add a live negative control for the trial-vs-baseline netlist equality check
+- **PR #833**: test(t1-physical): bind trial LVS reference hash to the trial netlist
+- **Issue #831** (closed): Bind each archived P&R trial's committed netlist to its LVS reference hash
 - **PR #830**: Record the M5 strap-offset trial that reproduced the four baseline opens
 
 ### 2026-11-24
@@ -531,42 +535,6 @@ Recent merged pull requests and closed issues. Entries record forge events only;
 - **Issue #134** (closed): SXT-028b artifact no longer byte-reproducible by its own generator (sxt015_reconciliation snapshot + stale justification_text_finding)
 - **Issue #132** (closed): Tooling: extract_phaser_inputs.py modulation screen is the same silent no-op (iterates md dict keys)
 - **Issue #117** (closed): SXT-015/017 accounting: replace Conditioner no_long_buffer placeholder with SXT-028b measured state; fix 'no delay line' and 'gate/LFO' labels
-
-### 2026-09-25
-
-- **PR #131**: #116: chorus extractor FX-modulation screen walks the real md structure (was a silent no-op)
-- **PR #129**: SXT-028e/#57: Distortion effect leaf — frozen fixed model, exact RTL, per-instance state, reference leg NOT_RUN
-- **PR #118**: SXT-028b (#54): Conditioner effect leaf - frozen model, exact RTL, live negative controls
-- **PR #128**: SXT-028f/#58: Reverb 2 tank reverb — frozen fixed-point model, exact RTL, per-instance state, oracle leg named
-- **PR #124**: SXT-028g/#59: Phaser effect leaf — frozen model, exact RTL, per-instance state, oracle gap named
-- **PR #120**: SXT-028d/#56: Global FX slot 2 routing form — fixed model, exact RTL, per-instance state, oracle gap named
-- **PR #115**: SXT-024/#108: keep the bespoke reverb tail window; NO_VERDICT refusal + model_tail_present transparency; regeneration sequenced behind #112
-- **PR #113**: #100: wet-path tail gate on the stereo effect-slice comparators; rms_diff_dbfs floor; spectral_corr characterization
-- **PR #109**: SXT-017 stage 2: gate candidate bundles on SXT-016 cost closure and escalate the profile-v1 freeze
-- **PR #106**: feat: SXT-042/#76 keytrack modsource — frozen model, exact RTL
-- **PR #103**: SXT-038/#72: LP 24 dB filter leaf — frozen model, exact RTL, pinned-kernel reference
-- **PR #105**: SXT-039/#73: LP Legacy Ladder filter — frozen model, exact RTL, pinned-kernel reference (oracle-free)
-- **PR #99**: #93: gate the tail region in the shared audio comparator (verdict, not advisory)
-- **PR #98**: SXT-095: audit pre-fix shared-comparator rms_diff_dbfs polarity
-- **Issue #116** (closed): Tooling: extract_chorus_inputs.py modulation screen is a silent no-op (iterates md dict keys)
-- **Issue #57** (closed): SXT-028e: Distortion effect leaf (multiband + waveshaper drive)
-- **Issue #54** (closed): SXT-028b: Conditioner effect leaf (gate/compressor/LFO)
-- **Issue #58** (closed): SXT-028f: Reverb 2 effect leaf (sst-effects tank reverb)
-- **Issue #59** (closed): SXT-028g: Phaser effect leaf (sst-effects Phaser)
-- **Issue #56** (closed): SXT-028d: Routing-form leaf: Global FX slot 2 (second concurrent global FX instance)
-- **Issue #108** (closed): Tooling: unify compare_reverb_model.py's tail check onto the shared declared_tail_region()/tail_check() shape
-- **Issue #100** (closed): Tooling: extend the #93 wet-path tail gate to the stereo effect-slice comparators; decide the -Infinity / spectral_corr metric findings
-- **Issue #76** (closed): SXT-042: voice leaf — modulation behavior: keytrack
-- **Issue #73** (closed): SXT-039: voice leaf — filter algorithm: LP Legacy Ladder
-- **Issue #93** (closed): SXT-028c follow-up: gate tail-region check in the shared audio comparator (verdict, not advisory)
-- **Issue #95** (closed): Tooling: audit pre-fix shared-comparator outputs for inverted rms_diff_dbfs flags
-
-### 2026-09-24
-
-- **PR #92**: SXT-040/#74: Sine oscillator — fixed model, exact RTL, reference fixtures
-- **PR #91**: SXT-028c/#55: Chorus — fixed model, exact RTL, per-instance state, shared-delay-semantics dependency noted
-- **Issue #74** (closed): SXT-040: voice leaf — oscillator family: Sine
-- **Issue #55** (closed): SXT-028c: Chorus effect leaf (sst-effects Chorus, delay-line class)
 
 ### 2026-10-09
 
